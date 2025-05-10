@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-    <title>Document</title>
+    <title>Login</title>
 </head>
 
 <body>
@@ -17,17 +17,20 @@
             <div class="ps-2">
                 <p class="text-3xl font-bold pb-2">Masuk yuk</p>
                 <span class="font-medium">Belum punya akun?</span>
-                <a href="#"
+                <a href="/register"
                     class="inline-block font-semibold bg-gradient-to-r from-primary to-secondary-purple bg-clip-text text-transparent transition-all hover:scale-90 active:scale-50">
                     Daftar
                 </a>
 
-                <x-textfield type="email" name="email" id="email" placeholder="Masukkan email . . ."
-                    :required="true" class="w-4/5 mt-10">Email</x-textfield>
-                <x-textfield type="password" name="password" id="password" placeholder="Masukkan password . . ."
-                    :required="true" class="w-4/5 mt-6">Password</x-textfield>
+                <form action="" method="POST">
+                    @csrf
+                    <x-textfield type="email" name="email" id="email" placeholder="Masukkan email . . ."
+                        :required="true" class="w-4/5 mt-10">Email</x-textfield>
+                    <x-textfield type="password" name="password" id="password" placeholder="Masukkan password . . ."
+                        :required="true" class="w-4/5 mt-6">Password</x-textfield>
 
-                <x-button-lg class="w-4/5 mt-16" type="submit">masuk</x-button-lg>
+                    <x-button-lg class="w-4/5 mt-16" type="submit">masuk</x-button-lg>
+                </form>
             </div>
         </section>
         <section id="default-carousel" class="relative w-2/5" data-carousel="slide">

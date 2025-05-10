@@ -18,7 +18,8 @@ export default {
             tertiary: {
                 DEFAULT: "#F4F4F4",
                 "100": "#FFFFFF",
-                "200": "#C5C5C5"
+                "200": "#C5C5C5",
+                "300": "#B3B3B3"
             },
             success: "#00D24D",
             warning: {
@@ -26,6 +27,9 @@ export default {
                 "200": "#FFBF00"
             },
             danger: "#FF0000",
+            btn: {
+                "cancel": "rgba(137, 137, 137,0.20)"
+            }
         },
         fontFamily: {
             'body': [
@@ -69,6 +73,10 @@ export default {
             ],
             'outer': [
                 '-8px -6px 10px rgba(255,255,255,1.00)',
+                '6px 4px 6px rgba(104,101,101,0.25)'
+            ],
+            'l-rb-outer': [
+                '-8px 4px 10px rgba(255,255,255,1.00)',
                 '6px 4px 6px rgba(104,101,101,0.25)'
             ]
         }
