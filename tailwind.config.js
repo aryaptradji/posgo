@@ -19,7 +19,11 @@ export default {
                 DEFAULT: "#F4F4F4",
                 "100": "#FFFFFF",
                 "200": "#C5C5C5",
-                "300": "#B3B3B3"
+                "300": "#B3B3B3",
+                "400": "#C7C7C7",
+                'title': "#8B8B8B",
+                'title-line': "#E4E4E4",
+                'table-line': "#EEEEEE"
             },
             success: "#00D24D",
             warning: {
@@ -71,6 +75,9 @@ export default {
             'inner': [
                 'inset 4px 6px 4px rgba(0,0,0,0.36)'
             ],
+            'inner-pag': [
+                'inset 0px 4px 4px 1px rgba(0,0,0,0.36)'
+            ],
             'outer': [
                 '-8px -6px 10px rgba(255,255,255,1.00)',
                 '6px 4px 6px rgba(104,101,101,0.25)'
@@ -78,6 +85,9 @@ export default {
             'l-rb-outer': [
                 '-8px 4px 10px rgba(255,255,255,1.00)',
                 '6px 4px 6px rgba(104,101,101,0.25)'
+            ],
+            'outer-sidebar': [
+                '0px 10px 15px rgba(228, 118, 63,0.60)'
             ]
         }
     },
