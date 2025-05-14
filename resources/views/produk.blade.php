@@ -13,11 +13,11 @@
     <div class="w-full bg-tertiary rounded-2xl shadow-outer mt-12" x-data="{
         search: '',
         products: [
-            { image: '/img/product/teh-botol.png', name: 'Teh Botol Sosro', stok: 0, pcs: '50', harga: 'Rp 60.000' },
-            { image: '/img/product/panther.png', name: 'Panther', stok: 0, pcs: 30, harga: 'Rp 30.000' },
-            { image: '/img/product/milku.png', name: 'Milku', stok: 1, pcs: 45, harga: 'Rp 20.000' },
-            { image: '/img/product/floridina.png', name: 'Floridina', stok: 4, pcs: 25, harga: 'Rp 25.000' },
-            { image: '/img/product/teh-kotak.png', name: 'Teh Kotak', stok: 46, pcs: 20, harga: 'Rp 15.000' }
+            { image: '/img/product/teh-botol.png', name: 'Teh Botol Sosro', stok: 0, pcs: '50', harga: 60000 },
+            { image: '/img/product/panther.png', name: 'Panther', stok: 0, pcs: 30, harga: 30000 },
+            { image: '/img/product/milku.png', name: 'Milku', stok: 1, pcs: 45, harga: 20000 },
+            { image: '/img/product/floridina.png', name: 'Floridina', stok: 4, pcs: 25, harga: 25000 },
+            { image: '/img/product/teh-kotak.png', name: 'Teh Kotak', stok: 46, pcs: 20, harga: 15000 }
         ],
         currentPage: 1,
         perPage: 5,
@@ -43,7 +43,7 @@
             return filtered;
         },
         get totalPages() {
-            return Math.ceil(this.products.length / this.perPage);
+            return Math.ceil(this.filteredProducts.length / this.perPage);
         },
         get paginatedProducts() {
             const start = (this.currentPage - 1) * this.perPage;
@@ -65,16 +65,16 @@
         }
     }">
         <div class="flex flex-col justify-between">
-            <div class="pe-7 py-4 flex justify-between">
-                <div class="w-2/5 flex gap-4 items-center justify-center font-semibold">
-                    <span @click="selectedFilter = 'Semua'; currentPage = 1" :class="selectedFilter === 'Semua' ? 'bg-primary text-white' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg cursor-pointer">Semua</span>
-                    <span @click="selectedFilter = 'Banyak'; currentPage = 1" :class="selectedFilter === 'Banyak' ? 'bg-primary text-white' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg cursor-pointer">Banyak</span>
-                    <span @click="selectedFilter = 'Sedikit'; currentPage = 1" :class="selectedFilter === 'Sedikit' ? 'bg-primary text-white' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg cursor-pointer">Sedikit</span>
-                    <span @click="selectedFilter = 'Habis'; currentPage = 1" :class="selectedFilter === 'Habis' ? 'bg-primary text-white' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg cursor-pointer">Habis</span>
+            <div class="px-7 py-4 flex justify-between">
+                <div class="w-fit flex gap-4 items-center justify-center font-semibold">
+                    <span @click="selectedFilter = 'Semua'; currentPage = 1" :class="selectedFilter === 'Semua' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Semua</span>
+                    <span @click="selectedFilter = 'Banyak'; currentPage = 1" :class="selectedFilter === 'Banyak' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Banyak</span>
+                    <span @click="selectedFilter = 'Sedikit'; currentPage = 1" :class="selectedFilter === 'Sedikit' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Sedikit</span>
+                    <span @click="selectedFilter = 'Habis'; currentPage = 1" :class="selectedFilter === 'Habis' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Habis</span>
                 </div>
                 <div
                     class="w-1/5 px-3 py-2 flex flex-row text-sm outline-none ring-1 ring-tertiary-300 rounded-lg bg-gray-50">
@@ -87,9 +87,9 @@
                 <table class="w-full min-w-max text-sm text-left dark:text-gray-400">
                     <thead class="text-xs uppercase bg-white">
                         <tr>
-                            <th class="px-4 py-3 w-36" align="center">Gambar</th>
+                            <th class="px-4 py-3 w-44" align="center">Gambar</th>
                             <th class="px-4 py-3 w-60" align="center">Nama Produk</th>
-                            <th class="px-4 py-3 w-44" align="center">
+                            <th class="px-4 py-3" align="center">
                                 <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'stok'; sortAsc = !sortAsc">
                                     Stok
                                     <span class="ml-2 text-tertiary-300 transition-transform"
@@ -98,9 +98,10 @@
                                     </span>
                                 </button>
                             </th>
-                            <th class="px-4 py-3 w-44" align="center">Pcs</th>
-                            <th class="px-4 py-3 w-44" align="center">Status</th>
-                            <th class="px-4 py-3 w-52" align="center">Harga</th>
+                            <th class="px-4 py-3" align="center">Pcs</th>
+                            <th class="px-4 py-3 w-36" align="center">Status</th>
+                            <th class="px-4 py-3 w-44" align="center">Harga</th>
+                            <th class="px-4 py-3 w-36" align="center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,7 +120,20 @@
                                     :class="{ 'bg-danger/15 text-danger border-danger': product.stok == 0, 'bg-warning-200/15 text-warning-200 border-warning-200': product.stok <= 5 && product.stok > 0, 'bg-success/15 text-success border-success': product.stok > 5 }"
                                         x-text="product.stok == 0 ? 'Habis' : product.stok <= 5 && product.stok > 0 ? 'Sedikit' : 'Banyak'"></span>
                                 </td>
-                                <td class="px-4 py-2" align="center" x-text="product.harga"></td>
+                                <td class="px-4 py-2" align="center" x-text="'Rp ' + product.harga"></td>
+                                <td class="px-4 py-2" align="center">
+                                    <div class="flex justify-center gap-2">
+                                        <button type="button" class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
+                                            <x-icons.detail-icon/>
+                                        </button>
+                                        <button type="button" class="text-primary transition-transform hover:scale-125 active:scale-90">
+                                            <x-icons.edit-icon/>
+                                        </button>
+                                        <button type="button" class="text-danger transition-transform hover:scale-125 active:scale-90">
+                                            @include('components.icons.delete-icon')
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         </template>
                     </tbody>
