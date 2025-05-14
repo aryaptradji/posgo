@@ -86,8 +86,11 @@ export default {
                 '-8px 4px 10px rgba(255,255,255,1.00)',
                 '6px 4px 6px rgba(104,101,101,0.25)'
             ],
-            'outer-sidebar': [
+            'outer-sidebar-primary': [
                 '0px 10px 15px rgba(228, 118, 63,0.60)'
+            ],
+            'outer-sidebar-secondary': [
+                '0px 10px 15px rgba(122, 36, 249,0.60)'
             ]
         }
     },
