@@ -258,7 +258,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(product, index) in paginatedProducts.filter(product => product.name.toLowerCase().includes(search.toLowerCase()) || product.category.toLowerCase().includes(search.toLowerCase()) || product.color.toLowerCase().includes(search.toLowerCase()))" :key="index">
+                            <template x-for="(product, index) in paginatedProducts.filter(product => product.name.toLowerCase().includes(search.toLowerCase()))" :key="index">
                                 <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                     <td class="px-4 py-2" align="center">
                                         <div class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
@@ -391,7 +391,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(product, index) in paginatedProducts.filter(product => product.name.toLowerCase().includes(search.toLowerCase()) || product.category.toLowerCase().includes(search.toLowerCase()) || product.color.toLowerCase().includes(search.toLowerCase()))" :key="index">
+                            <template x-for="(product, index) in paginatedProducts.filter(product => product.name.toLowerCase().includes(search.toLowerCase()))" :key="index">
                                 <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                     <td class="px-4 py-2" align="center">
                                         <div class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
