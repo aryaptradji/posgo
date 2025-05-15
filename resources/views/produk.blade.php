@@ -14,17 +14,17 @@
         search: '',
         products: [
             { image: '/img/product/teh-botol.png', name: 'Teh Botol Sosro', stok: 0, pcs: '50', harga: 60000 },
-            { image: '/img/product/panther.png', name: 'Panther', stok: 0, pcs: 30, harga: 30000 },
+            { image: '/img/product/panther.png', name: 'Panther', stok: 0, pcs: 30, harga: 70000 },
             { image: '/img/product/milku.png', name: 'Milku', stok: 1, pcs: 45, harga: 20000 },
-            { image: '/img/product/floridina.png', name: 'Floridina', stok: 4, pcs: 25, harga: 25000 },
-            { image: '/img/product/teh-kotak.png', name: 'Teh Kotak', stok: 46, pcs: 20, harga: 15000 }
+            { image: '/img/product/floridina.png', name: 'Floridina', stok: 4, pcs: 25, harga: 72000 },
+            { image: '/img/product/teh-kotak.png', name: 'Teh Kotak', stok: 46, pcs: 20, harga: 25000 }
         ],
         currentPage: 1,
         perPage: 5,
         open: false,
         selectedFilter: 'Semua',
         sortBy: '',
-        sortAsc: true,
+        sortDesc: false,
         get filteredProducts() {
             let filtered = this.products.filter(product => {
                 const nameMatch = product.name.toLowerCase().includes(this.search.toLowerCase());
@@ -37,7 +37,9 @@
             });
 
             if (this.sortBy === 'stok') {
-                filtered.sort((a, b) => this.sortAsc ? a.stok - b.stok : b.stok - a.stok);
+                filtered.sort((a, b) => this.sortDesc ? b.stok - a.stok : a.stok - b.stok );
+            } else if (this.sortBy === 'harga') {
+                filtered.sort((a, b) => this.sortDesc ? b.harga - a.harga : a.harga - b.harga);
             }
 
             return filtered;
@@ -90,17 +92,25 @@
                             <th class="px-4 py-3 w-44" align="center">Gambar</th>
                             <th class="px-4 py-3 w-60" align="center">Nama Produk</th>
                             <th class="px-4 py-3" align="center">
-                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'stok'; sortAsc = !sortAsc">
+                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'stok'; sortDesc = !sortDesc">
                                     Stok
                                     <span class="ml-2 text-tertiary-300 transition-transform"
-                                        :class="sortAsc ? 'rotate-0' : 'rotate-180'">
+                                        :class="sortDesc && sortBy === 'stok' ? 'rotate-180' : 'rotate-0'">
                                         <x-icons.arrow-down />
                                     </span>
                                 </button>
                             </th>
                             <th class="px-4 py-3" align="center">Pcs</th>
                             <th class="px-4 py-3 w-36" align="center">Status</th>
-                            <th class="px-4 py-3 w-44" align="center">Harga</th>
+                            <th class="px-4 py-3 w-44" align="center">
+                                <button type="button" class="flex items-center justify-center uppercase" @click="sortBy = 'harga'; sortDesc = !sortDesc">
+                                    Harga
+                                    <span class="ml-2 text-tertiary-300 transition-transform"
+                                        :class="sortDesc && sortBy === 'harga' ? 'rotate-180' : 'rotate-0'">
+                                        <x-icons.arrow-down />
+                                    </span>
+                                </button>
+                            </th>
                             <th class="px-4 py-3 w-36" align="center"></th>
                         </tr>
                     </thead>
