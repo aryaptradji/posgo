@@ -30,7 +30,7 @@
         open: false,
         selectedFilter: 'Semua',
         sortBy: '',
-        sortAsc: true,
+        sortDesc: false,
         get filteredOrders() {
             let filtered = this.orders.filter(order => {
                 const nameMatch = order.name.toLowerCase().includes(this.search.toLowerCase()) || order.kode.toLowerCase().includes(this.search.toLowerCase());
@@ -39,12 +39,12 @@
             });
 
             if (this.sortBy === 'item') {
-                filtered.sort((a, b) => this.sortAsc ? a.item - b.item : b.item - a.item);
+                filtered.sort((a, b) => this.sortDesc ? b.item - a.item : a.item - b.item);
             } else if (this.sortBy === 'kategori') {
                 filtered.sort((a, b) => {
-                    return this.sortAsc
-                        ? a.kategori.localeCompare(b.kategori)
-                        : b.kategori.localeCompare(a.kategori);
+                    return this.sortDesc
+                        ? b.kategori.localeCompare(a.kategori)
+                        : a.kategori.localeCompare(b.kategori);
                 });
             }
 
@@ -99,20 +99,20 @@
                             <th class="px-4 py-3" align="center">Waktu</th>
                             <th class="px-4 py-3" align="center">Nama</th>
                             <th class="px-4 py-3" align="center">
-                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'kategori'; sortAsc = !sortAsc">
+                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'kategori'; sortDesc = !sortDesc">
                                     Kategori
                                     <span class="ml-2 text-tertiary-300 transition-transform"
-                                        :class="sortAsc ? 'rotate-0' : 'rotate-180'">
+                                        :class="sortDesc && sortBy === 'kategori' ? 'rotate-180' : 'rotate-0'">
                                         <x-icons.arrow-down />
                                     </span>
                                 </button>
                             </th>
                             <th class="px-4 py-3" align="center">Status</th>
                             <th class="px-4 py-3" align="center">
-                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'item'; sortAsc = !sortAsc">
+                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'item'; sortDesc = !sortDesc">
                                     Item
                                     <span class="ml-2 text-tertiary-300 transition-transform"
-                                        :class="sortAsc ? 'rotate-0' : 'rotate-180'">
+                                        :class="sortDesc && sortBy === 'item' ? 'rotate-180' : 'rotate-0'">
                                         <x-icons.arrow-down />
                                     </span>
                                 </button>
