@@ -29,3 +29,6 @@ Route::get('/retur', function () {
 Route::get('/pemasukan', function () {
     return view('pemasukan');
 });
+ Route::get('/pengeluaran', function () {
+     return view('pengeluaran');
+ });

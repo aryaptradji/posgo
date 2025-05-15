@@ -55,7 +55,7 @@
         get totalPages() {
             return Math.ceil(this.filteredIncomes.length / this.perPage);
         },
-        get paginatedProducts() {
+        get paginatedIncomes() {
             const start = (this.currentPage - 1) * this.perPage;
             return this.filteredIncomes.slice(start, start + this.perPage);
         },
@@ -111,7 +111,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="(income, index) in filteredIncomes" :key="index">
+                        <template x-for="(income, index) in paginatedIncomes" :key="index">
                             <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                 <td class="px-4 py-2" align="center" x-text="income.tanggal"></td>
                                 <td class="px-4 py-2" align="center" x-text="income.sumber"></td>
@@ -131,7 +131,7 @@
                                 </td>
                             </tr>
                         </template>
-                        <template x-if="filteredIncomes.length === 0">
+                        <template x-if="paginatedIncomes.length === 0">
                             <tr>
                                 <td colspan="7" class="text-center py-10 text-gray-500 italic">Pemasukan tidak ditemukan</td>
                             </tr>

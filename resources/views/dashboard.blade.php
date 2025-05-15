@@ -277,7 +277,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(product, index) in filteredProducts" :key="index">
+                            <template x-for="(product, index) in paginatedProducts" :key="index">
                                 <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                     <td class="px-4 py-2" align="center">
                                         <div class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
@@ -286,6 +286,11 @@
                                     </td>
                                     <td class="px-4 py-2" align="center" x-text="product.name"></td>
                                     <td class="px-4 py-2" align="center" x-text="product.sold"></td>
+                                </tr>
+                            </template>
+                            <template x-if="paginatedProducts.length === 0">
+                                <tr>
+                                    <td colspan="7" class="text-center py-10 text-gray-500 italic">Produk tidak ditemukan</td>
                                 </tr>
                             </template>
                         </tbody>
@@ -442,7 +447,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(product, index) in filteredProducts" :key="index">
+                            <template x-for="(product, index) in paginatedProducts" :key="index">
                                 <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                     <td class="px-4 py-2" align="center">
                                         <div class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
@@ -455,6 +460,11 @@
                                         :class="getStatusClass(product.stok)" x-text="getStatusValue(product.stok)"></span>
                                     </td>
                                     <td class="px-4 py-2" align="center" x-text="product.stok"></td>
+                                </tr>
+                            </template>
+                            <template x-if="paginatedProducts.length === 0">
+                                <tr>
+                                    <td colspan="7" class="text-center py-10 text-gray-500 italic">Produk tidak ditemukan</td>
                                 </tr>
                             </template>
                         </tbody>
