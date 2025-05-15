@@ -25,3 +25,7 @@ Route::get('/riwayat', function () {
 Route::get('/retur', function () {
     return view('retur');
 });
+
+Route::get('/pemasukan', function () {
+    return view('pemasukan');
+});

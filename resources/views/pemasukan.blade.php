@@ -1,23 +1,33 @@
 <x-layout>
-    <x-slot:title>Produk</x-slot:title>
+    <x-slot:title>Pemasukan</x-slot:title>
     <x-slot:header>
         <div class="flex justify-between items-center">
-            <span>Produk</span>
-            <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-purple transition-all hover:scale-105 active:scale-90">
-                <x-icons.plus/>
-                Buat
-            </button>
+            <span>Pemasukan</span>
+            <div class="flex gap-6">
+                <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
+                    <x-icons.print/>
+                    Print
+                </button>
+                <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-primary transition-all hover:scale-105 active:scale-90">
+                    <x-icons.export/>
+                    Export
+                </button>
+                <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-purple transition-all hover:scale-105 active:scale-90">
+                    <x-icons.plus/>
+                    Buat
+                </button>
+            </div>
         </div>
     </x-slot:header>
 
     <div class="w-full bg-tertiary rounded-2xl shadow-outer mt-12" x-data="{
         search: '',
-        products: [
-            { image: '/img/product/teh-botol.png', name: 'Teh Botol Sosro', stok: 0, pcs: '50', harga: 60000 },
-            { image: '/img/product/panther.png', name: 'Panther', stok: 0, pcs: 30, harga: 70000 },
-            { image: '/img/product/milku.png', name: 'Milku', stok: 1, pcs: 45, harga: 20000 },
-            { image: '/img/product/floridina.png', name: 'Floridina', stok: 4, pcs: 25, harga: 72000 },
-            { image: '/img/product/teh-kotak.png', name: 'Teh Kotak', stok: 46, pcs: 20, harga: 25000 }
+        incomes: [
+            { tanggal: '30 Sep 2024', sumber: 'Teh Botol Sosro', status: 'Produk', total: 60000 },
+            { tanggal: '29 Sep 2024', sumber: 'Cashback Supplier', status: 'Luar Produk', total: 70000 },
+            { tanggal: '29 Sep 2024', sumber: 'Floridina', status: 'Produk', total: 20000 },
+            { tanggal: '28 Sep 2024', sumber: 'Sponsor Sosro', status: 'Luar Produk', total: 72000 },
+            { tanggal: '27 Sep 2024', sumber: 'Milku', status: 'Produk', total: 25000 }
         ],
         currentPage: 1,
         perPage: 5,
@@ -25,37 +35,29 @@
         selectedFilter: 'Semua',
         sortBy: '',
         sortDesc: false,
-        getStatusValue(stok) {
-            if (stok == 0) return 'Habis';
-            if (stok > 0 && stok <= 5) return 'Sedikit';
-            return 'Banyak';
+        getStatusClass(status) {
+            if (status === 'Produk') return 'bg-secondary-purple/15 text-secondary-purple border-secondary-purple';
+            return 'bg-primary/15 text-primary border-primary';
         },
-        getStatusClass(stok) {
-            if (stok === 0) return 'bg-danger/15 text-danger border-danger';
-            if (stok > 0 && stok <= 5) return 'bg-warning-200/15 text-warning-200 border-warning-200';
-            return 'bg-success/15 text-success border-success';
-        },
-        get filteredProducts() {
-            let filtered = this.products.filter(product => {
-                const searchMatch = product.name.toLowerCase().includes(this.search.toLowerCase());
-                const filterMatch = this.selectedFilter === 'Semua' || this.getStatusValue(product.stok) === this.selectedFilter
+        get filteredIncomes() {
+            let filtered = this.incomes.filter(income => {
+                const searchMatch = income.sumber.toLowerCase().includes(this.search.toLowerCase());
+                const filterMatch = this.selectedFilter === 'Semua' || income.status === this.selectedFilter;
                 return searchMatch && filterMatch;
             });
 
-            if (this.sortBy === 'stok') {
-                filtered.sort((a, b) => this.sortDesc ? b.stok - a.stok : a.stok - b.stok );
-            } else if (this.sortBy === 'harga') {
-                filtered.sort((a, b) => this.sortDesc ? b.harga - a.harga : a.harga - b.harga);
+            if (this.sortBy === 'total') {
+                filtered.sort((a, b) => this.sortDesc ? b.total - a.total : a.total - b.total );
             }
 
             return filtered;
         },
         get totalPages() {
-            return Math.ceil(this.filteredProducts.length / this.perPage);
+            return Math.ceil(this.filteredIncomes.length / this.perPage);
         },
         get paginatedProducts() {
             const start = (this.currentPage - 1) * this.perPage;
-            return this.filteredProducts.slice(start, start + this.perPage);
+            return this.filteredIncomes.slice(start, start + this.perPage);
         },
         get visiblePages() {
             const pages = [];
@@ -77,12 +79,10 @@
                 <div class="w-fit flex gap-4 items-center justify-center font-semibold">
                     <span @click="selectedFilter = 'Semua'; currentPage = 1" :class="selectedFilter === 'Semua' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
                         class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Semua</span>
-                    <span @click="selectedFilter = 'Banyak'; currentPage = 1" :class="selectedFilter === 'Banyak' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Banyak</span>
-                    <span @click="selectedFilter = 'Sedikit'; currentPage = 1" :class="selectedFilter === 'Sedikit' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Sedikit</span>
-                    <span @click="selectedFilter = 'Habis'; currentPage = 1" :class="selectedFilter === 'Habis' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Habis</span>
+                    <span @click="selectedFilter = 'Produk'; currentPage = 1" :class="selectedFilter === 'Produk' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Produk</span>
+                    <span @click="selectedFilter = 'Luar Produk'; currentPage = 1" :class="selectedFilter === 'Luar Produk' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Luar Produk</span>
                 </div>
                 <div
                     class="w-1/5 px-3 py-2 flex flex-row text-sm outline-none ring-1 ring-tertiary-300 rounded-lg bg-gray-50">
@@ -95,51 +95,32 @@
                 <table class="w-full min-w-max text-sm text-left dark:text-gray-400">
                     <thead class="text-xs uppercase bg-white">
                         <tr>
-                            <th class="px-4 py-3 w-44" align="center">Gambar</th>
-                            <th class="px-4 py-3 w-60" align="center">Nama Produk</th>
+                            <th class="px-4 py-3" align="center">Tanggal</th>
+                            <th class="px-4 py-3" align="center">Sumber</th>
+                            <th class="px-4 py-3" align="center">Status</th>
                             <th class="px-4 py-3" align="center">
-                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'stok'; sortDesc = !sortDesc">
-                                    Stok
+                                <button type="button" class="flex items-center justify-center uppercase" @click="sortBy = 'total'; sortDesc = !sortDesc">
+                                    Total
                                     <span class="ml-2 text-tertiary-300 transition-transform"
-                                        :class="sortDesc && sortBy === 'stok' ? 'rotate-180' : 'rotate-0'">
+                                        :class="sortDesc && sortBy === 'total' ? 'rotate-180' : 'rotate-0'">
                                         <x-icons.arrow-down />
                                     </span>
                                 </button>
                             </th>
-                            <th class="px-4 py-3" align="center">Pcs</th>
-                            <th class="px-4 py-3 w-36" align="center">Status</th>
-                            <th class="px-4 py-3 w-44" align="center">
-                                <button type="button" class="flex items-center justify-center uppercase" @click="sortBy = 'harga'; sortDesc = !sortDesc">
-                                    Harga
-                                    <span class="ml-2 text-tertiary-300 transition-transform"
-                                        :class="sortDesc && sortBy === 'harga' ? 'rotate-180' : 'rotate-0'">
-                                        <x-icons.arrow-down />
-                                    </span>
-                                </button>
-                            </th>
-                            <th class="px-4 py-3 w-36" align="center"></th>
+                            <th class="px-4 py-3" align="center"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="(product, index) in filteredProducts" :key="index">
+                        <template x-for="(income, index) in filteredIncomes" :key="index">
                             <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
-                                <td class="px-4 py-2" align="center">
-                                    <div class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
-                                        <img :src="product.image" class="h-12">
-                                    </div>
+                                <td class="px-4 py-2" align="center" x-text="income.tanggal"></td>
+                                <td class="px-4 py-2" align="center" x-text="income.sumber"></td>
+                                <td class="p-4" align="center">
+                                    <span class="px-2 py-1 rounded-lg border-2" :class="getStatusClass(income.status)" x-text="income.status"></span>
                                 </td>
-                                <td class="px-4 py-2" align="center" x-text="product.name"></td>
-                                <td class="px-4 py-2" align="center" x-text="product.stok"></td>
-                                <td class="px-4 py-2" align="center" x-text="product.pcs"></td>
-                                <td class="px-4 py-2" align="center">
-                                    <span class="px-2 py-1 rounded-lg border-2" :class="getStatusClass(product.stok)" x-text="getStatusValue(product.stok)"></span>
-                                </td>
-                                <td class="px-4 py-2" align="center" x-text="'Rp ' + product.harga"></td>
+                                <td class="px-4 py-2" align="center" x-text="'Rp ' + income.total"></td>
                                 <td class="px-4 py-2" align="center">
                                     <div class="flex justify-center gap-2">
-                                        <button type="button" class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
-                                            <x-icons.detail-icon/>
-                                        </button>
                                         <button type="button" class="text-primary transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.edit-icon/>
                                         </button>
@@ -150,9 +131,9 @@
                                 </td>
                             </tr>
                         </template>
-                        <template x-if="filteredProducts.length === 0">
+                        <template x-if="filteredIncomes.length === 0">
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Produk tidak ditemukan</td>
+                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Pemasukan tidak ditemukan</td>
                             </tr>
                         </template>
                     </tbody>
@@ -223,5 +204,4 @@
             </div>
         </div>
     </div>
-
 </x-layout>

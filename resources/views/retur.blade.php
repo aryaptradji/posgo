@@ -103,7 +103,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="(order, index) in paginatedOrders" :key="index">
+                        <template x-for="(order, index) in filteredOrders" :key="index">
                             <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                 <td class="px-4 py-2" align="center" x-text="order.kode"></td>
                                 <td class="px-4 py-2" align="center" x-text="order.waktu"></td>
@@ -127,6 +127,11 @@
                                         </template>
                                     </div>
                                 </td>
+                            </tr>
+                        </template>
+                        <template x-if="filteredOrders.length === 0">
+                            <tr>
+                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Retur tidak ditemukan</td>
                             </tr>
                         </template>
                     </tbody>

@@ -4,11 +4,11 @@
         <div class="flex justify-between items-center">
             <span>Riwayat</span>
             <div class="flex gap-6">
-                <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-purple">
+                <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-purple transition-all hover:scale-105 active:scale-90">
                     <x-icons.print/>
                     Print
                 </button>
-                <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-primary">
+                <button class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-primary transition-all hover:scale-105 active:scale-90">
                     <x-icons.export/>
                     Export
                 </button>
@@ -122,7 +122,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="(order, index) in paginatedOrders" :key="index">
+                        <template x-for="(order, index) in filteredOrders" :key="index">
                             <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                 <td class="px-4 py-2" align="center" x-text="order.kode"></td>
                                 <td class="px-4 py-2" align="center" x-text="order.waktu"></td>
@@ -152,6 +152,11 @@
                                         </template>
                                     </div>
                                 </td>
+                            </tr>
+                        </template>
+                        <template x-if="filteredOrders.length === 0">
+                            <tr>
+                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Riwayat tidak ditemukan</td>
                             </tr>
                         </template>
                     </tbody>
