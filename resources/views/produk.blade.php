@@ -140,8 +140,11 @@
                 </table>
             </div>
             <!-- Pagination Controls -->
-            <div class="flex items-center justify-end gap-4 pb-4">
-                <div class="relative w-1/2">
+            <div class="flex items-center mx-7 justify-between gap-4 pb-4">
+                <span class="text-sm italic">
+                    Showing <span x-text="currentPage"></span> of <span x-text="totalPages"></span> pages
+                </span>
+                <div class="relative">
                     <button class="flex items-center px-3 bg-tertiary ring-1 ring-tertiary-300 rounded-lg text-sm" type="button"
                         @click="open = !open">
                         <span class="pe-3 py-2 border-r border-tertiary-300 text-tertiary-300">Per page</span>
@@ -155,18 +158,18 @@
                                 <span>2</span>
                             </li>
                             <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                @click="perPage = 4; open = false; currentPage = 1">
-                                <span>4</span>
+                                @click="perPage = 5; open = false; currentPage = 1">
+                                <span>5</span>
                             </li>
                             <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                @click="perPage = 6; open = false; currentPage = 1">
-                                <span>6</span>
+                                @click="perPage = 10; open = false; currentPage = 1">
+                                <span>10</span>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <!-- Navigation -->
-                <div class="flex items-center mr-7 bg-tertiary text-sm">
+                <div class="flex items-center bg-tertiary text-sm">
                     <!-- Prev Button -->
                     <template x-if="currentPage > 1">
                         <button
