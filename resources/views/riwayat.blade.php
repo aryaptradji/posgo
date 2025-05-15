@@ -33,9 +33,9 @@
         sortDesc: false,
         get filteredOrders() {
             let filtered = this.orders.filter(order => {
-                const nameMatch = order.name.toLowerCase().includes(this.search.toLowerCase()) || order.kode.toLowerCase().includes(this.search.toLowerCase());
+                const searchMatch = order.name.toLowerCase().includes(this.search.toLowerCase()) || order.kode.toLowerCase().includes(this.search.toLowerCase());
                 const filterMatch = this.selectedFilter === 'Semua' || order.status === this.selectedFilter;
-                return nameMatch && filterMatch;
+                return searchMatch && filterMatch;
             });
 
             if (this.sortBy === 'item') {
@@ -129,7 +129,7 @@
                                 <td class="px-4 py-2" align="center" x-text="order.name"></td>
                                 <td class="px-4 py-2" align="center" x-text="order.kategori"></td>
                                 <td class="px-4 py-4" align="center">
-                                    <span class="p-2 rounded-lg border-2"
+                                    <span class="px-2 py-1 rounded-lg border-2"
                                     :class="{ 'bg-danger/15 text-danger border-danger': order.status == 'Belum dikirim', 'bg-warning-200/15 text-warning-200 border-warning-200': order.status == 'Dalam perjalanan', 'bg-success/15 text-success border-success': order.status == 'Selesai' }"
                                         x-text="order.status"></span>
                                 </td>
@@ -158,7 +158,7 @@
                 </table>
             </div>
             <!-- Pagination Controls -->
-            <div class="flex items-center justify-between mx-7 gap-4 pb-4">
+            <div class="flex items-center justify-between mx-7 pb-4">
                 <span class="text-sm italic">
                     Showing <span x-text="currentPage"></span> of <span x-text="totalPages"></span> pages
                 </span>

@@ -214,12 +214,23 @@
             currentPage: 1,
             perPage: 5,
             open: false,
+            sortBy: '',
+            sortDesc: false,
+            get filteredProducts() {
+                let filtered = this.products.filter(product => product.name.toLowerCase().includes(this.search.toLowerCase()));
+
+                if (this.sortBy === 'sold') {
+                    filtered.sort((a, b) => this.sortDesc ? b.sold - a.sold : a.sold - b.sold);
+                }
+
+                return filtered;
+            },
             get totalPages() {
-                return Math.ceil(this.products.length / this.perPage);
+                return Math.ceil(this.filteredProducts.length / this.perPage);
             },
             get paginatedProducts() {
                 const start = (this.currentPage - 1) * this.perPage;
-                return this.products.slice(start, start + this.perPage);
+                return this.filteredProducts.slice(start, start + this.perPage);
             },
             get visiblePages() {
                 const pages = [];
@@ -254,11 +265,19 @@
                             <tr>
                                 <th class="px-4 py-3 w-36" align="center">Gambar</th>
                                 <th class="px-4 py-3 w-48" align="center">Nama Produk</th>
-                                <th class="px-4 py-3" align="center">Jumlah Pembelian</th>
+                                <th class="px-4 py-3" align="center">
+                                    <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'sold'; sortDesc = !sortDesc">
+                                        Total Terjual
+                                        <span class="ml-2 text-tertiary-300 transition-transform"
+                                            :class="sortDesc && sortBy === 'sold' ? 'rotate-180' : 'rotate-0'">
+                                            <x-icons.arrow-down />
+                                        </span>
+                                    </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(product, index) in paginatedProducts.filter(product => product.name.toLowerCase().includes(search.toLowerCase()))" :key="index">
+                            <template x-for="(product, index) in filteredProducts" :key="index">
                                 <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                     <td class="px-4 py-2" align="center">
                                         <div class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
@@ -273,7 +292,10 @@
                     </table>
                 </div>
                 <!-- Pagination Controls -->
-                <div class="flex items-center justify-end gap-4 pb-4">
+                <div class="flex items-center mx-7 justify-between pb-4">
+                    <span class="text-sm italic">
+                        Showing <span x-text="currentPage"></span> of <span x-text="totalPages"></span> pages
+                    </span>
                     <div class="relative">
                         <button class="flex items-center px-3 bg-tertiary ring-1 ring-tertiary-300 rounded-lg text-sm" type="button"
                             @click="open = !open">
@@ -284,22 +306,22 @@
                         <div x-show="open" @click.away="open = false" class="absolute bottom-10 right-0 bg-white rounded-lg shadow-sm w-14">
                             <ul class="py-2 text-sm text-gray-700">
                                 <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                    @click="perPage = 2; open = false; currentPage = 1">
-                                    <span>2</span>
+                                    @click="perPage = 3; open = false; currentPage = 1">
+                                    <span>3</span>
                                 </li>
                                 <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                    @click="perPage = 4; open = false; currentPage = 1">
-                                    <span>4</span>
+                                    @click="perPage = 5; open = false; currentPage = 1">
+                                    <span>5</span>
                                 </li>
                                 <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                    @click="perPage = 6; open = false; currentPage = 1">
-                                    <span>6</span>
+                                    @click="perPage = 8; open = false; currentPage = 1">
+                                    <span>8</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
                     <!-- Navigation -->
-                    <div class="flex items-center mr-7 bg-tertiary text-sm">
+                    <div class="flex items-center bg-tertiary text-sm">
                         <!-- Prev Button -->
                         <template x-if="currentPage > 1">
                             <button
@@ -346,12 +368,33 @@
             currentPage: 1,
             perPage: 5,
             open: false,
+            sortBy: '',
+            sortDesc: false,
+            getStatusValue(stok) {
+                if (stok == 0) return 'Habis';
+                if (stok > 0 && stok <= 5) return 'Sedikit';
+                return 'Banyak';
+            },
+            getStatusClass(stok) {
+                if (stok === 0) return 'bg-danger/15 text-danger border-danger';
+                if (stok > 0 && stok <= 5) return 'bg-warning-200/15 text-warning-200 border-warning-200';
+                return 'bg-success/15 text-success border-success';
+            },
+            get filteredProducts() {
+                let filtered = this.products.filter(product => product.name.toLowerCase().includes(this.search.toLowerCase()) || this.getStatusValue(product.stok).toLowerCase().includes(this.search.toLowerCase()));
+
+                if (this.sortBy === 'stok') {
+                    filtered.sort((a, b) => this.sortDesc ? b.stok - a.stok : a.stok - b.stok);
+                }
+
+                return filtered;
+            },
             get totalPages() {
-                return Math.ceil(this.products.length / this.perPage);
+                return Math.ceil(this.filteredProducts.length / this.perPage);
             },
             get paginatedProducts() {
                 const start = (this.currentPage - 1) * this.perPage;
-                return this.products.slice(start, start + this.perPage);
+                return this.filteredProducts.slice(start, start + this.perPage);
             },
             get visiblePages() {
                 const pages = [];
@@ -384,14 +427,22 @@
                     <table class="w-full min-w-max text-sm text-left dark:text-gray-400">
                         <thead class="text-xs uppercase bg-white">
                             <tr>
-                                <th class="px-4 py-3 w-36" align="center">Gambar</th>
-                                <th class="px-4 py-3 w-48" align="center">Nama Produk</th>
+                                <th class="px-4 py-3" align="center">Gambar</th>
+                                <th class="px-4 py-3" align="center">Nama Produk</th>
                                 <th class="px-4 py-3" align="center">Status</th>
-                                <th class="px-4 py-3" align="center">Stok</th>
+                                <th class="px-4 py-3" align="center">
+                                    <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'stok'; sortDesc = !sortDesc">
+                                        Stok
+                                        <span class="ml-2 text-tertiary-300 transition-transform"
+                                            :class="sortDesc && sortBy === 'stok' ? 'rotate-180' : 'rotate-0'">
+                                            <x-icons.arrow-down />
+                                        </span>
+                                    </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(product, index) in paginatedProducts.filter(product => product.name.toLowerCase().includes(search.toLowerCase()))" :key="index">
+                            <template x-for="(product, index) in filteredProducts" :key="index">
                                 <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                     <td class="px-4 py-2" align="center">
                                         <div class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
@@ -400,9 +451,8 @@
                                     </td>
                                     <td class="px-4 py-2" align="center" x-text="product.name"></td>
                                     <td class="px-4 py-2" align="center">
-                                        <span class="p-2 rounded-lg border-2"
-                                        :class="{ 'bg-danger/15 text-danger border-danger': product.stok == 0, 'bg-warning-200/15 text-warning-200 border-warning-200': product.stok <= 5 && product.stok > 0, 'bg-success/15 text-success border-success': product.stok > 5 }"
-                                            x-text="product.stok == 0 ? 'Habis' : product.stok <= 5 && product.stok > 0 ? 'Sedikit' : 'Banyak'"></span>
+                                        <span class="px-2 py-1 rounded-lg border-2"
+                                        :class="getStatusClass(product.stok)" x-text="getStatusValue(product.stok)"></span>
                                     </td>
                                     <td class="px-4 py-2" align="center" x-text="product.stok"></td>
                                 </tr>
@@ -411,7 +461,10 @@
                     </table>
                 </div>
                 <!-- Pagination Controls -->
-                <div class="flex items-center justify-end gap-4 pb-4">
+                <div class="flex items-center mx-7 justify-between gap-4 pb-4">
+                    <span class="text-sm italic">
+                        Showing <span x-text="currentPage"></span> of <span x-text="totalPages"></span> pages
+                    </span>
                     <div class="relative">
                         <button class="flex items-center px-3 bg-tertiary ring-1 ring-tertiary-300 rounded-lg text-sm" type="button"
                             @click="open = !open">
@@ -422,22 +475,22 @@
                         <div x-show="open" @click.away="open = false" class="absolute bottom-10 right-0 bg-white rounded-lg shadow-sm w-14">
                             <ul class="py-2 text-sm text-gray-700">
                                 <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                    @click="perPage = 2; open = false; currentPage = 1">
-                                    <span>2</span>
+                                    @click="perPage = 3; open = false; currentPage = 1">
+                                    <span>3</span>
                                 </li>
                                 <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                    @click="perPage = 4; open = false; currentPage = 1">
-                                    <span>4</span>
+                                    @click="perPage = 5; open = false; currentPage = 1">
+                                    <span>5</span>
                                 </li>
                                 <li class="block px-4 py-2 hover:bg-primary hover:text-white cursor-pointer text-center"
-                                    @click="perPage = 6; open = false; currentPage = 1">
-                                    <span>6</span>
+                                    @click="perPage = 8; open = false; currentPage = 1">
+                                    <span>8</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
                     <!-- Navigation -->
-                    <div class="flex items-center mr-7 bg-tertiary text-sm">
+                    <div class="flex items-center bg-tertiary text-sm">
                         <!-- Prev Button -->
                         <template x-if="currentPage > 1">
                             <button

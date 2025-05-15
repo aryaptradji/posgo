@@ -16,22 +16,18 @@
         open: false,
         selectedFilter: 'Semua',
         sortBy: '',
-        sortAsc: true,
+        sortDesc: false,
         get filteredOrders() {
             let filtered = this.orders.filter(order => {
-                const nameMatch = order.name.toLowerCase().includes(this.search.toLowerCase()) || order.kode.toLowerCase().includes(this.search.toLowerCase()) || order.id_transaksi.toLowerCase().includes(this.search.toLowerCase());
+                const searchMatch = order.kode.toLowerCase().includes(this.search.toLowerCase()) || order.id_transaksi.toLowerCase().includes(this.search.toLowerCase());
                 const filterMatch = this.selectedFilter === 'Semua' || order.status === this.selectedFilter;
-                return nameMatch && filterMatch;
+                return searchMatch && filterMatch;
             });
 
             if (this.sortBy === 'item') {
-                filtered.sort((a, b) => this.sortAsc ? a.item - b.item : b.item - a.item);
-            } else if (this.sortBy === 'kategori') {
-                filtered.sort((a, b) => {
-                    return this.sortAsc
-                        ? a.kategori.localeCompare(b.kategori)
-                        : b.kategori.localeCompare(a.kategori);
-                });
+                filtered.sort((a, b) => this.sortDesc ? b.item - a.item : a.item - b.item);
+            } else if (this.sortBy === 'total') {
+                filtered.sort((a, b) => this.sortDesc ? b.total - a.total : a.total - b.total);
             }
 
             return filtered;
@@ -63,12 +59,12 @@
                 <div class="w-fit flex gap-4 items-center justify-center font-semibold">
                     <span @click="selectedFilter = 'Semua'; currentPage = 1" :class="selectedFilter === 'Semua' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
                         class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Semua</span>
-                    <span @click="selectedFilter = 'Selesai'; currentPage = 1" :class="selectedFilter === 'Selesai' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Selesai</span>
-                    <span @click="selectedFilter = 'Dalam perjalanan'; currentPage = 1" :class="selectedFilter === 'Dalam perjalanan' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Dalam perjalanan</span>
-                    <span @click="selectedFilter = 'Belum dikirim'; currentPage = 1" :class="selectedFilter === 'Belum dikirim' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
-                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Belum dikirim</span>
+                    <span @click="selectedFilter = 'Diterima'; currentPage = 1" :class="selectedFilter === 'Diterima' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Diterima</span>
+                    <span @click="selectedFilter = 'Menunggu konfirmasi'; currentPage = 1" :class="selectedFilter === 'Menunggu konfirmasi' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Menunggu konfirmasi</span>
+                    <span @click="selectedFilter = 'Ditolak'; currentPage = 1" :class="selectedFilter === 'Ditolak' ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black'"
+                        class="px-3 py-2 rounded-lg transition-all duration-500 cursor-pointer">Ditolak</span>
                 </div>
                 <div
                     class="w-1/5 px-3 py-2 flex flex-row text-sm outline-none ring-1 ring-tertiary-300 rounded-lg bg-gray-50">
@@ -83,27 +79,26 @@
                         <tr>
                             <th class="px-4 py-3" align="center">Kode</th>
                             <th class="px-4 py-3" align="center">Waktu</th>
-                            <th class="px-4 py-3" align="center">Nama</th>
-                            <th class="px-4 py-3" align="center">
-                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'kategori'; sortAsc = !sortAsc">
-                                    Kategori
-                                    <span class="ml-2 text-tertiary-300 transition-transform"
-                                        :class="sortAsc ? 'rotate-0' : 'rotate-180'">
-                                        <x-icons.arrow-down />
-                                    </span>
-                                </button>
-                            </th>
+                            <th class="px-4 py-3" align="center">ID Transaksi</th>
                             <th class="px-4 py-3" align="center">Status</th>
                             <th class="px-4 py-3" align="center">
-                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'item'; sortAsc = !sortAsc">
+                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'item'; sortDesc = !sortDesc">
                                     Item
                                     <span class="ml-2 text-tertiary-300 transition-transform"
-                                        :class="sortAsc ? 'rotate-0' : 'rotate-180'">
+                                        :class="sortDesc && sortBy === 'item' ? 'rotate-180' : 'rotate-0'">
                                         <x-icons.arrow-down />
                                     </span>
                                 </button>
                             </th>
-                            <th class="px-4 py-3" align="center">Total</th>
+                            <th class="px-4 py-3" align="center">
+                                <button class="flex items-center justify-center uppercase" type="button" @click="sortBy = 'total'; sortDesc = !sortDesc">
+                                    Total
+                                    <span class="ml-2 text-tertiary-300 transition-transform"
+                                        :class="sortDesc && sortBy === 'total' ? 'rotate-180' : 'rotate-0'">
+                                        <x-icons.arrow-down />
+                                    </span>
+                                </button>
+                            </th>
                             <th class="px-4 py-3" align="center"></th>
                         </tr>
                     </thead>
@@ -112,11 +107,10 @@
                             <tr class="border-b-2 border-b-tertiary-table-line border-gray-200">
                                 <td class="px-4 py-2" align="center" x-text="order.kode"></td>
                                 <td class="px-4 py-2" align="center" x-text="order.waktu"></td>
-                                <td class="px-4 py-2" align="center" x-text="order.name"></td>
-                                <td class="px-4 py-2" align="center" x-text="order.kategori"></td>
+                                <td class="px-4 py-2" align="center" x-text="order.id_transaksi"></td>
                                 <td class="px-4 py-4" align="center">
-                                    <span class="p-2 rounded-lg border-2"
-                                    :class="{ 'bg-danger/15 text-danger border-danger': order.status == 'Belum dikirim', 'bg-warning-200/15 text-warning-200 border-warning-200': order.status == 'Dalam perjalanan', 'bg-success/15 text-success border-success': order.status == 'Selesai' }"
+                                    <span class="px-2 py-1 rounded-lg border-2"
+                                    :class="{ 'bg-danger/15 text-danger border-danger': order.status == 'Ditolak', 'bg-warning-200/15 text-warning-200 border-warning-200': order.status == 'Menunggu konfirmasi', 'bg-success/15 text-success border-success': order.status == 'Diterima' }"
                                         x-text="order.status"></span>
                                 </td>
                                 <td class="px-4 py-2" align="center" x-text="order.item"></td>
@@ -126,14 +120,9 @@
                                         <button type="button" class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.detail-icon/>
                                         </button>
-                                        <template x-if="order.status === 'Belum dikirim'">
-                                            <button type="button" class="transition-transform hover:scale-125 active:scale-90">
-                                                <x-icons.send-icon/>
-                                            </button>
-                                        </template>
-                                        <template x-if="order.status === 'Dalam perjalanan'">
-                                            <button type="button" class="transition-transform hover:scale-125 active:scale-90">
-                                                <x-icons.upload-icon/>
+                                        <template x-if="order.status === 'Menunggu konfirmasi'">
+                                            <button type="button" class="bg-secondary-blue text-white px-3 py-1 rounded-full transition-transform hover:scale-125 active:scale-90">
+                                                Konfirmasi
                                             </button>
                                         </template>
                                     </div>
@@ -144,7 +133,7 @@
                 </table>
             </div>
             <!-- Pagination Controls -->
-            <div class="flex items-center justify-between mx-7 gap-4 pb-4">
+            <div class="flex items-center justify-between mx-7 pb-4">
                 <span class="text-sm italic">
                     Showing <span x-text="currentPage"></span> of <span x-text="totalPages"></span> pages
                 </span>

@@ -27,13 +27,13 @@
         sortDesc: false,
         get filteredProducts() {
             let filtered = this.products.filter(product => {
-                const nameMatch = product.name.toLowerCase().includes(this.search.toLowerCase());
+                const searchMatch = product.name.toLowerCase().includes(this.search.toLowerCase());
                 const filterMatch =
                     this.selectedFilter === 'Semua' ||
                     (this.selectedFilter === 'Habis' && product.stok == 0) ||
                     (this.selectedFilter === 'Sedikit' && product.stok > 0 && product.stok <= 5) ||
                     (this.selectedFilter === 'Banyak' && product.stok > 5);
-                return nameMatch && filterMatch;
+                return searchMatch && filterMatch;
             });
 
             if (this.sortBy === 'stok') {
@@ -126,7 +126,7 @@
                                 <td class="px-4 py-2" align="center" x-text="product.stok"></td>
                                 <td class="px-4 py-2" align="center" x-text="product.pcs"></td>
                                 <td class="px-4 py-2" align="center">
-                                    <span class="p-2 rounded-lg border-2"
+                                    <span class="px-2 py-1 rounded-lg border-2"
                                     :class="{ 'bg-danger/15 text-danger border-danger': product.stok == 0, 'bg-warning-200/15 text-warning-200 border-warning-200': product.stok <= 5 && product.stok > 0, 'bg-success/15 text-success border-success': product.stok > 5 }"
                                         x-text="product.stok == 0 ? 'Habis' : product.stok <= 5 && product.stok > 0 ? 'Sedikit' : 'Banyak'"></span>
                                 </td>
@@ -150,7 +150,7 @@
                 </table>
             </div>
             <!-- Pagination Controls -->
-            <div class="flex items-center mx-7 justify-between gap-4 pb-4">
+            <div class="flex items-center mx-7 justify-between pb-4">
                 <span class="text-sm italic">
                     Showing <span x-text="currentPage"></span> of <span x-text="totalPages"></span> pages
                 </span>
