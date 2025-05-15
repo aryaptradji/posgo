@@ -91,6 +91,9 @@ export default {
             ],
             'outer-sidebar-secondary': [
                 '0px 10px 15px rgba(122, 36, 249,0.60)'
+            ],
+            'drop': [
+                '0px 4px 4px 0px rgba(0,0,0,0.25)'
             ]
         }
     },

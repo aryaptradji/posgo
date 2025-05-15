@@ -121,7 +121,7 @@
                                             <x-icons.detail-icon/>
                                         </button>
                                         <template x-if="order.status === 'Menunggu konfirmasi'">
-                                            <button type="button" class="bg-secondary-blue text-white px-3 py-1 rounded-full transition-transform hover:scale-125 active:scale-90">
+                                            <button type="button" class="bg-secondary-blue text-white font-bold shadow-drop px-3 py-1 rounded-full transition-transform hover:scale-125 active:scale-90">
                                                 Konfirmasi
                                             </button>
                                         </template>
