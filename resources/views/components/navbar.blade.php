@@ -13,11 +13,11 @@
     aria-label="Sidebar">
     <div class="h-full p-6 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul class="space-y-3 font-medium" x-data="{ focus: 1 }">
-            <x-navlink href="/dashboard" :active="request()->is('dashboard')" :focusNo="1" @click="focus = 1">
+            <x-navlink href="{{ route('dashboard.index') }}" :active="request()->is('admin/dashboard')" :focusNo="1" @click="focus = 1">
                 <x-icons.dashboard/>
                 <x-slot:title>Dashboard</x-slot:title>
             </x-navlink>
-            <x-navlink href="/produk" :active="request()->is('produk')" :focusNo="2" @click="focus = 2">
+            <x-navlink href="{{ route('product.index') }}" :active="request()->is('product/' . '*') || request()->is('product')" :focusNo="2" @click="focus = 2">
                 <x-icons.produk/>
                 <x-slot:title>Produk</x-slot:title>
             </x-navlink>
