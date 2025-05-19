@@ -57,7 +57,28 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validasi input
+        $validated = $request->validate([
+            'name' => 'required|string|unique:products,name',
+            'stock' => 'required|integer|min:0',
+            'pcs' => 'required|integer|min:0',
+            'price' => 'required|numeric|min:0',
+            'image' => 'required|image|mimes:png|max:2048',
+        ]);
+
+        // Simpan gambar
+        $imagePath = $request->file('image')->store('products', 'public');
+
+        // Simpan ke database
+        Product::create([
+            'name' => $validated['name'],
+            'stock' => $validated['stock'],
+            'pcs' => $validated['pcs'],
+            'price' => $validated['price'],
+            'image' => $imagePath,
+        ]);
+
+        return redirect()->route('product.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     /**

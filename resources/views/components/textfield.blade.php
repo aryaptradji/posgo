@@ -3,11 +3,11 @@
     'name' => null,
     'id' => null,
     'placeholder' => null,
-    'class' => null,
+    'classCont' => null,
     'required' => false,
 ])
 
-<div class="{{ $class }}">
+<div class="{{ $classCont }}">
     <label for="email" class="block mb-4 text-base font-bold text-black dark:text-white">{{ $slot }}</label>
     <input
         {{ $attributes->merge([

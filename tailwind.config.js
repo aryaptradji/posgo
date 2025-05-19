@@ -6,9 +6,6 @@ export default {
       "./resources/**/*.vue",
       "./node_modules/flowbite/**/*.js"
     ],
-    safelist: [
-        'text-secondary-purple'
-    ],
     darkMode: 'class',
     theme: {
       extend: {

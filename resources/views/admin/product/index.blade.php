@@ -82,7 +82,7 @@
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="center">
                                     <div
-                                        class="flex items-center justify-center h-14 aspect-square rounded-full bg-white">
+                                        class="flex items-center justify-center h-14 aspect-square object-contain rounded-full bg-white">
                                         <img src="/img/product/{{ $product->image }}" class="h-12">
                                     </div>
                                 </td>

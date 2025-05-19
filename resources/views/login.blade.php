@@ -37,14 +37,14 @@
                 <form action="" method="POST">
                     @csrf
                     <x-textfield type="email" name="email" id="email" placeholder="Masukkan email . . ."
-                        :required="true" class="w-4/5 mt-10 mb-2" x-model="email" x-on:input="validateEmail()" x-bind:class="emailError ? 'focus:ring focus:ring-danger' : 'focus:ring focus:ring-primary'">Email</x-textfield>
+                        :required="true" classCont="w-4/5 mt-10 mb-2" x-model="email" x-on:input="validateEmail()" x-bind:class="emailError ? 'focus:ring focus:ring-danger' : 'focus:ring focus:ring-primary'">Email</x-textfield>
                     <span x-show="emailError" x-if="emailError" x-transition:enter="transition-all ease duration-1000" x-transition:enter-start="opacity-0 -translate-y-6"
                         x-transition:enter-end="opacity-100 translate-y-none" x-transition:leave="transition-all ease duration-1000"
                         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 -translate-y-6"
                         class="text-danger text-sm font-semibold ml-2" x-text="emailError">
                     </span>
                     <x-textfield type="password" name="password" id="password" placeholder="Masukkan password . . ."
-                        :required="true" class="w-4/5 mt-6">Password</x-textfield>
+                        :required="true" classCont="w-4/5 mt-6">Password</x-textfield>
 
                     <x-button-lg class="w-4/5 mt-16" type="submit">masuk</x-button-lg>
                 </form>

@@ -14,7 +14,7 @@
     <div id="container" class="flex">
         <x-navbar/>
 
-        <main class="px-8 pt-8 pb-4 ml-80 mt-24 flex-grow">
+        <main {{ $attributes->merge(['class' => 'px-8 pt-8 pb-4 ml-80 mt-24 flex-grow']) }}>
             <x-header>{{ $header }}</x-header>
             {{ $slot }}
         </main>

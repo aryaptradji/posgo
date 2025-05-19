@@ -33,17 +33,16 @@
                         <!-- TextField Nama -->
                         <x-textfield type="text" name="name" id="name"
                             placeholder="Masukkan nama lengkap . . ." :required="true"
-                            class="w-4/5 mt-4 mb-6">Nama</x-textfield>
+                            classCont="w-4/5 mt-4 mb-6">Nama</x-textfield>
                         <!-- TextField No Telepon -->
                         <x-textfield type="text" name="phone" id="phone" inputmode="numeric" pattern="[0-9]*"
-                            placeholder="08xxxxxxxxx" :required="true" class="w-4/5 mb-6">Nomor Telepon</x-textfield>
+                            placeholder="08xxxxxxxxx" :required="true" classCont="w-4/5 mb-6">Nomor Telepon</x-textfield>
                         <!-- TextField Alamat -->
                         <x-textfield type="text" name="address" id="address"
                             placeholder="Masukkan alamat dan nomor rumah . . ." :required="true"
-                            class="w-4/5">Alamat</x-textfield>
+                            classCont="w-4/5">Alamat</x-textfield>
                         <div class="w-4/5 mt-10 text-end">
-                            <x-button-sm onclick="nextStep()" type="button" color="text-white"
-                                background="bg-gradient-to-r from-primary to-secondary-purple">lanjut</x-button-sm>
+                            <x-button-sm onclick="nextStep()" type="button" class="text-white bg-gradient-to-r from-primary to-secondary-purple">lanjut</x-button-sm>
                         </div>
                     </div>
                     <!-- Data Diri: Sec 2 -->
@@ -68,10 +67,8 @@
                         <!-- Dropdown Kelurahan -->
                         <x-dropdown class="mb-6 w-4/5" name="kelurahan" :items="['Kembangan', 'Meruya Selatan', 'Meruya Utara', 'Srengseng']">Kelurahan</x-dropdown>
                         <div class="w-4/5 mt-10 flex justify-between">
-                            <x-button-sm onclick="prevStep()" type="button" color="text-black"
-                                background="bg-btn-cancel">kembali</x-button-sm>
-                            <x-button-sm onclick="nextStep()" type="button" color="text-white"
-                                background="bg-gradient-to-r from-primary to-secondary-purple">lanjut</x-button-sm>
+                            <x-button-sm onclick="prevStep()" type="button" class="text-black bg-btn-cancel">kembali</x-button-sm>
+                            <x-button-sm onclick="nextStep()" type="button" class="text-white bg-gradient-to-r from-primary to-secondary-purple">lanjut</x-button-sm>
                         </div>
                     </div>
                     <!-- Akun -->
@@ -89,10 +86,10 @@
                             <span class="font-bold">Akun</span>
                         </div>
                         <x-textfield type="email" name="email" id="email" placeholder="Masukkan email . . ."
-                            :required="true" class="w-4/5 mt-4 mb-6">Email</x-textfield>
+                            :required="true" classCont="w-4/5 mt-4 mb-6">Email</x-textfield>
                         <x-textfield type="password" name="password" id="password"
                             placeholder="Masukkan password . . ." :required="true"
-                            class="w-4/5 mb-6">Password</x-textfield>
+                            classCont="w-4/5 mb-6">Password</x-textfield>
 
                         <x-button-lg class="w-4/5 mt-16" type="submit">daftar</x-button-lg>
                     </div>
