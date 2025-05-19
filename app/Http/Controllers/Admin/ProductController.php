@@ -64,6 +64,12 @@ class ProductController extends Controller
             'pcs' => 'required|integer|min:0',
             'price' => 'required|numeric|min:0',
             'image' => 'required|image|mimes:png|max:2048',
+        ],[
+            'name.required' => 'Nama wajib diisi',
+            'name.unique' => 'Nama produk ini sudah ada',
+            'image.required'  => 'Field gambar wajib diisi',
+            'image.image' => 'File harus berbentuk gambar',
+            'image.mimes' => 'Format gambar harus .png'
         ]);
 
         // Simpan gambar

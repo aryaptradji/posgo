@@ -19,12 +19,13 @@
                 emailError: '',
                 validateEmail() {
                     this.emailError = ''; // Reset error message
+                    const emailPattern = /^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    let result = emailPattern.test(this.email);
 
-                    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-                    if (!emailPattern.test(this.email)) {
+                    if (!result) {
                         this.emailError = 'Format email tidak valid';
                     }
+                    print
                 }
             }">
                 <p class="text-3xl font-bold pb-2">Masuk yuk</p>
