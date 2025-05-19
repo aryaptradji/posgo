@@ -32,7 +32,7 @@
         @csrf
         <div class="col-span-1 flex flex-col gap-4" x-data="{
             raw: '0',
-            name: '',
+            name: @js(old('name')),
             nameError: '',
             nameServerError: {{ $errors->has('name') ? 'true' : 'false' }},
             validateName() {
@@ -62,8 +62,6 @@
                 <x-inline-error-message class="mb-2 -mt-2" x-show="nameServerError">{{ $message }}</x-inline-error-message>
             @enderror
 
-
-
             <div class="grid grid-cols-2 gap-4 mb-2">
                 <x-textfield class="focus:ring focus:ring-primary" type="number" name="stock" min="0"
                     placeholder="0" value="0" oninput="this.value = Math.max(0, this.value)">Stok</x-textfield>
@@ -74,41 +72,7 @@
             <x-textfield-price class="focus:ring focus:ring-primary" name="price">Harga</x-textfield-price>
         </div>
 
-
-        <div x-data="imageUploader()" class="col-span-1 flex flex-col gap-4">
-            <label class="block font-bold">Gambar</label>
-
-            <!-- Upload Area -->
-            <template x-if="!fileName">
-                <div @dragover.prevent @dragenter.prevent @drop.prevent="handleDrop($event)"
-                    class="h-full border-2 border-dashed border-gray-300 bg-tertiary rounded-lg shadow-outer flex flex-col justify-center items-center text-sm font-semibold">
-                    <span>Drag & Drop Your Files or <label for="image"
-                            class="inline-block bg-gradient-to-r from-primary to-secondary-purple bg-clip-text text-transparent transition-all hover:opacity-75 hover:scale-95 active:scale-75 cursor-pointer">Browse</label></span>
-                </div>
-            </template>
-
-            <input type="file" name="image" id="image" class="hidden" @change="handleFile($event)">
-
-            <!-- Preview Area -->
-            <template x-if="fileName">
-                <div
-                    class="relative bg-gradient-to-b from-green-400 to-white p-4 rounded-xl h-full shadow-md flex flex-col justify-center items-center">
-                    <div class="absolute top-4 left-6 text-left">
-                        <p class="text-sm font-bold text-white" x-text="fileName"></p>
-                        <p class="text-xs text-white opacity-80" x-text="fileSize + ' KB'"></p>
-                    </div>
-                    <div class="absolute top-4 right-14 text-right">
-                        <p class="text-sm font-semibold text-white">Upload complete</p>
-                        <p class="text-xs text-white opacity-80">tap to undo</p>
-                    </div>
-                    <button @click="reset()"
-                        class="absolute top-4 right-5 aspect-square rounded-full transition-all hover:scale-110 active:scale-90 bg-white/70 text-xl font-bold">
-                        <x-icons.close />
-                    </button>
-                    <img :src="imageUrl" alt="Preview" class="w-32 mt-4 drop-shadow-md">
-                </div>
-            </template>
-        </div>
+        <x-textfield-image name="image">Gambar</x-textfield-image>
 
         <div class="col-span-2 flex justify-center gap-6 mt-3">
             <x-button-sm class="w-fit px-7 text-black bg-btn-cancel">
@@ -118,37 +82,4 @@
         </div>
     </form>
 
-    <script>
-        function imageUploader() {
-            return {
-                fileName: '',
-                fileSize: '',
-                imageUrl: '',
-                handleFile(event) {
-                    const file = event.target.files[0];
-                    if (file && file.type.startsWith('image/')) {
-                        this.fileName = file.name;
-                        this.fileSize = Math.round(file.size / 1024);
-                        this.imageUrl = URL.createObjectURL(file);
-                    }
-                },
-                handleDrop(event) {
-                    const droppedFile = event.dataTransfer.files[0];
-                    if (droppedFile && droppedFile.type.startsWith('image/')) {
-                        this.fileName = droppedFile.name;
-                        this.fileSize = Math.round(droppedFile.size / 1024);
-                        this.imageUrl = URL.createObjectURL(droppedFile);
-                        // Juga set ke input file agar ikut terkirim saat submit
-                        document.getElementById('image').files = event.dataTransfer.files;
-                    }
-                },
-                reset() {
-                    this.fileName = '';
-                    this.fileSize = '';
-                    this.imageUrl = '';
-                    document.getElementById('image').value = '';
-                }
-            }
-        }
-    </script>
 </x-layout>

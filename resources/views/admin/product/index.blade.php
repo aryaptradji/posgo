@@ -11,6 +11,19 @@
         </div>
     </x-slot:header>
 
+    <!-- Toast Create Success -->
+    @if (session('success'))
+        <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
+            <x-toast id="toast-success" iconClass="text-success bg-success/25"
+                slotClass="text-success" :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-success />
+                </x-slot:icon>
+                {{ session('success') }}
+            </x-toast>
+        </div>
+    @endif
+
     <div class="w-full bg-tertiary rounded-2xl shadow-outer mt-12">
         <div class="flex flex-col justify-between">
             <div class="px-7 py-4 flex justify-between">
@@ -82,8 +95,8 @@
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="center">
                                     <div
-                                        class="flex items-center justify-center h-14 aspect-square object-contain rounded-full bg-white">
-                                        <img src="/img/product/{{ $product->image }}" class="h-12">
+                                        class="flex items-center justify-center h-14 p-1 aspect-square object-contain rounded-full bg-white">
+                                        <img src="{{ asset('storage/' . $product->image) }}">
                                     </div>
                                 </td>
                                 <td class="px-4 py-2" align="center">{{ $product->name }}</td>

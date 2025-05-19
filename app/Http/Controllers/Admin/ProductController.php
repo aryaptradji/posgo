@@ -59,15 +59,16 @@ class ProductController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
-            'name' => 'required|string|unique:products,name',
+            'name' => 'required|string|regex:/^[a-zA-Z0-9.()\s]+$/|unique:products,name',
             'stock' => 'required|integer|min:0',
             'pcs' => 'required|integer|min:0',
             'price' => 'required|numeric|min:0',
             'image' => 'required|image|mimes:png|max:2048',
         ],[
             'name.required' => 'Nama wajib diisi',
+            'name.regex' => 'Tidak boleh mengandung karakter khusus',
             'name.unique' => 'Nama produk ini sudah ada',
-            'image.required'  => 'Field gambar wajib diisi',
+            'image.required'  => 'Gambar wajib diisi',
             'image.image' => 'File harus berbentuk gambar',
             'image.mimes' => 'Format gambar harus .png'
         ]);
@@ -84,7 +85,7 @@ class ProductController extends Controller
             'image' => $imagePath,
         ]);
 
-        return redirect()->route('product.index')->with('success', 'Produk berhasil ditambahkan.');
+        return redirect()->route('product.index')->with('success', 'Produk berhasil ditambahkan');
     }
 
     /**
