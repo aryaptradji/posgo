@@ -125,38 +125,56 @@
 
                                     <!-- Modal View -->
                                     <x-modal show="showModalView">
-                                        <x-slot:title>Hapus Produk</x-slot:title>
-                                        <x-slot:iconTitle>
-                                            <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
-                                        </x-slot:iconTitle>
-                                        <p class="mb-6 ml-6 mt-4 text-start">
-                                            Yakin ingin menghapus
-                                            <span class="font-bold text-danger">{{ $product->name }}</span>
-                                            ?
-                                        </p>
-                                        <x-slot:action>
-                                            <button type="button" @click="showModalView = false"
-                                                class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
-                                                Batal
-                                            </button>
-
-                                            <form action="{{ route('product.destroy', $product) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
-                                                    Hapus
+                                        <x-slot:title>
+                                            <div class="w-full flex justify-between">
+                                                <div class="flex">
+                                                    <x-icons.info-icon class="mr-3"/>
+                                                    <h2 class="text-lg font-bold">Detail</h2>
+                                                </div>
+                                                <button class="text-danger transition-all hover:scale-125 active:scale-90" type="button" @click="showModalView = false">
+                                                    <x-icons.close/>
                                                 </button>
-                                            </form>
-                                        </x-slot:action>
+                                            </div>
+                                        </x-slot:title>
+                                        <div class="px-10 mb-2">
+                                            <div class="flex items-center justify-center mb-6 h-32 p-2 aspect-square object-contain rounded-full bg-white">
+                                                <img src="{{ asset('storage/' . $product->image) }}" class="max-h-24">
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-16 text-start">
+                                                <div class="flex flex-col gap-4">
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Nama Produk</span>
+                                                        <span>{{ $product->name }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Stok</span>
+                                                        <span>{{ $product->stock }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Pcs</span>
+                                                        <span>{{ $product->pcs }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex flex-col gap-4 ml-10">
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Status</span>
+                                                        <span class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $status }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Harga</span>
+                                                        <span>Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </x-modal>
 
                                     <!-- Modal Delete -->
                                     <x-modal show="showModalDelete">
-                                        <x-slot:title>Hapus Produk</x-slot:title>
-                                        <x-slot:iconTitle>
+                                        <x-slot:title>
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
-                                        </x-slot:iconTitle>
+                                            <h2 class="text-lg font-bold">Hapus Produk</h2>
+                                        </x-slot:title>
                                         <p class="mb-6 ml-6 mt-4 text-start">
                                             Yakin ingin menghapus
                                             <span class="font-bold text-danger">{{ $product->name }}</span>
