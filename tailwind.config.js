@@ -32,7 +32,7 @@ export default {
             },
             danger: "#FF0000",
             btn: {
-                "cancel": "rgba(137, 137, 137,0.20)"
+                "cancel": "#e5e7eb"
             }
         },
         fontFamily: {

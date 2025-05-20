@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -59,20 +60,23 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         // Validasi input
-        $validated = $request->validate([
-            'name' => 'required|string|regex:/^[a-zA-Z0-9.()\s]+$/|unique:products,name',
-            'stock' => 'required|integer|min:0',
-            'pcs' => 'required|integer|min:0',
-            'price' => 'required|numeric|min:0',
-            'image' => 'required|image|mimes:png|max:2048',
-        ],[
-            'name.required' => 'Nama wajib diisi',
-            'name.regex' => 'Tidak boleh mengandung karakter khusus',
-            'name.unique' => 'Nama produk ini sudah ada',
-            'image.required'  => 'Gambar wajib diisi',
-            'image.image' => 'File harus berbentuk gambar',
-            'image.mimes' => 'Format gambar harus .png'
-        ]);
+        $validated = $request->validate(
+            [
+                'name' => 'required|string|regex:/^[a-zA-Z0-9.()\s]+$/|unique:products,name',
+                'stock' => 'required|integer|min:0',
+                'pcs' => 'required|integer|min:0',
+                'price' => 'required|numeric|min:0',
+                'image' => 'required|image|mimes:png|max:2048',
+            ],
+            [
+                'name.required' => 'Nama wajib diisi',
+                'name.regex' => 'Tidak boleh mengandung karakter khusus',
+                'name.unique' => 'Nama produk ini sudah ada',
+                'image.required' => 'Gambar wajib diisi',
+                'image.image' => 'File harus berbentuk gambar',
+                'image.mimes' => 'Format gambar harus .png',
+            ],
+        );
 
         // Simpan gambar
         $imagePath = $request->file('image')->store('products', 'public');
@@ -80,6 +84,7 @@ class ProductController extends Controller
         // Simpan ke database
         Product::create([
             'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
             'stock' => $validated['stock'],
             'pcs' => $validated['pcs'],
             'price' => $validated['price'],
@@ -117,19 +122,22 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         // Validasi input
-        $validated = $request->validate([
-            'name' => 'required|string|regex:/^[a-zA-Z0-9.()\s]+$/|unique:products,name,' . $product->slug . ',slug',
-            'stock' => 'required|integer|min:0',
-            'pcs' => 'required|integer|min:0',
-            'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:png|max:2048',
-        ], [
-            'name.required' => 'Nama wajib diisi',
-            'name.regex' => 'Tidak boleh mengandung karakter khusus',
-            'name.unique' => 'Nama produk ini sudah ada',
-            'image.image' => 'File harus berbentuk gambar',
-            'image.mimes' => 'Format gambar harus .png'
-        ]);
+        $validated = $request->validate(
+            [
+                'name' => 'required|string|regex:/^[a-zA-Z0-9.()\s]+$/|unique:products,name,' . $product->slug . ',slug',
+                'stock' => 'required|integer|min:0',
+                'pcs' => 'required|integer|min:0',
+                'price' => 'required|numeric|min:0',
+                'image' => 'nullable|image|mimes:png|max:2048',
+            ],
+            [
+                'name.required' => 'Nama wajib diisi',
+                'name.regex' => 'Tidak boleh mengandung karakter khusus',
+                'name.unique' => 'Nama produk ini sudah ada',
+                'image.image' => 'File harus berbentuk gambar',
+                'image.mimes' => 'Format gambar harus .png',
+            ],
+        );
 
         // Update data produk
         $product->name = $validated['name'];
@@ -151,8 +159,16 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        // Hapus gambar dari storage (kalau perlu)
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        // Hapus dari database
+        $product->delete();
+
+        return redirect()->route('product.index')->with('success', 'Produk berhasil dihapus');
     }
 }
