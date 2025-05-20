@@ -78,7 +78,7 @@
             <x-button-sm class="w-fit px-7 text-black bg-btn-cancel">
                 <a href="{{ route('product.index') }}">Batal</a>
             </x-button-sm>
-            <x-button-sm type="submit" class="w-fit px-7 text-primary bg-primary/20">Simpan</x-button-sm>
+            <x-button-sm type="submit" class="w-fit px-7 text-secondary-purple bg-secondary-purple/20">Buat</x-button-sm>
         </div>
     </form>
 

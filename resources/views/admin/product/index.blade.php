@@ -107,24 +107,24 @@
                                 </td>
                                 <td class="px-4 py-2" align="center">Rp
                                     {{ number_format($product->price, 0, ',', '.') }}</td>
-                                <td class="px-4 py-2" align="center" x-data="{ showModal: false }">
+                                <td class="px-4 py-2" align="center" x-data="{ showModalView: false, showModalDelete: false }">
                                     <div class="flex justify-center gap-2">
-                                        <a href="#"
+                                        <button type="button" @click="showModalView = true"
                                             class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.detail-icon />
-                                        </a>
+                                        </button>
                                         <a href="{{ route('product.edit', $product) }}"
                                             class="text-primary transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.edit-icon />
                                         </a>
-                                        <button type="button" @click="showModal = true"
+                                        <button type="button" @click="showModalDelete = true"
                                             class="text-danger transition-transform hover:scale-125 active:scale-90">
                                             @include('components.icons.delete-icon')
                                         </button>
                                     </div>
 
-                                    <!-- Modal Delete -->
-                                    <x-modal show="showModal">
+                                    <!-- Modal View -->
+                                    <x-modal show="showModalView">
                                         <x-slot:title>Hapus Produk</x-slot:title>
                                         <x-slot:iconTitle>
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
@@ -135,7 +135,35 @@
                                             ?
                                         </p>
                                         <x-slot:action>
-                                            <button type="button" @click="showModal = false"
+                                            <button type="button" @click="showModalView = false"
+                                                class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                Batal
+                                            </button>
+
+                                            <form action="{{ route('product.destroy', $product) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </x-slot:action>
+                                    </x-modal>
+
+                                    <!-- Modal Delete -->
+                                    <x-modal show="showModalDelete">
+                                        <x-slot:title>Hapus Produk</x-slot:title>
+                                        <x-slot:iconTitle>
+                                            <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
+                                        </x-slot:iconTitle>
+                                        <p class="mb-6 ml-6 mt-4 text-start">
+                                            Yakin ingin menghapus
+                                            <span class="font-bold text-danger">{{ $product->name }}</span>
+                                            ?
+                                        </p>
+                                        <x-slot:action>
+                                            <button type="button" @click="showModalDelete = false"
                                                 class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
                                                 Batal
                                             </button>
