@@ -15,6 +15,7 @@ class ProductSeeder extends Seeder
     {
         Product::create([
             'name' => 'Teh Botol Sosro',
+            'slug' => 'teh-botol-sosro',
             'image' => 'teh-botol.png',
             'stock' => 0,
             'pcs' => 50,
@@ -23,6 +24,7 @@ class ProductSeeder extends Seeder
 
         Product::create([
             'name' => 'Panther',
+            'slug' => 'panther',
             'image' => 'panther.png',
             'stock' => 0,
             'pcs' => 30,
@@ -31,6 +33,7 @@ class ProductSeeder extends Seeder
 
         Product::create([
             'name' => 'Milku',
+            'slug' => 'milku',
             'image' => 'milku.png',
             'stock' => 1,
             'pcs' => 45,
@@ -39,6 +42,7 @@ class ProductSeeder extends Seeder
 
         Product::create([
             'name' => 'Floridina',
+            'slug' => 'floridina',
             'image' => 'floridina.png',
             'stock' => 4,
             'pcs' => 25,
@@ -47,6 +51,7 @@ class ProductSeeder extends Seeder
 
         Product::create([
             'name' => 'Teh Kotak',
+            'slug' => 'teh-kotak',
             'image' => 'teh-kotak.png',
             'stock' => 46,
             'pcs' => 20,

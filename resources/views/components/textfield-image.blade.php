@@ -1,10 +1,13 @@
 @props([
     'name' => 'image',
     'uploadClass' => null,
-    'previewClass' => null
+    'previewClass' => null,
+    'initialImageUrl' => null,
+    'initialFileName' => null,
+    'initialFileSize' => null,
 ])
 
-<div x-data="imageUploader()" class="col-span-1 flex flex-col gap-4">
+<div {{ $attributes->merge(['class' => 'col-span-1 flex flex-col gap-4']) }} x-data="imageUploader('{{ $initialImageUrl ?? '' }}', '{{ $initialFileName ?? '' }}', '{{ $initialFileSize ?? '' }}')">
     <label class="block font-bold">{{ $slot }}</label>
 
     <!-- Upload Area -->
@@ -23,7 +26,8 @@
         <div
             class="relative bg-gradient-to-b from-green-400 to-white p-4 rounded-xl h-full shadow-md flex flex-col justify-center items-center {{ $previewClass }}">
             <div class="absolute top-4 left-6 text-left">
-                <p class="text-sm font-bold text-white" x-text="fileName"></p>
+
+                <p class="text-sm font-bold text-white" x-show="fromUpload === true" x-text="fileName"></p>
                 <p class="text-xs text-white opacity-80" x-text="fileSize + ' KB'"></p>
             </div>
             <div class="absolute top-4 right-14 text-right">
@@ -34,23 +38,27 @@
                 class="absolute top-4 right-5 aspect-square rounded-full transition-all hover:scale-110 active:scale-90 bg-white/70 text-xl font-bold">
                 <x-icons.close />
             </button>
-            <img :src="imageUrl" alt="Preview" class="w-32 mt-4 drop-shadow-md">
+            <img :src="imageUrl" alt="Preview" class="max-h-32 object-contain mt-4 drop-shadow-md">
         </div>
     </template>
 </div>
 
 <script>
-    function imageUploader() {
+    function imageUploader(initialUrl = '', initialName = '', initialSize = '') {
+        const fromUpload = initialName === '' ? false : null;
+
         return {
-            fileName: '',
-            fileSize: '',
-            imageUrl: '',
+            fileName: initialName,
+            fileSize: initialSize,
+            imageUrl: initialUrl,
+            fromUpload: fromUpload,
             handleFile(event) {
                 const file = event.target.files[0];
                 if (file && file.type.startsWith('image/')) {
                     this.fileName = file.name;
                     this.fileSize = Math.round(file.size / 1024);
                     this.imageUrl = URL.createObjectURL(file);
+                    this.fromUpload = true;
                 }
             },
             handleDrop(event) {
@@ -59,15 +67,16 @@
                     this.fileName = droppedFile.name;
                     this.fileSize = Math.round(droppedFile.size / 1024);
                     this.imageUrl = URL.createObjectURL(droppedFile);
-                    // Juga set ke input file agar ikut terkirim saat submit
-                    document.getElementById('image').files = event.dataTransfer.files;
+                    document.getElementById('{{ $name }}').files = event.dataTransfer.files;
+                    this.fromUpload = true;
                 }
             },
             reset() {
                 this.fileName = '';
                 this.fileSize = '';
                 this.imageUrl = '';
-                document.getElementById('image').value = '';
+                this.fromUpload = false;
+                document.getElementById('{{ $name }}').value = '';
             }
         }
     }

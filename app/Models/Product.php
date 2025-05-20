@@ -10,5 +10,10 @@ class Product extends Model
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'image', 'stock', 'pcs', 'price'];
+    protected $fillable = ['name', 'slug', 'image', 'stock', 'pcs', 'price'];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

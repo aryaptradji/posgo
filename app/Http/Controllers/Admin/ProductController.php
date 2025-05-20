@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -99,17 +100,52 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        //
+        $sizeInKB = null;
+
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            $sizeInKB = round(Storage::disk('public')->size($product->image) / 1024);
+        }
+
+        return view('admin.product.edit', compact('product', 'sizeInKB'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        // Validasi input
+        $validated = $request->validate([
+            'name' => 'required|string|regex:/^[a-zA-Z0-9.()\s]+$/|unique:products,name,' . $product->slug . ',slug',
+            'stock' => 'required|integer|min:0',
+            'pcs' => 'required|integer|min:0',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:png|max:2048',
+        ], [
+            'name.required' => 'Nama wajib diisi',
+            'name.regex' => 'Tidak boleh mengandung karakter khusus',
+            'name.unique' => 'Nama produk ini sudah ada',
+            'image.image' => 'File harus berbentuk gambar',
+            'image.mimes' => 'Format gambar harus .png'
+        ]);
+
+        // Update data produk
+        $product->name = $validated['name'];
+        $product->stock = $validated['stock'];
+        $product->pcs = $validated['pcs'];
+        $product->price = $validated['price'];
+
+        // Kalau upload gambar baru, ganti
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+            $product->image = $imagePath;
+        }
+
+        $product->save();
+
+        return redirect()->route('product.index')->with('success', 'Produk berhasil diperbarui');
     }
 
     /**

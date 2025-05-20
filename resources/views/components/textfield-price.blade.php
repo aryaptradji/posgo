@@ -3,10 +3,11 @@
     'id' => null,
     'classCont' => null,
     'required' => false,
+    'value' => 0
 ])
 
 <div class="{{ $classCont }}" x-data="{
-    raw: '0',
+    raw: '{{ $value }}',
     formatRupiah(val) {
         val = val.replace(/^0+/, '').replace(/[^\d]/g, '');
         if (!val) return 'Rp 0';

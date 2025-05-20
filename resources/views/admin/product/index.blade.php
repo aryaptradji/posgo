@@ -95,8 +95,8 @@
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="center">
                                     <div
-                                        class="flex items-center justify-center h-14 p-1 aspect-square object-contain rounded-full bg-white">
-                                        <img src="{{ asset('storage/' . $product->image) }}">
+                                        class="flex items-center justify-center h-14 p-2 aspect-square object-contain rounded-full bg-white">
+                                        <img src="{{ asset('storage/' . $product->image) }}" class="max-h-11">
                                     </div>
                                 </td>
                                 <td class="px-4 py-2" align="center">{{ $product->name }}</td>
@@ -114,7 +114,7 @@
                                             class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.detail-icon />
                                         </a>
-                                        <a href="#"
+                                        <a href="{{ route('product.edit', $product) }}"
                                             class="text-primary transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.edit-icon />
                                         </a>

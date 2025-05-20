@@ -1,14 +1,14 @@
-<x-layout class="mb-0">
-    <x-slot:title>Buat Produk</x-slot:title>
+<x-layout>
+    <x-slot:title>Ubah Produk</x-slot:title>
     <x-slot:header>
         <div class="flex mb-2 items-center gap-2 text-sm text-tertiary-title">
             <a href="{{ route('product.index') }}"
-                class="font-semibold transition-all duration-300 hover:text-secondary-purple hover:scale-110 active:scale-90">Produk</a>
+                class="font-semibold transition-all duration-300 hover:text-primary hover:scale-110 active:scale-90">Produk</a>
             <x-icons.arrow-down class="mb-0.5 -rotate-90 text-tertiary-300" />
-            <span class="font-semibold">Buat</span>
+            <span class="font-semibold">Ubah</span>
         </div>
         <div>
-            Buat Produk
+            Ubah Produk
         </div>
     </x-slot:header>
 
@@ -27,12 +27,13 @@
         </div>
     @endif
 
-    <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('product.update', $product) }}" method="POST" enctype="multipart/form-data"
         class="mt-10 rounded-xl grid grid-cols-2 gap-8">
         @csrf
+        @method('PUT')
         <div class="col-span-1 flex flex-col gap-4" x-data="{
             raw: '0',
-            name: @js(old('name')),
+            name: '{{ old('name', $product->name) }}',
             nameError: '',
             nameServerError: {{ $errors->has('name') ? 'true' : 'false' }},
             validateName() {
@@ -56,7 +57,7 @@
                 x-model="name" x-on:input="validateName()" x-bind:class="nameError || nameServerError ? 'focus:ring-danger ring ring-danger' : 'focus:ring focus:ring-primary'"
                 class="focus:ring"
                 type="text" name="name" placeholder="Masukkan nama produk disini . . ."
-                >Nama Produk</x-textfield>
+                value="{{ old('name', $product->name) }}">Nama Produk</x-textfield>
             <x-inline-error-message class="mb-2 -mt-2" x-show="nameError" x-text="nameError"></x-inline-error-message>
             @error('name')
                 <x-inline-error-message class="mb-2 -mt-2" x-show="nameServerError">{{ $message }}</x-inline-error-message>
@@ -64,15 +65,23 @@
 
             <div class="grid grid-cols-2 gap-4 mb-2">
                 <x-textfield class="focus:ring focus:ring-primary" type="number" name="stock" min="0"
-                    placeholder="0" :value="old('stock', 0)" oninput="this.value = Math.max(0, this.value)">Stok</x-textfield>
+                    placeholder="0" :value="old('stock', $product->stock)" oninput="this.value = Math.max(0, this.value)">Stok</x-textfield>
                 <x-textfield class="focus:ring focus:ring-primary" type="number" name="pcs" min="0"
-                    placeholder="0" :value="old('pcs', 0)" oninput="this.value = Math.max(0, this.value)">Pcs</x-textfield>
+                    placeholder="0" :value="old('pcs', $product->pcs)" oninput="this.value = Math.max(0, this.value)">Pcs</x-textfield>
             </div>
 
-            <x-textfield-price class="focus:ring focus:ring-primary" name="price" :value="old('price', 0)">Harga</x-textfield-price>
+            <x-textfield-price class="focus:ring focus:ring-primary" name="price" :value="old('price', $product->price)">Harga</x-textfield-price>
         </div>
 
-        <x-textfield-image name="image">Gambar</x-textfield-image>
+        <x-textfield-image
+            x-init="console.log('Preview image:', imageUrl)"
+            name="image"
+            initial-image-url="{{ asset('storage/' . $product->image) }}"
+            initial-file-name="{{ basename($product->image) }}"
+            initialFileSize="{{ $sizeInKB }}"
+        >
+            Gambar
+        </x-textfield-image>
 
         <div class="col-span-2 flex justify-center gap-6 mt-3">
             <x-button-sm class="w-fit px-7 text-black bg-btn-cancel">
@@ -81,5 +90,4 @@
             <x-button-sm type="submit" class="w-fit px-7 text-primary bg-primary/20">Simpan</x-button-sm>
         </div>
     </form>
-
 </x-layout>
