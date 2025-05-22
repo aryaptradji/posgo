@@ -27,7 +27,7 @@
             x-transition:leave="transition-all ease-in duration-300"
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="-translate-y-4 opacity-0"
-            :class="{ 'text-black': selected !== '{{ $value }}', 'text-tertiary-200': selected ==
+            x-bind:class="{ 'text-black': selected !== '{{ $value }}', 'text-tertiary-200': selected ==
                 '{{ $value }}', 'rounded-t-2xl': open, 'rounded-2xl': !open }"
             class="bg-tertiary h-14 shadow-outer text-black text-sm outline-none w-full text-left px-6 flex justify-between items-center"
             type="button" name="{{ $name }}" @click="open = !open" @focus="isFocus=true">

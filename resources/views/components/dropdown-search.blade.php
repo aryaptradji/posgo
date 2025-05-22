@@ -1,6 +1,7 @@
 @props([
     'name' => null,
     'items' => [],
+    'value' => 'Pilih Salah Satu'
 ])
 
 <div {{ $attributes }}>
@@ -10,11 +11,11 @@
     <div x-data="{ open: false, selected: 'Pilih Salah Satu', search: '', items: @js($items), isFocus: false }" class="relative">
         <!-- Button to toggle dropdown -->
         <button
-            :class="{ 'text-black': selected !== 'Pilih Salah Satu', 'text-tertiary-200': selected == 'Pilih Salah Satu', 'rounded-t-2xl': isFocus, 'rounded-2xl': !isFocus }"
+            x-bind:class="{ 'text-black': selected !== '{{ $value }}', 'text-tertiary-200': selected == '{{ $value }}', 'rounded-t-2xl': open, 'rounded-2xl': !open }"
             class="bg-tertiary h-14 shadow-outer text-black text-sm outline-none w-full text-left px-6 flex justify-between items-center"
             type="button" name="{{ $name }}" @click="open = !open" @focus="isFocus=true">
             <span x-text="selected"></span>
-            <img src="{{ asset('img/icon/arrow-down.svg') }}" class="w-4 h-min">
+            <x-icons.arrow-nav x-bind:class="{ 'text-black' : selected !== '{{ $value }}', 'text-tertiary-200': selected == '{{ $value }}' }"/>
         </button>
 
         <!-- Dropdown menu -->
