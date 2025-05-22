@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,8 @@ Route::get('/admin/dashboard', function () {
 })->name('dashboard.index');
 
 Route::resource('/product', ProductController::class);
+
+Route::resource('/expense', ExpenseController::class);
 
 Route::get('/riwayat', function () {
     return view('riwayat');

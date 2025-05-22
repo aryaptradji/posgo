@@ -12,7 +12,7 @@
         <button
             :class="{ 'text-black': selected !== 'Pilih Salah Satu', 'text-tertiary-200': selected == 'Pilih Salah Satu', 'rounded-t-2xl': isFocus, 'rounded-2xl': !isFocus }"
             class="bg-tertiary h-14 shadow-outer text-black text-sm outline-none w-full text-left px-6 flex justify-between items-center"
-            type="button" @click="open = !open" name="{{ $name }}" @focus="isFocus=true">
+            type="button" name="{{ $name }}" @click="open = !open" @focus="isFocus=true">
             <span x-text="selected"></span>
             <img src="{{ asset('img/icon/arrow-down.svg') }}" class="w-4 h-min">
         </button>

@@ -16,4 +16,10 @@ class Product extends Model
     {
         return 'slug';
     }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
 }

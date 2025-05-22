@@ -3,6 +3,7 @@
     'focusNo' => null,
     'menus' => [],
     'titleIcon' => null,
+    'route' => null,
 ])
 
 <li x-data="{
@@ -26,7 +27,7 @@
 
         @foreach ($menus as $menu)
             <li>
-                <a href="/{{ strtolower($menu['name']) }}"
+                <a href="{{ $menu['route'] }}"
                     class="flex items-center w-full px-6 py-2 transition-transform rounded-2xl group
                   {{ $menu['active'] ? 'text-primary' : 'text-black hover:scale-105' }}">
                     {!! $menu['icon'] !!}

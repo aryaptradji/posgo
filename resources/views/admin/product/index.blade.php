@@ -131,7 +131,7 @@
                                                     <x-icons.info-icon class="mr-3"/>
                                                     <h2 class="text-lg font-bold">Detail</h2>
                                                 </div>
-                                                <button class="text-danger transition-all hover:scale-125 active:scale-90" type="button" @click="showModalView = false">
+                                                <button class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95" type="button" @click="showModalView = false">
                                                     <x-icons.close/>
                                                 </button>
                                             </div>
@@ -210,8 +210,8 @@
 
             <div class="flex items-center mx-7 justify-between pb-4">
                 <span class="text-sm italic">
-                    Menampilkan {{ $products->firstItem() }} - {{ $products->lastItem() }} dari total
-                    {{ $products->total() }} produk
+                    Menampilkan {{ $products->firstItem() }} - {{ $products->lastItem() }} dari
+                    {{ $products->total() }}
                 </span>
 
                 <form method="GET" action="{{ route('product.index') }}" class="flex items-center gap-2">

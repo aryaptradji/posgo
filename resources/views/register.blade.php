@@ -61,11 +61,11 @@
                                 :required="true">RW</x-textfield>
                         </div>
                         <!-- Dropdown Kota -->
-                        <x-dropdown class="mb-6 w-4/5" name="kota" :items="['Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Barat', 'Tangerang']">Kota</x-dropdown>
+                        <x-dropdown-search class="mb-6 w-4/5" name="kota" :items="['Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Barat', 'Tangerang']">Kota</x-dropdown-search>
                         <!-- Dropdown Kecamatan -->
-                        <x-dropdown class="mb-6 w-4/5" name="kecamatan" :items="['Cengkareng', 'Kebon Jeruk', 'Kembangan', 'Kembangan']">Kecamatan</x-dropdown>
+                        <x-dropdown-search class="mb-6 w-4/5" name="kecamatan" :items="['Cengkareng', 'Kebon Jeruk', 'Kembangan', 'Kembangan']">Kecamatan</x-dropdown-search>
                         <!-- Dropdown Kelurahan -->
-                        <x-dropdown class="mb-6 w-4/5" name="kelurahan" :items="['Kembangan', 'Meruya Selatan', 'Meruya Utara', 'Srengseng']">Kelurahan</x-dropdown>
+                        <x-dropdown-search class="mb-6 w-4/5" name="kelurahan" :items="['Kembangan', 'Meruya Selatan', 'Meruya Utara', 'Srengseng']">Kelurahan</x-dropdown-search>
                         <div class="w-4/5 mt-10 flex justify-between">
                             <x-button-sm onclick="prevStep()" type="button" class="text-black bg-btn-cancel">kembali</x-button-sm>
                             <x-button-sm onclick="nextStep()" type="button" class="text-white bg-gradient-to-r from-primary to-secondary-purple">lanjut</x-button-sm>

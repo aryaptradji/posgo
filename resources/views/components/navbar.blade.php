@@ -25,12 +25,14 @@
                 [
                     'name' => 'Riwayat',
                     'active' => request()->is('riwayat'),
-                    'icon' => view('components.icons.riwayat')->render()
+                    'icon' => view('components.icons.riwayat')->render(),
+                    'route' => ''
                 ],
                 [
                     'name' => 'Retur',
                     'active' => request()->is('retur'),
-                    'icon' => view('components.icons.retur')->render()
+                    'icon' => view('components.icons.retur')->render(),
+                    'route' => ''
                 ],
             ]">
                 <x-slot:titleIcon>
@@ -42,12 +44,14 @@
                 [
                     'name' => 'Pemasukan',
                     'active' => request()->is('pemasukan'),
-                    'icon' => view('components.icons.pemasukan')->render()
+                    'icon' => view('components.icons.pemasukan')->render(),
+                    'route' => ''
                 ],
                 [
                     'name' => 'Pengeluaran',
-                    'active' => request()->is('pengeluaran'),
-                    'icon' => view('components.icons.pengeluaran')->render()
+                    'active' => request()->is('expense') || request()->is('expense' . '*'),
+                    'icon' => view('components.icons.pengeluaran')->render(),
+                    'route' => route('expense.index')
                 ],
             ]">
                 <x-slot:titleIcon>
@@ -59,22 +63,26 @@
                 [
                     'name' => 'Kasir',
                     'active' => request()->is('kasir'),
-                    'icon' => view('components.icons.kasir')->render()
+                    'icon' => view('components.icons.kasir')->render(),
+                    'route' => ''
                 ],
                 [
                     'name' => 'Supplier',
                     'active' => request()->is('supplier'),
-                    'icon' => view('components.icons.supplier')->render()
+                    'icon' => view('components.icons.supplier')->render(),
+                    'route' => ''
                 ],
                 [
                     'name' => 'Customer',
                     'active' => request()->is('customer'),
-                    'icon' => view('components.icons.customer')->render()
+                    'icon' => view('components.icons.customer')->render(),
+                    'route' => ''
                 ],
                 [
                     'name' => 'Kurir',
                     'active' => request()->is('kurir'),
-                    'icon' => view('components.icons.kurir')->render()
+                    'icon' => view('components.icons.kurir')->render(),
+                    'route' => ''
                 ],
             ]">
                 <x-slot:titleIcon>
@@ -86,12 +94,14 @@
                 [
                     'name' => 'Kelola',
                     'active' => request()->is('kelola'),
-                    'icon' => view('components.icons.kelola')->render()
+                    'icon' => view('components.icons.kelola')->render(),
+                    'route' => ''
                 ],
                 [
                     'name' => 'Invoice',
                     'active' => request()->is('invoice'),
-                    'icon' => view('components.icons.invoice')->render()
+                    'icon' => view('components.icons.invoice')->render(),
+                    'route' => ''
                 ],
             ]">
                 <x-slot:titleIcon>
