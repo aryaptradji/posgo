@@ -27,22 +27,40 @@
         </div>
     @endif
 
-    <form action="{{ route('expense.store') }}" method="POST"
-        class="mt-10 rounded-xl grid grid-cols-2 gap-8">
+    <form action="{{ route('expense.store') }}" method="POST" enctype="multipart/form-data" class="mt-10 rounded-xl grid grid-cols-2 gap-8"
+        x-data="{
+            sourceServerError: {{ $errors->has('source') ? true : false }},
+            categoryServerError: {{ $errors->has('category') ? true : false }},
+        }"
+        >
         @csrf
-
         <div class="col-span-1 flex flex-col gap-4">
-            {{-- Tanggal --}}
-            <x-textfield type="datetime-local" name="date" :value="old('date', now())" classCont="mb-2">
+            {{-- Waktu --}}
+            <x-textfield type="datetime-local" name="date" :value="old('date', now())" class="focus-within:ring focus-within:ring-primary" classCont="mb-2">
                 Waktu
             </x-textfield>
 
             {{-- Sumber --}}
-            <x-dropdown-toggle class="mb-20" name="source" :items="['Teh Botol Sosro', 'Panther', 'Milku']">Sumber</x-dropdown-toggle>
+            <x-dropdown-toggle class="mb-2" name="source" :items="array_merge($products, ['Gaji Karyawan', 'Bayar Listrik', 'Bayar Air', 'Biaya Kebershihan', 'Biaya Transportasi'])" :value="old('source', 'Pilih Salah Satu')">Sumber</x-dropdown-toggle>
+            @error('source')
+                <x-inline-error-message class="mb-2 -mt-2" x-show="sourceServerError">{{ $message }}</x-inline-error-message>
+            @enderror
+        </div>
+        <div class="col-span-1 flex flex-col gap-4">
+            {{-- Kategori --}}
+            <x-dropdown class="mb-2" name="category" :items="['operasional', 'luar operasional']" :value="old('category', 'Pilih Salah Satu')">Kategori</x-dropdown>
+            @error('category')
+                <x-inline-error-message class="mb-2 -mt-2" x-show="categoryServerError">{{ $message }}</x-inline-error-message>
+            @enderror
 
             {{-- Total --}}
-            <x-textfield-price name="price" :value="old('price')">Total</x-textfield-price>
+            <x-textfield-price class="focus:ring focus:ring-primary" name="total" :value="old('total', 0)">Total</x-textfield-price>
         </div>
-
+        <div class="col-span-2 flex justify-center gap-6 mt-3">
+            <x-button-sm class="w-fit px-7 text-black bg-btn-cancel">
+                <a href="{{ route('expense.index') }}">Batal</a>
+            </x-button-sm>
+            <x-button-sm type="submit" class="w-fit px-7 text-secondary-purple bg-secondary-purple/20">Buat</x-button-sm>
+        </div>
     </form>
 </x-layout>

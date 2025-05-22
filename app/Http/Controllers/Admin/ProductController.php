@@ -75,6 +75,7 @@ class ProductController extends Controller
                 'image.required' => 'Gambar wajib diisi',
                 'image.image' => 'File harus berbentuk gambar',
                 'image.mimes' => 'Format gambar harus .png',
+                'image.max' => 'Size gambar maksimal 2 mb'
             ],
         );
 

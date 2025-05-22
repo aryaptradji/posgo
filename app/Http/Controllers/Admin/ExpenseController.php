@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Expense;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -44,7 +45,8 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        return view('admin.expense.create');
+        $products = Product::pluck('name')->toArray();
+        return view('admin.expense.create', compact('products'));
     }
 
     /**
@@ -52,7 +54,28 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+        'date'      => 'required|date',
+        'source'    => 'required|not_in:Pilih Salah Satu|string|max:25',
+        'category'  => 'required|not_in:Pilih Salah Satu',
+        'total'     => 'required|numeric|min:0',
+    ],[
+        'date.required' => 'Waktu wajib diisi',
+        'source.required' => 'Sumber wajib diisi',
+        'source.not_in' => 'Sumber wajib diisi',
+        'source.max' => 'Sumber maksimal 25 huruf',
+        'category.required' => 'Kategori wajib diisi',
+        'category.not_in' => 'Kategori wajib diisi',
+    ]);
+
+    Expense::create([
+        'date'      => $validated['date'],
+        'source'    => $validated['source'],
+        'category'  => $validated['category'],
+        'total'     => $validated['total'],
+    ]);
+
+    return redirect()->route('expense.index')->with('success', 'Pengeluaran berhasil ditambahkan!');
     }
 
     /**
