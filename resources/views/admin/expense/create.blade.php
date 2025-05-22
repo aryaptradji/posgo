@@ -29,8 +29,8 @@
 
     <form action="{{ route('expense.store') }}" method="POST" enctype="multipart/form-data" class="mt-10 rounded-xl grid grid-cols-2 gap-8"
         x-data="{
-            sourceServerError: {{ $errors->has('source') ? true : false }},
-            categoryServerError: {{ $errors->has('category') ? true : false }},
+            sourceServerError: '{{ $errors->has('source') }}',
+            categoryServerError: '{{ $errors->has('category') }}',
         }"
         >
         @csrf
@@ -48,7 +48,7 @@
         </div>
         <div class="col-span-1 flex flex-col gap-4">
             {{-- Kategori --}}
-            <x-dropdown class="mb-2" name="category" :items="['operasional', 'luar operasional']" :value="old('category', 'Pilih Salah Satu')">Kategori</x-dropdown>
+            <x-dropdown class="mb-2" name="category" :items="['Operasional', 'Luar operasional']" :value="old('category', 'Pilih Salah Satu')">Kategori</x-dropdown>
             @error('category')
                 <x-inline-error-message class="mb-2 -mt-2" x-show="categoryServerError">{{ $message }}</x-inline-error-message>
             @enderror

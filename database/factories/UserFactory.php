@@ -2,9 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Address;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,24 +24,31 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->name();
+        $name = $this->faker->name();
         $email = Str::lower(str_replace(' ', '.', $name)) . '@' . fake()->freeEmailDomain();
 
         return [
             'name' => $name,
             'email' => $email,
-            'password' => static::$password ??= Hash::make('123'),
-            'phone_number' => fake()->phoneNumber(),
+            'password' => Hash::make('123'),
+            'phone_number' => $this->faker->phoneNumber(),
         ];
     }
 
     /**
      * Indicate that the model's email address should be unverified.
      */
-    public function kasir(): static
+    public function cashier(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => 'kasir',
+            'role' => 'cashier',
+        ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
         ]);
     }
 }

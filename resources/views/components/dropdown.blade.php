@@ -33,7 +33,7 @@
                     x-for="(item, index) in items" :key="index">
                     <li class="p-2 rounded-lg hover:bg-primary hover:text-white cursor-pointer"
                         @click="selected = item; open = false">
-                        <span class="capitalize" x-text="item"></span>
+                        <span x-text="item"></span>
                     </li>
                 </template>
                 <input type="hidden" name="{{ $name }}" :value="selected">

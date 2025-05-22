@@ -102,28 +102,56 @@
                                         : 'bg-primary/15 text-primary border-primary'
                         @endphp
                             <tr class="border-b-2 border-b-tertiary-table-line">
-                                <td class="px-4 py-2" align="center">{{ $expense->date->format('d M Y H:i:s') }}</td>
+                                <td class="px-4 py-2" align="center">{{ $expense->date->translatedFormat('d M Y H:i:s') }}</td>
                                 <td class="px-4 py-2" align="center">{{ $expense->source }}</td>
                                 <td class="px-4 py-2" align="center">
                                     <span class="px-2 py-1 rounded-lg capitalize border-2 {{ $class }}">{{ $expense->category }}</span>
                                 </td>
                                 <td class="px-4 py-2" align="center">Rp
                                     {{ number_format($expense->total, 0, ',', '.') }}</td>
-                                <td class="px-4 py-2" align="center">
+                                <td class="px-4 py-2" align="center" x-data="{ showModal: false }">
                                     <div class="flex justify-center gap-2">
                                         <a href="{{ route('expense.edit', $expense) }}"
                                             class="text-primary transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.edit-icon />
                                         </a>
-                                        <form action="{{ route('expense.destroy', $expense) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="text-danger transition-transform hover:scale-125 active:scale-90">
-                                                @include('components.icons.delete-icon')
-                                            </button>
-                                        </form>
+                                        <button type="submit" @click="showModal = true"
+                                            class="text-danger transition-transform hover:scale-125 active:scale-90">
+                                            @include('components.icons.delete-icon')
+                                        </button>
                                     </div>
+
+                                    <!-- Modal Delete -->
+                                    <x-modal show="showModal">
+                                        <x-slot:title>
+                                            <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
+                                            <h2 class="text-lg font-bold">Hapus Data Pengeluaran</h2>
+                                        </x-slot:title>
+                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                            Yakin ingin menghapus
+                                            <span class="font-bold text-danger">{{ $expense->source }}</span>
+                                            pada
+                                            <span class="font-bold text-danger">{{ $expense->date->translatedFormat('l, j M o') }}</span>
+                                            jam
+                                            <span class="font-bold text-danger">{{ $expense->date->translatedFormat('H:i:s') }}</span>
+                                            ?
+                                        </p>
+                                        <x-slot:action>
+                                            <button type="button" @click="showModal = false"
+                                                class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                Batal
+                                            </button>
+
+                                            <form action="{{ route('expense.destroy', $expense) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </x-slot:action>
+                                    </x-modal>
                                 </td>
                             </tr>
                         @empty

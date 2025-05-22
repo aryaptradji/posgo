@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone_number');
             $table->string('role')->default('customer');
+            $table->unsignedBigInteger('address_id');
             $table->timestamps();
         });
 

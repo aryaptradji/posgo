@@ -54,28 +54,31 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-        'date'      => 'required|date',
-        'source'    => 'required|not_in:Pilih Salah Satu|string|max:25',
-        'category'  => 'required|not_in:Pilih Salah Satu',
-        'total'     => 'required|numeric|min:0',
-    ],[
-        'date.required' => 'Waktu wajib diisi',
-        'source.required' => 'Sumber wajib diisi',
-        'source.not_in' => 'Sumber wajib diisi',
-        'source.max' => 'Sumber maksimal 25 huruf',
-        'category.required' => 'Kategori wajib diisi',
-        'category.not_in' => 'Kategori wajib diisi',
-    ]);
+        $validated = $request->validate(
+            [
+                'date' => 'required|date',
+                'source' => 'required|not_in:Pilih Salah Satu|string|max:25',
+                'category' => 'required|not_in:Pilih Salah Satu',
+                'total' => 'required|numeric|min:0',
+            ],
+            [
+                'date.required' => 'Waktu wajib diisi',
+                'source.required' => 'Sumber wajib diisi',
+                'source.not_in' => 'Sumber wajib diisi',
+                'source.max' => 'Sumber maksimal 25 huruf',
+                'category.required' => 'Kategori wajib diisi',
+                'category.not_in' => 'Kategori wajib diisi',
+            ],
+        );
 
-    Expense::create([
-        'date'      => $validated['date'],
-        'source'    => $validated['source'],
-        'category'  => $validated['category'],
-        'total'     => $validated['total'],
-    ]);
+        Expense::create([
+            'date' => $validated['date'],
+            'source' => $validated['source'],
+            'category' => $validated['category'],
+            'total' => $validated['total'],
+        ]);
 
-    return redirect()->route('expense.index')->with('success', 'Pengeluaran berhasil ditambahkan!');
+        return redirect()->route('expense.index')->with('success', 'Data pengeluaran berhasil ditambahkan!');
     }
 
     /**
@@ -89,24 +92,52 @@ class ExpenseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Expense $expense)
     {
-        //
+        $products = Product::pluck('name')->toArray();
+        return view('admin.expense.edit', compact('products', 'expense'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Expense $expense)
     {
-        //
+        $validated = $request->validate(
+            [
+                'date' => 'required|date',
+                'source' => 'required|not_in:Pilih Salah Satu|string|max:25',
+                'category' => 'required|not_in:Pilih Salah Satu',
+                'total' => 'required|numeric|min:0',
+            ],
+            [
+                'date.required' => 'Waktu wajib diisi',
+                'source.required' => 'Sumber wajib diisi',
+                'source.not_in' => 'Sumber wajib diisi',
+                'source.max' => 'Sumber maksimal 25 huruf',
+                'category.required' => 'Kategori wajib diisi',
+                'category.not_in' => 'Kategori wajib diisi',
+            ],
+        );
+
+        // Simpan perubahan
+        $expense->update([
+            'date' => $validated['date'],
+            'source' => $validated['source'],
+            'category' => $validated['category'],
+            'total' => $validated['total'],
+        ]);
+
+        return redirect()->route('expense.index')->with('success', 'Data pengeluaran berhasil diperbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Expense $expense)
     {
-        //
+        $expense->delete();
+
+        return redirect()->route('expense.index')->with('success', 'Data pengeluaran berhasil dihapus.');
     }
 }

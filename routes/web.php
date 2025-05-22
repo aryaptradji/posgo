@@ -1,8 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ProductController;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/login', function () {
     return view('login');
@@ -17,9 +18,11 @@ Route::get('/admin/dashboard', function () {
     return view('admin.dashboard.index');
 })->name('dashboard.index');
 
-Route::resource('/product', ProductController::class);
+Route::resource('/admin/product', ProductController::class);
 
-Route::resource('/expense', ExpenseController::class);
+Route::resource('/admin/expense', ExpenseController::class);
+
+Route::resource('/admin/cashier', UserController::class);
 
 Route::get('/riwayat', function () {
     return view('riwayat');

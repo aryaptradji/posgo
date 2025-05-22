@@ -17,7 +17,7 @@
                 <x-icons.dashboard/>
                 <x-slot:title>Dashboard</x-slot:title>
             </x-navlink>
-            <x-navlink href="{{ route('product.index') }}" :active="request()->is('product/' . '*') || request()->is('product')" :focusNo="2" @click="focus = 2">
+            <x-navlink href="{{ route('product.index') }}" :active="request()->is('admin/product/' . '*') || request()->is('admin/product')" :focusNo="2" @click="focus = 2">
                 <x-icons.produk/>
                 <x-slot:title>Produk</x-slot:title>
             </x-navlink>
@@ -49,7 +49,7 @@
                 ],
                 [
                     'name' => 'Pengeluaran',
-                    'active' => request()->is('expense') || request()->is('expense' . '*'),
+                    'active' => request()->is('admin/expense') || request()->is('admin/expense' . '*'),
                     'icon' => view('components.icons.pengeluaran')->render(),
                     'route' => route('expense.index')
                 ],
@@ -62,9 +62,9 @@
             <x-navlink-toggle :focusNo="5" :menus="[
                 [
                     'name' => 'Kasir',
-                    'active' => request()->is('kasir'),
+                    'active' => request()->is('admin/cashier') || request()->is('admin/cashier' . '*'),
                     'icon' => view('components.icons.kasir')->render(),
-                    'route' => ''
+                    'route' => route('cashier.index')
                 ],
                 [
                     'name' => 'Supplier',

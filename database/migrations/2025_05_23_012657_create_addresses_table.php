@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,16 +12,10 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Relasi ke tabel users
-            $table->string('rt');
-            $table->string('rw');
-            $table->string('kelurahan');
-            $table->string('kecamatan');
-            $table->string('kota');
+            $table->foreignId('neighborhood_id')->constrained('neighborhoods')->onDelete('cascade');
+            $table->string('street'); // e.g. "Jl. Melati No. 27A"
+            $table->string('notes')->nullable(); // opsional: patokan, catatan kurir
             $table->timestamps();
-
-            // Membuat foreign key constraint
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
