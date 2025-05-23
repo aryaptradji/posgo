@@ -85,15 +85,14 @@
                     </thead>
                     <tbody>
                         @forelse ($cashiers as $cashier)
+                            @php
+                                $parts = explode(' ', $cashier->name);
+                                $initials = strtoupper(
+                                    substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''),
+                                );
+                            @endphp
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="center">
-                                    <!-- <img src="{{ $cashier->photo_url }}" class="max-h-11 aspect-square object-contain rounded-full"> -->
-                                    @php
-                                        $parts = explode(' ', $cashier->name);
-                                        $initials = strtoupper(
-                                            substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''),
-                                        );
-                                    @endphp
                                     @if ($cashier->photo_url)
                                         <img src="{{ $cashier->photo_url }}"
                                             class="rounded-full h-11 w-11 aspect-square object-cover">
@@ -106,11 +105,12 @@
                                 </td>
                                 <td class="px-4 py-2 capitalize" align="center">{{ $cashier->name }}</td>
                                 <td class="px-4 py-2" align="center">{{ $cashier->email }}</td>
-                                <td class="px-4 py-2" align="center">{{ str_repeat('•', strlen($cashier->visible_password)) }}</td>
+                                <td class="px-4 py-2" align="center">
+                                    {{ str_repeat('•', strlen($cashier->visible_password)) }}</td>
                                 <td class="px-4 py-2" align="center">{{ $cashier->phone_number }}</td>
                                 <td class="px-4 py-2" align="center">
                                     {{ $cashier->created->translatedFormat('d M Y H:i:s') }}</td>
-                                <td class="px-4 py-2" align="center" x-data="{ showModalView: false, showModalDelete: false }">
+                                <td class="px-4 py-2" align="center" x-data="{ isShow: false, showModalView: false, showModalDelete: false }">
                                     <div class="flex justify-center gap-2">
                                         <button type="button" @click="showModalView = true"
                                             class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
@@ -126,11 +126,77 @@
                                         </button>
                                     </div>
 
+                                    <!-- Modal View -->
+                                    <x-modal show="showModalView">
+                                        <x-slot:title>
+                                            <div class="w-full flex justify-between">
+                                                <div class="flex">
+                                                    <x-icons.info-icon class="mr-3" />
+                                                    <h2 class="text-lg font-bold">Detail</h2>
+                                                </div>
+                                                <button
+                                                    class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95"
+                                                    type="button" @click="showModalView = false">
+                                                    <x-icons.close />
+                                                </button>
+                                            </div>
+                                        </x-slot:title>
+                                        <div class="px-10 mb-2">
+                                            <div
+                                                class="flex items-center justify-center mb-6 h-32 p-2">
+                                                @if ($cashier->photo_url)
+                                                    <img src="{{ $cashier->photo_url }}"
+                                                        class="rounded-full h-32 w-32 aspect-square object-cover">
+                                                @else
+                                                    <div
+                                                        class="bg-tertiary-title-line text-tertiary-title font-semibold rounded-full w-32 h-32 flex items-center justify-center text-5xl">
+                                                        {{ $initials }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-16 text-start">
+                                                <div class="flex flex-col gap-4">
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Nama</span>
+                                                        <span>{{ $cashier->name }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Email</span>
+                                                        <span>{{ $cashier->email }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">
+                                                            Password
+                                                        </span>
+                                                        <span class="flex items-center gap-2">
+                                                            <span x-cloak x-show="!isShow">{{ str_repeat('•', strlen($cashier->visible_password)) }}</span>
+                                                            <span x-cloak x-show="isShow">{{ $cashier->visible_password }}</span>
+                                                            <button type="button" @click="isShow = !isShow">
+                                                                <x-icons.eye-open x-cloak width="16" x-show="!isShow"/>
+                                                                <x-icons.eye-close x-cloak width="16" x-show="isShow"/>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex flex-col gap-4 ml-6">
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">No Handphone</span>
+                                                        <span>{{ $cashier->phone_number }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Waktu Dibuat</span>
+                                                        <span>{{ $cashier->created->translatedFormat('d M Y H:i:s') }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </x-modal>
+
                                     <!-- Modal Delete -->
                                     <x-modal show="showModalDelete">
                                         <x-slot:title>
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
-                                            <h2 class="text-lg font-bold">Hapus Produk</h2>
+                                            <h2 class="text-lg font-bold">Hapus Akun Kasir</h2>
                                         </x-slot:title>
                                         <p class="mb-6 mx-6 mt-4 text-start">
                                             Yakin ingin menghapus akun kasir dengan nama
@@ -157,7 +223,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Akun kasir tidak ditemukan</td>
+                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Akun kasir tidak
+                                    ditemukan</td>
                             </tr>
                         @endforelse
                     </tbody>
