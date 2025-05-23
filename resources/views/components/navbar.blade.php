@@ -1,5 +1,5 @@
 <header
-    class="fixed z-10 top-0 w-screen h-24 px-6 clip-text bg-gradient-to-tr from-primary/60 to-secondary-purple/60 backdrop-blur-md flex justify-between items-center">
+    class="fixed z-20 top-0 w-screen h-24 px-6 clip-text bg-gradient-to-tr from-primary/60 to-secondary-purple/60 backdrop-blur-md flex justify-between items-center">
     <img src="{{ asset('img/posgo-logo.svg') }}" alt="posgo-logo.svg" class="w-28">
     <div class="flex justify-between items-center w-24 mr-5">
         <img src="{{ asset('img/icon/notification.svg') }}" alt="notification.svg" class="w-8">
@@ -9,9 +9,9 @@
 </header>
 
 <nav id="sidebar"
-    class="fixed top-24 left-0 w-80 h-[calc(100vh-6rem)] transition-transform -translate-x-full sm:translate-x-0"
+    class="fixed z-10 top-0 pt-24 left-0 w-80 h-full bg-gray-50 transition-transform -translate-x-full sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full p-6 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+    <div class="h-full p-6 overflow-y-auto bg-gray-50">
         <ul class="space-y-3 font-medium" x-data="{ focus: 1 }">
             <x-navlink href="{{ route('dashboard.index') }}" :active="request()->is('admin/dashboard')" :focusNo="1" @click="focus = 1">
                 <x-icons.dashboard/>

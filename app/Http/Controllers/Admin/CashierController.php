@@ -1,18 +1,37 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class UserController extends Controller
+class CashierController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.cashier.index');
+        $query = User::with('address')->where('role', 'cashier');
+
+        // Pencarian
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Sorting
+        if ($request->filled('sort')) {
+            $query->orderBy($request->sort, $request->boolean('desc') ? 'desc' : 'asc');
+        } else {
+            $query->latest('created');
+        }
+
+        // Pagination
+        $perPage = $request->input('per_page', 5);
+        $cashiers = $query->paginate($perPage)->withQueryString();
+
+        return view('admin.cashier.index', compact('cashiers'));
     }
 
     /**

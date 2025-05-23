@@ -26,12 +26,17 @@ class UserFactory extends Factory
     {
         $name = $this->faker->name();
         $email = Str::lower(str_replace(' ', '.', $name)) . '@' . fake()->freeEmailDomain();
+        $plain = 'kasir123';
 
         return [
+            'created' => $this->faker->dateTimeBetween('-30 days', 'now'),
             'name' => $name,
+            'slug' => Str::slug($name),
             'email' => $email,
-            'password' => Hash::make('123'),
+            'password' => Hash::make($plain),
             'phone_number' => $this->faker->phoneNumber(),
+            'address_id' => Address::factory(),
+            'photo' => null,
         ];
     }
 
@@ -40,9 +45,15 @@ class UserFactory extends Factory
      */
     public function cashier(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => 'cashier',
-        ]);
+        return $this->state(function () {
+            $plain = 'kasir123';
+
+            return [
+                'role' => 'cashier',
+                'password' => Hash::make($plain),
+                'plaintext_password' => $plain,
+            ];
+        });
     }
 
     public function admin(): static

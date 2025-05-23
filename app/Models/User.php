@@ -16,7 +16,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'email', 'password', 'phone_number'];
+    protected $fillable = ['created_at', 'name', 'email', 'phone_number', 'password', 'plaintext_password', 'role', 'address_id', 'photo'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -25,11 +25,26 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'plaintext_password',
         // 'remember_token',
     ];
 
     public function address()
     {
         return $this->belongsTo(Address::class);
+    }
+
+    protected $casts = [
+        'created' => 'datetime',
+    ];
+
+    public function getVisiblePasswordAttribute()
+    {
+        return $this->role === 'cashier' ? $this->plaintext_password : null;
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo ? asset('storage/' . $this->photo) : null;
     }
 }

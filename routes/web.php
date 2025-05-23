@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CashierController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Admin\ExpenseController;
@@ -22,7 +23,7 @@ Route::resource('/admin/product', ProductController::class);
 
 Route::resource('/admin/expense', ExpenseController::class);
 
-Route::resource('/admin/cashier', UserController::class);
+Route::resource('/admin/cashier', CashierController::class);
 
 Route::get('/riwayat', function () {
     return view('riwayat');
