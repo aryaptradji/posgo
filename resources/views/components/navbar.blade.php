@@ -68,9 +68,9 @@
                 ],
                 [
                     'name' => 'Supplier',
-                    'active' => request()->is('supplier'),
+                    'active' => request()->is('admin/supplier') || request()->is('admin/supplier' . '*'),
                     'icon' => view('components.icons.supplier')->render(),
-                    'route' => ''
+                    'route' => route('supplier.index')
                 ],
                 [
                     'name' => 'Customer',
