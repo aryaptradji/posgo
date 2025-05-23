@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('created');
+            $table->dateTime('created')->default(now());
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('email');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('plaintext_password')->nullable();
             $table->string('phone_number');
             $table->string('role')->default('customer');
-            $table->unsignedBigInteger('address_id');
+            $table->unsignedBigInteger('address_id')->nullable();
             $table->timestamps();
         });
 

@@ -14,7 +14,7 @@
 
     <!-- Toast Error -->
     @if ($errors->any())
-        <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
+        <div class="fixed top-16 right-10 z-20 flex flex-col items-end gap-4">
             @foreach ($errors->all() as $error)
                 <x-toast id="toast-failed{{ $loop->index }}" iconClass="text-danger bg-danger/25"
                     slotClass="text-danger" :duration="6000" :delay="$loop->index * 500">

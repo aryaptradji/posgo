@@ -14,7 +14,7 @@
 
     <!-- Toast Error -->
     @if ($errors->any())
-        <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
+        <div class="fixed top-16 right-10 z-20 flex flex-col items-end gap-4">
             @foreach ($errors->all() as $error)
                 <x-toast id="toast-failed{{ $loop->index }}" iconClass="text-danger bg-danger/25"
                     slotClass="text-danger" :duration="6000" :delay="$loop->index * 500">
@@ -71,7 +71,7 @@
             <x-textfield-price class="focus:ring focus:ring-primary" name="price" :value="old('price', 0)">Harga</x-textfield-price>
         </div>
 
-        <x-textfield-image name="image">Gambar</x-textfield-image>
+        <x-textfield-image name="image">Gambar<span class="ml-2 text-xs text-tertiary-400 font-semibold">(format .png, max. 2 mb)</span></x-textfield-image>
 
         <div class="col-span-2 flex justify-center gap-6 mt-3">
             <x-button-sm class="w-fit px-7 text-black bg-btn-cancel">

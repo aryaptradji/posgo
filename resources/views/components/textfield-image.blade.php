@@ -14,7 +14,7 @@
     <template x-if="!fileName">
         <div @dragover.prevent @dragenter.prevent @drop.prevent="handleDrop($event)"
             class="h-full border-2 border-dashed border-gray-300 bg-tertiary rounded-lg shadow-outer flex flex-col justify-center items-center text-sm font-semibold {{ $uploadClass }}">
-            <span>Drag & Drop Your Files or <label for="image"
+            <span>Drag & Drop Your Files or <label for="{{ $name }}"
                     class="inline-block bg-gradient-to-r from-primary to-secondary-purple bg-clip-text text-transparent transition-all hover:opacity-75 hover:scale-95 active:scale-75 cursor-pointer">Browse</label></span>
         </div>
     </template>

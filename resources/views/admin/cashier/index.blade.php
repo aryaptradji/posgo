@@ -25,7 +25,7 @@
 
     <!-- Toast Create Success -->
     @if (session('success'))
-        <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
+        <div class="fixed top-16 right-10 z-20 flex flex-col justify-end gap-4">
             <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success"
                 :duration="6000">
                 <x-slot:icon>
@@ -104,9 +104,9 @@
                                         </div>
                                     @endif
                                 </td>
-                                <td class="px-4 py-2" align="center">{{ $cashier->name }}</td>
+                                <td class="px-4 py-2 capitalize" align="center">{{ $cashier->name }}</td>
                                 <td class="px-4 py-2" align="center">{{ $cashier->email }}</td>
-                                <td class="px-4 py-2" align="center">{{ $cashier->visible_password }}</td>
+                                <td class="px-4 py-2" align="center">{{ str_repeat('•', strlen($cashier->visible_password)) }}</td>
                                 <td class="px-4 py-2" align="center">{{ $cashier->phone_number }}</td>
                                 <td class="px-4 py-2" align="center">
                                     {{ $cashier->created->translatedFormat('d M Y H:i:s') }}</td>
