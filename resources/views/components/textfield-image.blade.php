@@ -27,7 +27,7 @@
             class="relative bg-gradient-to-b from-green-400 to-white p-4 rounded-xl h-full shadow-md flex flex-col justify-center items-center {{ $previewClass }}">
             <div class="absolute top-4 left-6 text-left">
 
-                <p class="text-sm font-bold text-white" x-show="fromUpload === true" x-text="fileName"></p>
+                <p class="text-sm font-bold text-white max-w-56" x-show="fromUpload === true" x-text="fileName"></p>
                 <p class="text-xs text-white opacity-80" x-text="fileSize + ' KB'"></p>
             </div>
             <div class="absolute top-4 right-14 text-right">

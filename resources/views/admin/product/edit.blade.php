@@ -74,13 +74,13 @@
         </div>
 
         <x-textfield-image
-            x-init="console.log('Preview image:', imageUrl)"
             name="image"
             initial-image-url="{{ asset('storage/' . $product->image) }}"
             initial-file-name="{{ basename($product->image) }}"
             initialFileSize="{{ $sizeInKB }}"
         >
             Gambar
+            <span class="ml-2 text-xs text-tertiary-400 font-semibold">(format .png, max. 2 mb)</span>
         </x-textfield-image>
 
         <div class="col-span-2 flex justify-center gap-6 mt-3">

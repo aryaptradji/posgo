@@ -56,7 +56,7 @@
                 </form>
             </div>
 
-            <div class="pb-4 relative overflow-x-auto overflow-y-auto max-h-[450px]">
+            <div class="pb-4 relative overflow-x-auto overflow-y-auto h-fit">
                 <table class="w-full min-w-max text-xs text-left">
                     <thead class="text-xs uppercase bg-white">
                         <tr>
@@ -116,7 +116,7 @@
                                             class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.detail-icon />
                                         </button>
-                                        <a href="{{ route('product.edit', $cashier) }}"
+                                        <a href="{{ route('cashier.edit', $cashier) }}"
                                             class="text-primary transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.edit-icon />
                                         </a>
@@ -132,8 +132,8 @@
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
                                             <h2 class="text-lg font-bold">Hapus Produk</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 ml-6 mt-4 text-start">
-                                            Yakin ingin menghapus
+                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                            Yakin ingin menghapus akun kasir dengan nama
                                             <span class="font-bold text-danger">{{ $cashier->name }}</span>
                                             ?
                                         </p>
@@ -143,7 +143,7 @@
                                                 Batal
                                             </button>
 
-                                            <form action="{{ route('product.destroy', $cashier) }}" method="POST">
+                                            <form action="{{ route('cashier.destroy', $cashier) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
@@ -157,8 +157,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Produk tidak ditemukan
-                                </td>
+                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Akun kasir tidak ditemukan</td>
                             </tr>
                         @endforelse
                     </tbody>

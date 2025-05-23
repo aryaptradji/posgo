@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->photo ? asset('storage/' . $this->photo) : null;
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

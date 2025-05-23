@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Database\Factories\CashierFactory;
+use Illuminate\Support\Facades\Storage;
 
 class CashierController extends Controller
 {
@@ -94,6 +95,7 @@ class CashierController extends Controller
 
         // Buat user
         User::create([
+            'created' => now(),
             'name' => $data['name'],
             'slug' => Str::slug($data['name']),
             'email' => $data['email'],
@@ -118,24 +120,88 @@ class CashierController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $cashier)
     {
-        //
+        $sizeInKB = null;
+
+        if ($cashier->image && Storage::disk('public')->exists($cashier->image)) {
+            $sizeInKB = round(Storage::disk('public')->size($cashier->image) / 1024);
+        }
+
+        return view('admin.cashier.edit', compact('cashier', 'sizeInKB'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $cashier)
     {
-        //
+        // Validasi input
+        $data = $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'regex:/^[a-zA-Z]+[a-zA-Z\s]*$/',
+                    Rule::unique('users')->ignore($cashier->id)->where(fn ($q) => $q->where('role', 'cashier')),
+                    'max:50'
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                    Rule::unique('users')->ignore($cashier->id)
+                ],
+                'phone_number' => 'required|regex:/^08[0-9]{8,13}$/',
+                'password' => 'required|string|min:6',
+                'photo' => 'nullable|image|mimes:jpg,jpeg|max:2048',
+                'role' => 'required|in:cashier'
+            ],
+            [
+                'name.required' => 'Nama wajib diisi',
+                'name.regex' => 'Nama hanya boleh mengandung huruf',
+                'name.unique' => 'Nama kasir ini sudah digunakan',
+                'name.max' => 'Nama maksimal 50 huruf',
+                'email.required' => 'Email wajib diisi',
+                'email.unique' => 'Email ini sudah digunakan',
+                'phone_number.required' => 'Nomor handphone wajib diisi',
+                'phone_number.regex' => 'Format nomor handphone tidak valid',
+                'password.required' => 'Password wajib diisi',
+                'photo.image' => 'File harus berbentuk gambar',
+                'photo.mimes' => 'Format foto harus .jpg/.jpeg',
+                'photo.max' => 'Size foto maksimal 2 mb'
+            ],
+        );
+
+        // Update akun kasir
+        $cashier->name = $data['name'];
+        $cashier->slug = Str::slug($data['name']);
+        $cashier->email = $data['email'];
+        $cashier->phone_number = $data['phone_number'];
+        $cashier->password = Hash::make($data['password']);
+        $cashier->plaintext_password = $data['role'] === 'cashier' ? $request->password : null;
+
+        // Jika upload gambar baru, ganti
+        if ($request->hasFile('photo')) {
+            $imagePath = $request->file('photo')->store('cashiers', 'public');
+            $cashier->photo = $imagePath;
+        }
+
+        $cashier->save();
+
+        return redirect()->route('cashier.index')->with('success', 'Akun kasir berhasil diperbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $cashier)
     {
-        //
+        if ($cashier->image && Storage::disk('public')->exists($cashier->image)) {
+            Storage::disk('public')->delete($cashier->image);
+        }
+
+        $cashier->delete();
+
+        return redirect()->route('cashier.index')->with('success', 'Akun kasir berhasil dihapus');
     }
 }
