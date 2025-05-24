@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Database\Factories\CashierFactory;
 use Illuminate\Support\Facades\Storage;
 
 class CashierController extends Controller
@@ -62,7 +61,7 @@ class CashierController extends Controller
                     Rule::unique('users')->where(fn ($q) => $q->where('role', 'cashier')),
                     'max:50'
                 ],
-                'email' => 'required|email|unique:users,email',
+                'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/|unique:users,email',
                 'phone_number' => 'required|regex:/^08[0-9]{8,13}$/',
                 'password' => 'required|string|min:6',
                 'photo' => 'nullable|image|mimes:jpg,jpeg|max:2048',
@@ -74,6 +73,7 @@ class CashierController extends Controller
                 'name.unique' => 'Nama kasir ini sudah digunakan',
                 'name.max' => 'Nama maksimal 50 huruf',
                 'email.required' => 'Email wajib diisi',
+                'email.regex' => 'Format email tidak valid',
                 'email.unique' => 'Email ini sudah digunakan',
                 'phone_number.required' => 'Nomor handphone wajib diisi',
                 'phone_number.regex' => 'Format nomor handphone tidak valid',
@@ -105,7 +105,7 @@ class CashierController extends Controller
             'photo' => $data['photo'] ?? null,
             'role' => $data['role']
         ]);
-        // dd($data);
+
         return redirect()->route('cashier.index')->with('success', 'Akun kasir berhasil dibuat');
     }
 

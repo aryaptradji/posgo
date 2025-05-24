@@ -10,5 +10,10 @@ class Supplier extends Model
     /** @use HasFactory<\Database\Factories\SupplierFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'phone', 'email', 'fax', 'address'];
+    protected $fillable = ['name', 'slug', 'phone', 'email', 'fax', 'address'];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

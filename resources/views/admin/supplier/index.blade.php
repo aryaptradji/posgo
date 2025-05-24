@@ -108,9 +108,9 @@
                                 <td class="px-4 py-2" align="center">{{ $supplier->email }}</td>
                                 <td class="px-4 py-2" align="center">{{ $supplier->fax }}</td>
                                 <td class="px-4 py-2" align="center">{{ $supplier->address }}</td>
-                                <td class="px-4 py-2" align="center" x-data="{ showModal: false }">
+                                <td class="px-4 py-2" align="center" x-data="{ showModalView: false, showModalDelete: false }">
                                     <div class="flex justify-center gap-2">
-                                        <button type="button"
+                                        <button type="button" @click="showModalView = true"
                                             class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.detail-icon />
                                         </button>
@@ -118,14 +118,57 @@
                                             class="text-primary transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.edit-icon />
                                         </a>
-                                        <button type="submit" @click="showModal = true"
+                                        <button type="submit" @click="showModalDelete = true"
                                             class="text-danger transition-transform hover:scale-125 active:scale-90">
                                             @include('components.icons.delete-icon')
                                         </button>
                                     </div>
 
+                                    <!-- Modal View -->
+                                    <x-modal show="showModalView">
+                                        <x-slot:title>
+                                            <div class="w-full flex justify-between">
+                                                <div class="flex">
+                                                    <x-icons.info-icon class="mr-3"/>
+                                                    <h2 class="text-lg font-bold">Detail Supplier</h2>
+                                                </div>
+                                                <button class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95" type="button" @click="showModalView = false">
+                                                    <x-icons.close/>
+                                                </button>
+                                            </div>
+                                        </x-slot:title>
+                                        <div class="px-10 mb-2">
+                                            <div class="grid grid-cols-2 gap-20 text-start">
+                                                <div class="flex flex-col gap-4 flex-grow w-fit">
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Nama</span>
+                                                        <span>{{ $supplier->name }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Telepon</span>
+                                                        <span>{{ $supplier->phone }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Email</span>
+                                                        <span>{{ $supplier->email }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex flex-col gap-4 flex-grow w-fit">
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Fax</span>
+                                                        <span>{{ $supplier->fax }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Alamat</span>
+                                                        <span><{{ $supplier->address }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </x-modal>
+
                                     <!-- Modal Delete -->
-                                    <x-modal show="showModal">
+                                    <x-modal show="showModalDelete">
                                         <x-slot:title>
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
                                             <h2 class="text-lg font-bold">Hapus Data Supplier</h2>
@@ -136,7 +179,7 @@
                                             ?
                                         </p>
                                         <x-slot:action>
-                                            <button type="button" @click="showModal = false"
+                                            <button type="button" @click="showModalDelete = false"
                                                 class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
                                                 Batal
                                             </button>
