@@ -34,7 +34,7 @@ class UserFactory extends Factory
             'slug' => Str::slug($name),
             'email' => $email,
             'password' => Hash::make($plain),
-            'phone_number' => $this->faker->phoneNumber(),
+            'phone_number' => $this->faker->numerify('08##########'),
             'address_id' => Address::factory(),
             'photo' => null,
         ];

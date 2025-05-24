@@ -71,7 +71,7 @@
                                         class="ml-2 text-tertiary-300 {{ request('sort') == 'name' && request('desc') ? 'rotate-180' : '' }}" />
                                 </a>
                             </th>
-                            <th class="px-4 py-3 w-48" align="center">Telepon</th>
+                            <th class="px-4 py-3" align="center">Telepon</th>
                             <th class="px-4 py-3" align="center">
                                 <a href="{{ request()->fullUrlWithQuery([
                                     'sort' => 'email',
@@ -84,7 +84,7 @@
                                         class="ml-2 text-tertiary-300 {{ request('sort') == 'email' && request('desc') ? 'rotate-180' : '' }}" />
                                 </a>
                             </th>
-                            <th class="px-4 py-3 w-20" align="center">Fax</th>
+                            <th class="px-4 py-3" align="center">Fax</th>
                             <th class="px-4 py-3 w-72" align="center">
                                 <a href="{{ request()->fullUrlWithQuery([
                                     'sort' => 'address',
@@ -103,11 +103,11 @@
                     <tbody>
                         @forelse ($suppliers as $supplier)
                             <tr class="border-b-2 border-b-tertiary-table-line">
-                                <td class="px-4 py-2" align="center">{{ $supplier->name }}</td>
-                                <td class="px-4 py-2" align="center">{{ $supplier->phone }}</td>
-                                <td class="px-4 py-2" align="center">{{ $supplier->email }}</td>
-                                <td class="px-4 py-2" align="center">{{ $supplier->fax }}</td>
-                                <td class="px-4 py-2" align="center">{{ $supplier->address }}</td>
+                                <td class="px-4 py-2" align="left">{{ $supplier->name }}</td>
+                                <td class="px-4 py-2" align="left">{{ $supplier->phone }}</td>
+                                <td class="px-4 py-2" align="left">{{ $supplier->email }}</td>
+                                <td class="px-4 py-2" align="left">{{ $supplier->fax }}</td>
+                                <td class="px-4 py-2" align="left">{{ $supplier->address }}</td>
                                 <td class="px-4 py-2" align="center" x-data="{ showModalView: false, showModalDelete: false }">
                                     <div class="flex justify-center gap-2">
                                         <button type="button" @click="showModalView = true"

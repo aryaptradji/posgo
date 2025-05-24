@@ -80,9 +80,9 @@
                 ],
                 [
                     'name' => 'Kurir',
-                    'active' => request()->is('kurir'),
+                    'active' => request()->is('admin/courier') || request()->is('admin/courier' . '*'),
                     'icon' => view('components.icons.kurir')->render(),
-                    'route' => ''
+                    'route' => route('courier.index')
                 ],
             ]">
                 <x-slot:titleIcon>
