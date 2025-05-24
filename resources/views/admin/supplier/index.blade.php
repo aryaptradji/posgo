@@ -138,8 +138,8 @@
                                             </div>
                                         </x-slot:title>
                                         <div class="px-10 mb-2">
-                                            <div class="grid grid-cols-2 gap-20 text-start">
-                                                <div class="flex flex-col gap-4 flex-grow w-fit">
+                                            <div class="grid grid-cols-2 gap-4 text-start">
+                                                <div class="flex flex-col gap-4 col-span-1 justify-self-start">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Nama</span>
                                                         <span>{{ $supplier->name }}</span>
@@ -153,14 +153,14 @@
                                                         <span>{{ $supplier->email }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="flex flex-col gap-4 flex-grow w-fit">
+                                                <div class="flex flex-col gap-4 col-span-1 justify-self-end">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Fax</span>
                                                         <span>{{ $supplier->fax }}</span>
                                                     </div>
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Alamat</span>
-                                                        <span><{{ $supplier->address }}</span>
+                                                        <span>{{ $supplier->address }}</span>
                                                     </div>
                                                 </div>
                                             </div>

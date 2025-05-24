@@ -140,8 +140,8 @@
                                             <div class="flex items-center justify-center mb-6 h-32 p-2 aspect-square object-contain rounded-full bg-white">
                                                 <img src="{{ asset('storage/' . $product->image) }}" class="max-h-24">
                                             </div>
-                                            <div class="grid grid-cols-2 gap-16 text-start">
-                                                <div class="flex flex-col gap-4">
+                                            <div class="grid grid-cols-2 gap-4 text-start">
+                                                <div class="flex flex-col gap-4 col-span-1 justify-self-start">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Nama Produk</span>
                                                         <span>{{ $product->name }}</span>
@@ -155,7 +155,7 @@
                                                         <span>{{ $product->pcs }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="flex flex-col gap-4 ml-10">
+                                                <div class="flex flex-col gap-4 col-span-1 justify-self-end">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Status</span>
                                                         <span class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $status }}</span>

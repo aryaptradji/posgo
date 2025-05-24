@@ -154,8 +154,8 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            <div class="grid grid-cols-2 gap-16 text-start">
-                                                <div class="flex flex-col gap-4">
+                                            <div class="grid grid-cols-2 gap-4 text-start">
+                                                <div class="flex flex-col gap-4 col-span-1 justify-self-start">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Nama</span>
                                                         <span>{{ $cashier->name }}</span>
@@ -178,7 +178,7 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div class="flex flex-col gap-4 ml-6">
+                                                <div class="flex flex-col gap-4 col-span-1 justify-self-end">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">No Handphone</span>
                                                         <span>{{ $cashier->phone_number }}</span>
