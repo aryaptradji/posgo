@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Courier;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CourierController extends Controller
 {
@@ -45,7 +46,7 @@ class CourierController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.courier.create');
     }
 
     /**
@@ -53,7 +54,31 @@ class CourierController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|regex:/^[a-zA-Z]+[a-zA-Z.\s]*$/|unique:couriers,name',
+            'phone' => 'required|string|regex:/^08[0-9]{8,13}$/',
+            'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+            'address' => 'required|string'
+        ],[
+            'name.required' => 'Nama wajib diisi',
+            'name.regex' => 'Nama hanya boleh mengandung huruf',
+            'name.unique' => 'Nama supplier ini sudah ada',
+            'phone.required' => 'Telepon wajib diisi',
+            'phone.regex' => 'Format nomor telepon tidak valid',
+            'email.required' => 'Email wajib diisi',
+            'email.regex' => 'Format email tidak valid',
+            'address.required' => 'Alamat wajib diisi'
+        ]);
+
+        Courier::create([
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'phone' => $validated['phone'],
+            'email' => $validated['email'],
+            'address' => $validated['address']
+        ]);
+
+        return redirect()->route('courier.index')->with('success', 'Data kurir berhasil dibuat');
     }
 
     /**

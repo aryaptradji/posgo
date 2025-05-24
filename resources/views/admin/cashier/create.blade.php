@@ -48,7 +48,7 @@
 
                     if (this.name == false) {
                         this.nameError = 'Nama wajib diisi';
-                    } else if (!/^[a-zA-Z]+[a-zA-Z\s]*$/.test(this.name)) {
+                    } else if (!/^[a-zA-Z]+[a-zA-Z.\s]*$/.test(this.name)) {
                         this.nameError = 'Nama hanya boleh mengandung huruf'
                     }
                     if (this.name !== '') {

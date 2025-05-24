@@ -57,7 +57,7 @@ class CashierController extends Controller
                 'name' => [
                     'required',
                     'string',
-                    'regex:/^[a-zA-Z]+[a-zA-Z\s]*$/',
+                    'regex:/^[a-zA-Z]+[a-zA-Z.\s]*$/',
                     Rule::unique('users')->where(fn ($q) => $q->where('role', 'cashier')),
                     'max:50'
                 ],
