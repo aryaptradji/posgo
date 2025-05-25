@@ -102,7 +102,7 @@
                     <tbody>
                         @forelse ($couriers as $courier)
                             <tr class="border-b-2 border-b-tertiary-table-line">
-                                <td class="px-4 py-2" align="left">{{ $courier->name }}</td>
+                                <td class="px-4 py-2" align="center">{{ $courier->name }}</td>
                                 <td class="px-4 py-2" align="left">{{ $courier->phone }}</td>
                                 <td class="px-4 py-2" align="left">{{ $courier->email }}</td>
                                 <td class="px-4 py-2" align="left">{{ $courier->address }}</td>

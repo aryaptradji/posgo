@@ -111,24 +111,6 @@ class SupplierController extends Controller
      */
     public function update(Request $request, Supplier $supplier)
     {
-        // $validated = $request->validate([
-        //     'name' => 'required|string|unique:suppliers,name',
-        //     'phone' => 'required|string|regex:/^08[0-9]{8,13}$/|unique:suppliers,phone',
-        //     'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/|unique:suppliers,email',
-        //     'fax' => 'nullable|string|unique:suppliers,fax',
-        //     'address' => 'required|string'
-        // ],[
-        //     'name.required' => 'Nama wajib diisi',
-        //     'name.unique' => 'Nama supplier ini sudah ada',
-        //     'phone.required' => 'Telepon wajib diisi',
-        //     'phone.regex' => 'Format nomor telepon tidak valid',
-        //     'phone.unique' => 'Nomor telepon ini sudah ada',
-        //     'email.required' => 'Email wajib diisi',
-        //     'email.regex' => 'Format email tidak valid',
-        //     'email.unique' => 'Email ini sudah digunakan',
-        //     'fax.unique' => 'Nomor fax ini sudah digunakan',
-        //     'address.required' => 'Alamat wajib diisi'
-        // ]);
         $validated = $request->validate([
             'name' => [
                 'required',
