@@ -22,8 +22,7 @@ class CourierController extends Controller
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
                     ->orWhere('email', 'like', '%' . $request->search . '%')
-                    ->orWhere('phone', 'like', '%' . $request->search . '%')
-                    ->orWhere('address', 'like', '%' . $request->search . '%');
+                    ->orWhere('phone', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -58,8 +57,7 @@ class CourierController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|regex:/^[a-zA-Z]+[a-zA-Z.\s]*$/|unique:couriers,name',
             'phone' => 'required|string|regex:/^08[0-9]{8,13}$/',
-            'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
-            'address' => 'required|string'
+            'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
         ],[
             'name.required' => 'Nama wajib diisi',
             'name.regex' => 'Nama hanya boleh mengandung huruf',
@@ -68,15 +66,13 @@ class CourierController extends Controller
             'phone.regex' => 'Format nomor telepon tidak valid',
             'email.required' => 'Email wajib diisi',
             'email.regex' => 'Format email tidak valid',
-            'address.required' => 'Alamat wajib diisi'
         ]);
 
         Courier::create([
             'name' => $validated['name'],
             'slug' => Str::slug($validated['name']),
             'phone' => $validated['phone'],
-            'email' => $validated['email'],
-            'address' => $validated['address']
+            'email' => $validated['email']
         ]);
 
         return redirect()->route('courier.index')->with('success', 'Data kurir berhasil dibuat');
@@ -103,21 +99,6 @@ class CourierController extends Controller
      */
     public function update(Request $request, Courier $courier)
     {
-        // $validated = $request->validate([
-        //     'name' => 'required|string|regex:/^[a-zA-Z]+[a-zA-Z.\s]*$/|unique:couriers,name',
-        //     'phone' => 'required|string|regex:/^08[0-9]{8,13}$/',
-        //     'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
-        //     'address' => 'required|string'
-        // ],[
-        //     'name.required' => 'Nama wajib diisi',
-        //     'name.regex' => 'Nama hanya boleh mengandung huruf',
-        //     'name.unique' => 'Nama supplier ini sudah ada',
-        //     'phone.required' => 'Telepon wajib diisi',
-        //     'phone.regex' => 'Format nomor telepon tidak valid',
-        //     'email.required' => 'Email wajib diisi',
-        //     'email.regex' => 'Format email tidak valid',
-        //     'address.required' => 'Alamat wajib diisi'
-        // ]);
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -127,7 +108,6 @@ class CourierController extends Controller
             ],
             'phone' => 'required|string|regex:/^08[0-9]{8,13}$/',
             'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
-            'address' => 'required|string'
         ],[
             'name.required' => 'Nama wajib diisi',
             'name.regex' => 'Nama hanya boleh mengandung huruf',
@@ -136,13 +116,11 @@ class CourierController extends Controller
             'phone.regex' => 'Format nomor telepon tidak valid',
             'email.required' => 'Email wajib diisi',
             'email.regex' => 'Format email tidak valid',
-            'address.required' => 'Alamat wajib diisi'
         ]);
 
         $courier->name = $validated['name'];
         $courier->phone = $validated['phone'];
         $courier->email = $validated['email'];
-        $courier->address = $validated['address'];
 
         $courier->save();
 

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             TangerangSeeder::class,
             NeighborhoodSeeder::class,
             CashierSeeder::class,
+            CustomerSeeder::class,
             ProductSeeder::class,
             SupplierSeeder::class,
             CourierSeeder::class

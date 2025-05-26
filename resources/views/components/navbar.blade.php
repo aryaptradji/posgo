@@ -74,9 +74,9 @@
                 ],
                 [
                     'name' => 'Customer',
-                    'active' => request()->is('customer'),
+                    'active' => request()->is('admin/customer') || request()->is('admin/customer' . '*'),
                     'icon' => view('components.icons.customer')->render(),
-                    'route' => ''
+                    'route' => route('customer.index')
                 ],
                 [
                     'name' => 'Kurir',

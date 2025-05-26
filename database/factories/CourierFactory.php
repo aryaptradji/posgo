@@ -25,7 +25,6 @@ class CourierFactory extends Factory
             'slug' => Str::slug($name),
             'phone' => $this->faker->numerify('08##########'),
             'email' => $email,
-            'address' => $this->faker->address(),
         ];
 
     }

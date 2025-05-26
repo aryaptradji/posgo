@@ -26,12 +26,13 @@ class UserFactory extends Factory
     {
         $name = $this->faker->name();
         $email = Str::lower(str_replace(' ', '.', $name)) . '@' . fake()->freeEmailDomain();
-        $plain = 'kasir123';
+        $plain = '123';
 
         return [
             'created' => $this->faker->dateTimeBetween('-30 days', 'now'),
             'name' => $name,
             'slug' => Str::slug($name),
+            'role' => 'customer',
             'email' => $email,
             'password' => Hash::make($plain),
             'phone_number' => $this->faker->numerify('08##########'),
@@ -52,6 +53,7 @@ class UserFactory extends Factory
                 'role' => 'cashier',
                 'password' => Hash::make($plain),
                 'plaintext_password' => $plain,
+                'address_id' => null
             ];
         });
     }
@@ -60,6 +62,8 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => 'admin',
+            'password' => Hash::make('admin123'),
+            'address_id' => null
         ]);
     }
 }

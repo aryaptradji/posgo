@@ -10,7 +10,7 @@ class Courier extends Model
     /** @use HasFactory<\Database\Factories\CourierFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'phone', 'email', 'address'];
+    protected $fillable = ['name', 'slug', 'phone', 'email'];
 
     public function getRouteKeyName()
     {

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Admin\CashierController;
 use App\Http\Controllers\Admin\CourierController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SupplierController;
@@ -30,6 +31,8 @@ Route::resource('/admin/cashier', CashierController::class);
 Route::resource('/admin/supplier', SupplierController::class);
 
 Route::resource('/admin/courier', CourierController::class);
+
+Route::resource('/admin/customer', CustomerController::class);
 
 Route::get('/riwayat', function () {
     return view('riwayat');

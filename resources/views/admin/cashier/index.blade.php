@@ -73,11 +73,11 @@
                             <th class="px-4 py-3" align="center">Password</th>
                             <th class="px-4 py-3" align="center">No Handphone</th>
                             <th class="px-4 py-3" align="center">
-                                <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_at', 'desc' => request('desc') ? null : 1, 'page' => 1]) }}"
+                                <a href="{{ request()->fullUrlWithQuery(['sort' => 'created', 'desc' => request('desc') ? null : 1, 'page' => 1]) }}"
                                     class="flex items-center justify-center uppercase">
                                     Waktu Dibuat
                                     <x-icons.arrow-down
-                                        class="ml-2 text-tertiary-300 {{ request('sort') == 'created_at' && request('desc') ? 'rotate-180' : '' }}" />
+                                        class="ml-2 text-tertiary-300 {{ request('sort') == 'created' && request('desc') ? 'rotate-180' : '' }}" />
                                 </a>
                             </th>
                             <th class="px-4 py-3" align="center"></th>
