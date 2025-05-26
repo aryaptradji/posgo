@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center">
             <span>Customer</span>
             <div class="flex gap-6">
-                <a href="#"
+                <a href="{{ route('customer.print') }}" target="_blank"
                     class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
                     <x-icons.print />
                     Print
@@ -14,27 +14,9 @@
                     <x-icons.export />
                     Export
                 </a>
-                <a href="{{ route('customer.create') }}"
-                    class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-purple transition-all hover:scale-105 active:scale-90">
-                    <x-icons.plus />
-                    Buat
-                </a>
             </div>
         </div>
     </x-slot:header>
-
-    <!-- Toast Create Success -->
-    @if (session('success'))
-        <div class="fixed top-16 right-10 z-20 flex flex-col justify-end gap-4">
-            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success"
-                :duration="6000">
-                <x-slot:icon>
-                    <x-icons.toast-success />
-                </x-slot:icon>
-                {{ session('success') }}
-            </x-toast>
-        </div>
-    @endif
 
     <div class="w-full bg-tertiary rounded-2xl shadow-outer mt-12">
         <div class="flex flex-col justify-between">
@@ -78,7 +60,14 @@
                                 </a>
                             </th>
                             <th class="px-4 py-3" align="center">No Handphone</th>
-                            <th class="px-4 py-3 w-44" align="center">Alamat</th>
+                            <th class="px-4 py-3 w-44" align="center">
+                                <a href="{{ request()->fullUrlWithQuery(['sort' => 'address', 'desc' => request('desc') ? null : 1, 'page' => 1]) }}"
+                                    class="flex items-center justify-center uppercase">
+                                    Alamat
+                                    <x-icons.arrow-down
+                                        class="ml-2 text-tertiary-300 {{ request('sort') == 'address' && request('desc') ? 'rotate-180' : '' }}" />
+                                </a>
+                            </th>
                             <th class="px-4 py-3" align="center">
                                 <a href="{{ request()->fullUrlWithQuery(['sort' => 'created', 'desc' => request('desc') ? null : 1, 'page' => 1]) }}"
                                     class="flex items-center justify-center uppercase">
@@ -115,30 +104,23 @@
                                 <td class="px-4 py-2" align="left">{{ $customer->phone_number }}</td>
                                 <td class="px-4 py-2" align="left">
                                     {{ $customer->address->street }},
-                                    RT {{ $customer->address->neighborhood->rt }}/RW {{ $customer->address->neighborhood->rw }},
+                                    RT {{ $customer->address->neighborhood->rt }}/RW
+                                    {{ $customer->address->neighborhood->rw }},
                                     Kec. {{ $customer->address->neighborhood->subDistrict->district->name }},
                                     Kel. {{ $customer->address->neighborhood->subDistrict->name }},
+                                    {{ $customer->address->neighborhood->subDistrict->district->city->name }}
+                                    {{ $customer->address->neighborhood->postal_code }}
                                 </td>
                                 <td class="px-4 py-2" align="left">
                                     {{ $customer->created->translatedFormat('d M Y H:i:s') }}</td>
-                                <td class="px-4 py-2" align="center" x-data="{ isShow: false, showModalView: false, showModalDelete: false }">
-                                    <div class="flex justify-center gap-2">
-                                        <button type="button" @click="showModalView = true"
-                                            class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
-                                            <x-icons.detail-icon />
-                                        </button>
-                                        <a href="{{ route('customer.edit', $customer) }}"
-                                            class="text-primary transition-transform hover:scale-125 active:scale-90">
-                                            <x-icons.edit-icon />
-                                        </a>
-                                        <button type="button" @click="showModalDelete = true"
-                                            class="text-danger transition-transform hover:scale-125 active:scale-90">
-                                            @include('components.icons.delete-icon')
-                                        </button>
-                                    </div>
+                                <td class="px-4 py-2" align="center" x-data="{ showModal: false }">
+                                    <button type="button" @click="showModal = true"
+                                        class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
+                                        <x-icons.detail-icon />
+                                    </button>
 
                                     <!-- Modal View -->
-                                    <x-modal show="showModalView">
+                                    <x-modal show="showModal">
                                         <x-slot:title>
                                             <div class="w-full flex justify-between">
                                                 <div class="flex">
@@ -147,14 +129,13 @@
                                                 </div>
                                                 <button
                                                     class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95"
-                                                    type="button" @click="showModalView = false">
+                                                    type="button" @click="showModal = false">
                                                     <x-icons.close />
                                                 </button>
                                             </div>
                                         </x-slot:title>
                                         <div class="px-10 mb-2">
-                                            <div
-                                                class="flex items-center justify-center mb-6 h-32 p-2">
+                                            <div class="flex items-center justify-center mb-6 h-32 p-2">
                                                 @if ($customer->photo_url)
                                                     <img src="{{ $customer->photo_url }}"
                                                         class="rounded-full h-32 w-32 aspect-square object-cover">
@@ -175,8 +156,6 @@
                                                         <span class="font-bold">Email</span>
                                                         <span>{{ $customer->email }}</span>
                                                     </div>
-                                                </div>
-                                                <div class="flex flex-col gap-4 col-span-1 justify-self-end">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">No Handphone</span>
                                                         <span>{{ $customer->phone_number }}</span>
@@ -184,6 +163,38 @@
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Waktu Dibuat</span>
                                                         <span>{{ $customer->created->translatedFormat('d M Y H:i:s') }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Alamat</span>
+                                                        <span>{{ $customer->address->street }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex flex-col gap-4 col-span-1 justify-self-end">
+                                                    <div class="flex gap-6">
+                                                        <div class="flex flex-col gap-1">
+                                                            <span class="font-bold">RT</span>
+                                                            <span>{{ $customer->address->neighborhood->rt }}</span>
+                                                        </div>
+                                                        <div class="flex flex-col gap-1">
+                                                            <span class="font-bold">RW</span>
+                                                            <span>{{ $customer->address->neighborhood->rw }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Kecamatan</span>
+                                                        <span>{{ $customer->address->neighborhood->subDistrict->name }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Kelurahan</span>
+                                                        <span>{{ $customer->address->neighborhood->subDistrict->district->name }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Kota/Kabupaten</span>
+                                                        <span>{{ $customer->address->neighborhood->subDistrict->district->city->name }}</span>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <span class="font-bold">Kode Pos</span>
+                                                        <span>{{ $customer->address->neighborhood->postal_code }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -193,7 +204,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Akun kasir tidak
+                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Akun customer tidak
                                     ditemukan</td>
                             </tr>
                         @endforelse

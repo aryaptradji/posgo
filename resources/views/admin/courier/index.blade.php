@@ -59,7 +59,7 @@
                 <table class="w-full min-w-max text-sm text-left">
                     <thead class="text-xs uppercase bg-white">
                         <tr>
-                            <th class="px-4 py-3 w-60" align="center">
+                            <th class="px-4 py-3" align="center">
                                 <a href="{{ request()->fullUrlWithQuery([
                                     'sort' => 'name',
                                     'desc' => request('desc') ? null : 1,
@@ -91,8 +91,8 @@
                         @forelse ($couriers as $courier)
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="center">{{ $courier->name }}</td>
-                                <td class="px-4 py-2" align="left">{{ $courier->phone }}</td>
-                                <td class="px-4 py-2" align="left">{{ $courier->email }}</td>
+                                <td class="px-4 py-2" align="center">{{ $courier->phone }}</td>
+                                <td class="px-4 py-2" align="center">{{ $courier->email }}</td>
                                 <td class="px-4 py-2" align="center" x-data="{ showModalView: false, showModalDelete: false }">
                                     <div class="flex justify-center gap-2">
                                         <button type="button" @click="showModalView = true"

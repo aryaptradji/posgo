@@ -32,7 +32,9 @@ Route::resource('/admin/supplier', SupplierController::class);
 
 Route::resource('/admin/courier', CourierController::class);
 
+Route::get('/admin/customer/print', [CustomerController::class, 'print'])->name('customer.print');
 Route::resource('/admin/customer', CustomerController::class);
+
 
 Route::get('/riwayat', function () {
     return view('riwayat');
