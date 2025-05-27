@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomerController extends Controller
 {
@@ -47,7 +48,7 @@ class CustomerController extends Controller
         return view('admin.customer.index', compact('customers'));
     }
 
-    public function print(Request $request)
+    public function print()
     {
         $customers = User::with(['address.neighborhood.subDistrict.district.city'])
             ->where('role', 'customer')
