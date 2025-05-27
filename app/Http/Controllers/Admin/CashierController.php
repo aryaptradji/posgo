@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Exports\CashierExport;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
 class CashierController extends Controller
@@ -203,5 +205,17 @@ class CashierController extends Controller
         $cashier->delete();
 
         return redirect()->route('cashier.index')->with('success', 'Akun kasir berhasil dihapus');
+    }
+
+    public function print()
+    {
+        $cashiers = User::where('role', 'cashier')->orderBy('created', 'desc')->get();
+
+        return view('admin.cashier.print', compact('cashiers'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new CashierExport(), 'daftar_kasir.xlsx');
     }
 }
