@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Models\Supplier;
 
 Route::get('/login', function () {
     return view('login');
@@ -28,6 +29,8 @@ Route::resource('/admin/expense', ExpenseController::class);
 
 Route::resource('/admin/cashier', CashierController::class);
 
+Route::get('/admin/supplier/print', [SupplierController::class, 'print'])->name('supplier.print');
+Route::get('/admin/supplier/export', [SupplierController::class, 'export'])->name('supplier.export');
 Route::resource('/admin/supplier', SupplierController::class);
 
 Route::get('/admin/courier/print', [CourierController::class, 'print'])->name('courier.print');

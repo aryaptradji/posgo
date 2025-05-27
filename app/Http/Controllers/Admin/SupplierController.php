@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Supplier;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Exports\SupplierExport;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SupplierController extends Controller
 {
@@ -167,5 +169,16 @@ class SupplierController extends Controller
         $supplier->delete();
 
         return redirect()->route('supplier.index')->with('success', 'Data supplier berhasil dihapus');
+    }
+
+    public function print()
+    {
+        $suppliers = Supplier::latest()->get();
+        return view('admin.supplier.print', compact('suppliers'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new SupplierExport(), 'daftar_supplier.xlsx');
     }
 }

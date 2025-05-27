@@ -4,12 +4,12 @@
         <div class="flex justify-between items-center">
             <span>Supplier</span>
             <div class="flex gap-6">
-                <a href="#"
+                <a href="{{ route('supplier.print') }}"
                     class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
                     <x-icons.print />
                     Print
                 </a>
-                <a href="#"
+                <a href="{{ route('supplier.export') }}"
                     class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-primary transition-all hover:scale-105 active:scale-90">
                     <x-icons.export />
                     Export
