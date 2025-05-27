@@ -30,6 +30,8 @@ Route::resource('/admin/cashier', CashierController::class);
 
 Route::resource('/admin/supplier', SupplierController::class);
 
+Route::get('/admin/courier/print', [CourierController::class, 'print'])->name('courier.print');
+Route::get('/admin/courier/export', [CourierController::class, 'export'])->name('courier.export');
 Route::resource('/admin/courier', CourierController::class);
 
 Route::get('/admin/customer/print', [CustomerController::class, 'print'])->name('customer.print');
