@@ -33,7 +33,8 @@ Route::resource('/admin/supplier', SupplierController::class);
 Route::resource('/admin/courier', CourierController::class);
 
 Route::get('/admin/customer/print', [CustomerController::class, 'print'])->name('customer.print');
-Route::resource('/admin/customer', CustomerController::class);
+Route::get('/admin/customer/export', [CustomerController::class, 'export'])->name('customer.export');
+Route::get('/admin/customer', [CustomerController::class, 'index'])->name('customer.index');
 
 
 Route::get('/riwayat', function () {
