@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Models\Expense;
+use App\Models\Product;
 use App\Models\Supplier;
 
 Route::get('/login', function () {
@@ -24,6 +25,8 @@ Route::get('/admin/dashboard', function () {
     return view('admin.dashboard.index');
 })->name('dashboard.index');
 
+Route::get('/admin/product/print', [ProductController::class, 'print'])->name('product.print');
+Route::get('/admin/product/export', [ProductController::class, 'export'])->name('product.export');
 Route::resource('/admin/product', ProductController::class);
 
 Route::get('/admin/expense/print', [ExpenseController::class, 'print'])->name('expense.print');

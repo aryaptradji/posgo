@@ -20,7 +20,7 @@ class ExpenseExport implements FromCollection, WithHeadings, WithStyles
                 'Waktu' => $expense->date->translatedFormat('d M Y H:i:s'),
                 'Sumber' => $expense->source,
                 'Kategori' => $expense->category,
-                'Total' => $expense->total
+                'Total' => (string) $expense->total
             ];
         });
     }

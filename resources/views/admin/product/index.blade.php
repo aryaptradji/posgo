@@ -3,11 +3,21 @@
     <x-slot:header>
         <div class="flex justify-between items-center">
             <span>Produk</span>
-            <a href="{{ route('product.create') }}"
-                class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-purple transition-all hover:scale-105 active:scale-90">
-                <x-icons.plus />
-                Buat
-            </a>
+            <div class="flex gap-6">
+                <a href="{{ route('product.print') }}" class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
+                    <x-icons.print/>
+                    Print
+                </a>
+                <a href="{{ route('product.export') }}" class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-primary transition-all hover:scale-105 active:scale-90">
+                    <x-icons.export/>
+                    Export
+                </a>
+                <a href="{{ route('product.create') }}"
+                    class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-purple transition-all hover:scale-105 active:scale-90">
+                    <x-icons.plus />
+                    Buat
+                </a>
+            </div>
         </div>
     </x-slot:header>
 
@@ -57,7 +67,7 @@
                     <thead class="text-xs uppercase bg-white">
                         <tr>
                             <th class="px-4 py-3 w-44" align="center">Gambar</th>
-                            <th class="px-4 py-3 w-60" align="center">Nama Produk</th>
+                            <th class="px-4 py-3 w-60" align="center">Nama</th>
                             <th class="px-4 py-3" align="center">
                                 <a href="{{ request()->fullUrlWithQuery(['sort' => 'stock', 'desc' => request('desc') ? null : 1, 'page' => 1]) }}"
                                     class="flex items-center justify-center uppercase">

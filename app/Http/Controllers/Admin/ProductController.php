@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -172,5 +174,17 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('product.index')->with('success', 'Produk berhasil dihapus');
+    }
+
+    public function print()
+    {
+        $products = Product::latest()->get();
+
+        return view('admin.product.print', compact('products'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new ProductExport(), 'daftar_produk.xlsx');
     }
 }
