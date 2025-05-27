@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Expense;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Exports\ExpenseExport;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExpenseController extends Controller
 {
@@ -139,5 +141,17 @@ class ExpenseController extends Controller
         $expense->delete();
 
         return redirect()->route('expense.index')->with('success', 'Data pengeluaran berhasil dihapus.');
+    }
+
+    public function print()
+    {
+        $expenses = Expense::latest('date')->get();
+
+        return view('admin.expense.print', compact('expenses'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new ExpenseExport(), 'daftar_pengeluaran.xlsx');
     }
 }
