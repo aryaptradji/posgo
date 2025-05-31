@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             CustomerSeeder::class,
             ProductSeeder::class,
             SupplierSeeder::class,
-            CourierSeeder::class
+            CourierSeeder::class,
+            OrderSeeder::class
         ]);
         Expense::factory(10)->create();
     }

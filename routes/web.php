@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\CashierController;
 use App\Http\Controllers\Admin\CourierController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\ExpenseController;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Models\Expense;
 use App\Models\Product;
@@ -20,14 +21,19 @@ Route::get('/register', function () {
     return view('register');
 });
 
+Route::get('/home', fn () => view('customer.home.index'))->name('customer.home');
+
+Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product.index');
+Route::post('/product', [CustomerProductController::class, 'checkout'])->name('customer.product.checkout');
+
 // Route Admin
 Route::get('/admin/dashboard', function () {
     return view('admin.dashboard.index');
 })->name('dashboard.index');
 
-Route::get('/admin/product/print', [ProductController::class, 'print'])->name('product.print');
-Route::get('/admin/product/export', [ProductController::class, 'export'])->name('product.export');
-Route::resource('/admin/product', ProductController::class);
+Route::get('/admin/product/print', [AdminProductController::class, 'print'])->name('product.print');
+Route::get('/admin/product/export', [AdminProductController::class, 'export'])->name('product.export');
+Route::resource('/admin/product', AdminProductController::class);
 
 Route::get('/admin/expense/print', [ExpenseController::class, 'print'])->name('expense.print');
 Route::get('/admin/expense/export', [ExpenseController::class, 'export'])->name('expense.export');

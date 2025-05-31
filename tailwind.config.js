@@ -21,6 +21,7 @@ export default {
                 "200": "#C5C5C5",
                 "300": "#B3B3B3",
                 "400": "#C7C7C7",
+                "500": "#BFBFBF",
                 'title': "#8B8B8B",
                 'title-line': "#E4E4E4",
                 'table-line': "#EEEEEE"

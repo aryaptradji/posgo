@@ -47,7 +47,7 @@
                     <x-textfield type="password" name="password" id="password" placeholder="Masukkan password . . ."
                         :required="true" classCont="w-4/5 mt-6">Password</x-textfield>
 
-                    <x-button-lg class="w-4/5 mt-16" type="submit">masuk</x-button-lg>
+                    <x-button-lg class="bg-gradient-to-r from-primary to-secondary-purple" classCont="w-4/5 mt-16" type="submit">masuk</x-button-lg>
                 </form>
             </div>
         </section>

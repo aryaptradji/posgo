@@ -91,7 +91,7 @@
                             placeholder="Masukkan password . . ." :required="true"
                             classCont="w-4/5 mb-6">Password</x-textfield>
 
-                        <x-button-lg class="w-4/5 mt-16" type="submit">daftar</x-button-lg>
+                        <x-button-lg class="bg-gradient-to-r from-primary to-secondary-purple" classCont="w-4/5 mt-16" type="submit">daftar</x-button-lg>
                     </div>
                 </div>
             </form>
