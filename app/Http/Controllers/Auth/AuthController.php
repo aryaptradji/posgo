@@ -23,7 +23,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'customer',  // Default role
+            'role' => 'customer', // Default role
         ]);
 
         Auth::login($user);
@@ -34,22 +34,52 @@ class AuthController extends Controller
     // Login pengguna
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ]);
+        $request->validate(
+            [
+                'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+                'password' => 'required|min:6',
+            ],
+            [
+                'email.required' => 'Email wajib diisi',
+                'email.regex' => 'Format email tidak valid',
+                'password.required' => 'Password wajib diisi',
+            ],
+        );
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            return redirect()->route('dashboard');
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()
+                ->withErrors(['email' => 'Email belum terdaftar'])
+                ->withInput();
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials']);
+        if (!Hash::check($request->password, $user->password)) {
+            return back()
+                ->withErrors(['password' => 'Password salah'])
+                ->withInput();
+        }
+
+        Auth::login($user);
+
+        session()->flash('success', 'Selamat datang, ' . $user->name . '!');
+
+        return match ($user->role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'cashier' => redirect()->route('kasir.dashboard'),
+            'customer' => redirect()->route('customer.home'),
+            default => abort(403, 'Role tidak dikenali.'),
+        };
     }
 
     // Logout pengguna
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::logout();
-        return redirect()->route('login');
+        Auth::logout(); // keluarin user dari session
+
+        $request->session()->invalidate(); // invalidate session biar aman
+        $request->session()->regenerateToken(); // regenerate CSRF token
+
+        return redirect()->route('login')->with('success', 'Kamu berhasil logout');
     }
 }

@@ -1,31 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <title>Login</title>
 </head>
 
 <body>
+    {{-- Toast Error --}}
+    @if ($errors->any())
+        <div class="fixed top-16 right-10 z-50 flex flex-col items-end gap-4">
+            @foreach ($errors->all() as $error)
+                <x-toast id="toast-failed{{ $loop->index }}" iconClass="text-danger bg-danger/25" slotClass="text-danger"
+                    :duration="6000" :delay="$loop->index * 500">
+                    <x-slot:icon>
+                        <x-icons.toast-failed />
+                    </x-slot:icon>
+                    {{ $error }}
+                </x-toast>
+            @endforeach
+        </div>
+    @endif
+
+    {{-- Toast Logout Success --}}
+    @if (session('success'))
+        <div class="fixed top-16 right-10 z-50 flex flex-col justify-end gap-4">
+            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success"
+                :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-success />
+                </x-slot:icon>
+                {{ session('success') }}
+            </x-toast>
+        </div>
+    @endif
+
     <div class="h-screen bg-tertiary px-8 py-8 flex">
         <section class="ps-24 w-3/5">
-            <!-- <div class="bg-blue-100 ps-16"> -->
             <img src="{{ asset('img/posgo-logo.svg') }}" alt="Logo" class="w-32 pt-6 pb-16">
             <div class="ps-2" x-data="{
-                email: '',
+                email: @js(old('email')),
+                password: @js(old('password')),
                 emailError: '',
+                passwordError: '',
+                emailServerError: '{{ $errors->has('email') }}',
+                passwordServerError: '{{ $errors->has('password') }}',
                 validateEmail() {
-                    this.emailError = ''; // Reset error message
-                    const emailPattern = /^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                    let result = emailPattern.test(this.email);
+                    this.emailError = '';
 
-                    if (!result) {
+                    if (this.email == false) {
+                        this.emailError = 'Email wajib diisi';
+                    } else if (!/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.email)) {
                         this.emailError = 'Format email tidak valid';
                     }
-                    print
+                    if (this.email !== '') {
+                        this.emailServerError = false;
+                    }
+                },
+                validatePassword() {
+                    this.passwordError = '';
+
+                    if (this.password == false) {
+                        this.passwordError = 'Password wajib diisi';
+                    }
+                    if (this.password !== '') {
+                        this.passwordServerError = false;
+                    }
                 }
             }">
                 <p class="text-3xl font-bold pb-2">Masuk yuk</p>
@@ -35,19 +85,29 @@
                     Daftar
                 </a>
 
-                <form action="" method="POST">
+                <form action="{{ route('auth.login') }}" method="POST">
                     @csrf
-                    <x-textfield type="email" name="email" id="email" placeholder="Masukkan email . . ."
-                        :required="true" classCont="w-4/5 mt-10 mb-2" x-model="email" x-on:input="validateEmail()" x-bind:class="emailError ? 'focus:ring focus:ring-danger' : 'focus:ring focus:ring-primary'">Email</x-textfield>
-                    <span x-show="emailError" x-if="emailError" x-transition:enter="transition-all ease duration-1000" x-transition:enter-start="opacity-0 -translate-y-6"
-                        x-transition:enter-end="opacity-100 translate-y-none" x-transition:leave="transition-all ease duration-1000"
-                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 -translate-y-6"
-                        class="text-danger text-sm font-semibold ml-2" x-text="emailError">
-                    </span>
-                    <x-textfield type="password" name="password" id="password" placeholder="Masukkan password . . ."
-                        :required="true" classCont="w-4/5 mt-6">Password</x-textfield>
+                    {{-- Email --}}
+                    <x-textfield x-model="email" x-on:input="validateEmail()" type="email" name="email"
+                        placeholder="Masukkan email . . ." classCont="w-4/5 mt-10 mb-2" class="focus:ring"
+                        x-bind:class="emailError || emailServerError ? 'ring ring-danger focus:ring-danger' : 'focus:ring-primary'">Email</x-textfield>
+                    <x-inline-error-message x-show="emailError" x-text="emailError"></x-inline-error-message>
+                    @error('email')
+                        <x-inline-error-message x-show="emailServerError">{{ $message }}</x-inline-error-message>
+                    @enderror
 
-                    <x-button-lg class="bg-gradient-to-r from-primary to-secondary-purple" classCont="w-4/5 mt-16" type="submit">masuk</x-button-lg>
+                    {{-- Password --}}
+                    <x-textfield x-model="password" x-on:input="validatePassword()" type="password" name="password"
+                        placeholder="Masukkan password . . ." classCont="w-4/5 mt-6 mb-2" class="focus:ring"
+                        x-bind:class="passwordError || passwordServerError ? 'ring ring-danger focus:ring-danger' :
+                            'focus:ring-primary'">Password</x-textfield>
+                    <x-inline-error-message x-show="passwordError" x-text="passwordError"></x-inline-error-message>
+                    @error('password')
+                        <x-inline-error-message x-show="passwordServerError">{{ $message }}</x-inline-error-message>
+                    @enderror
+
+                    <x-button-lg class="bg-gradient-to-r from-primary to-secondary-purple" contClass="w-4/5 mt-16"
+                        type="submit">Masuk</x-button-lg>
                 </form>
             </div>
         </section>
@@ -77,7 +137,8 @@
                 <!-- Item 3 -->
                 <div class="hidden duration-700 ease-in-out bg-primary" data-carousel-item>
                     <img src="{{ asset('img/Pengelolaan keuangan lebih baik.svg') }}"
-                        class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2" alt="Pengelolaan keuangan lebih baik.svg">
+                        class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
+                        alt="Pengelolaan keuangan lebih baik.svg">
                     <p
                         class="absolute w-full text-center top-3/4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
                         Pengelolaan keuangan lebih baik

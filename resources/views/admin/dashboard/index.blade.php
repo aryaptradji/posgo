@@ -2,6 +2,18 @@
     <x-slot:title>Dashboard</x-slot:title>
     <x-slot:header>Dashboard</x-slot:header>
 
+    <!-- Toast Login Success -->
+    @if (session('success'))
+        <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
+            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success" :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-success />
+                </x-slot:icon>
+                {{ session('success') }}
+            </x-toast>
+        </div>
+    @endif
+
     <div class="flex items-end justify-center gap-14 h-44 pb-8 px-8 mb-6 rounded-2xl shadow-outer bg-tertiary">
         <x-textfield-outline class="w-full" type="date" id="dari_tanggal" name="dari_tanggal">Dari
             Tanggal</x-textfield-outline>
