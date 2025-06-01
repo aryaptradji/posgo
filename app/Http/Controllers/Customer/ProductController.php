@@ -53,7 +53,7 @@ class ProductController extends Controller
         }
 
         if (empty($items)) {
-            return redirect()->back()->with('error', 'Produk tidak valid.');
+            return redirect()->back()->with('error', 'Produk tidak valid');
         }
 
         // $latestId = Order::max('id') + 1;

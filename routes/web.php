@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CourierController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
@@ -57,6 +58,8 @@ Route::get('/admin/dashboard', function () {
 Route::get('/admin/product/print', [AdminProductController::class, 'print'])->name('product.print');
 Route::get('/admin/product/export', [AdminProductController::class, 'export'])->name('product.export');
 Route::resource('/admin/product', AdminProductController::class);
+
+Route::resource('/admin/order', OrderController::class);
 
 Route::get('/admin/expense/print', [ExpenseController::class, 'print'])->name('expense.print');
 Route::get('/admin/expense/export', [ExpenseController::class, 'export'])->name('expense.export');

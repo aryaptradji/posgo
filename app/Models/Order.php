@@ -19,4 +19,8 @@ class Order extends Model
     public function items() {
         return $this->hasMany(OrderItem::class);
     }
+
+    protected $casts = [
+        'time' => 'datetime'
+    ];
 }

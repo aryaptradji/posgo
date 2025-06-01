@@ -40,7 +40,7 @@
                             {{ $initials }}
                         </div>
                     @endif
-                    <div class="flex flex-col text-sm justify-between">
+                    <div class="flex flex-col text-sm justify-between items-start">
                         <span class="font-semibold max-w-44">{{ $user->name }}</span>
                         <span
                             class="px-2 rounded-full capitalize border-2 w-fit text-xs {{ $class }}">{{ $user->role }}</span>
@@ -81,9 +81,9 @@
             <x-navlink-toggle :focusNo="3" :menus="[
                 [
                     'name' => 'Riwayat',
-                    'active' => request()->is('riwayat'),
+                    'active' => request()->is('admin/order') || request()->is('admin/order' . '*'),
                     'icon' => view('components.icons.riwayat')->render(),
-                    'route' => '',
+                    'route' => route('order.index'),
                 ],
                 [
                     'name' => 'Retur',

@@ -1,6 +1,18 @@
 <x-layout-main>
     <x-slot:title>Home</x-slot:title>
 
+    <!-- Toast Create Success -->
+    @if (session('success'))
+        <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
+            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success" :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-success />
+                </x-slot:icon>
+                {{ session('success') }}
+            </x-toast>
+        </div>
+    @endif
+
     <div class="flex px-14 justify-end relative w-full" x-data="{
         active: 0,
         slides: [{
@@ -51,7 +63,7 @@
                         <p class="font-medium w-96 mt-4" x-text="slide.subTitle"></p>
                         <x-button-sm type="button"
                             class="w-fit px-8 py-3 mt-8 text-white bg-gradient-to-r from-primary to-secondary-purple">
-                            Pesan
+                            <a href="{{ route('customer.product.index') }}">Pesan</a>
                         </x-button-sm>
                     </div>
                     <img :src="slide.image" class="relative right-16 -top-8" width="700" />
