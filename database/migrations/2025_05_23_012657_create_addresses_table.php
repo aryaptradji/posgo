@@ -13,8 +13,7 @@ return new class extends Migration {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('neighborhood_id')->constrained('neighborhoods')->onDelete('cascade');
-            $table->string('street'); // e.g. "Jl. Melati No. 27A"
-            $table->string('notes')->nullable(); // opsional: patokan, catatan kurir
+            $table->string('street');
             $table->timestamps();
         });
     }

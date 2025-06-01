@@ -12,7 +12,6 @@
             open: false,
             selected: '{{ $value }}',
             items: @js($items),
-            isFocus: false
         }"
         class="relative">
         <!-- Button to toggle dropdown -->

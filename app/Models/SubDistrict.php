@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubDistrict extends Model
 {
-    protected $fillable = ['name', 'district_id'];
+    protected $fillable = ['name', 'slug', 'district_id'];
 
     public function district()
     {

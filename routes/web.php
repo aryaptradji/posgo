@@ -3,6 +3,7 @@
 use App\Models\Expense;
 use App\Models\Product;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\UserController;
@@ -10,24 +11,36 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\CashierController;
 use App\Http\Controllers\Admin\CourierController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 
+// Auth
+Route::get('/', function () {
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    return match (Auth::user()->role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'cashier' => redirect()->route('kasir.dashboard'),
+        'customer' => redirect()->route('customer.home'),
+        default => abort(403, 'Role tidak dikenali.'),
+    };
+});
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])
     ->middleware('throttle:5,1') // max 5 kali per menit
     ->name('auth.login');
+Route::get('/register', [RegisterController::class, 'index'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('auth.logout');
 
-Route::get('/register', function () {
-    return view('register');
-});
-
-// Route Customer
+// Customer
 Route::middleware(['auth', 'role:customer'])->group(function () {
     // Home
     Route::get('/home', fn() => view('customer.home.index'))->name('customer.home');
@@ -36,7 +49,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::post('/product', [CustomerProductController::class, 'checkout'])->name('customer.product.checkout');
 });
 
-// Route Admin
+// Admin
 Route::get('/admin/dashboard', function () {
     return view('admin.dashboard.index');
 })->name('admin.dashboard');
@@ -85,7 +98,7 @@ Route::get('/kasir', function () {
     return view('kasir');
 });
 
-// Route Kasir
+// Kasir
 Route::get('/dashboard', function () {
     return view('kasir.dashboard');
 });

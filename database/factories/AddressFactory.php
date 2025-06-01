@@ -19,7 +19,6 @@ class AddressFactory extends Factory
     {
         return [
             'street' => $this->faker->streetAddress(),
-            'notes' => $this->faker->optional()->sentence(),
             'neighborhood_id' => Neighborhood::inRandomOrder()->first()?->id,
         ];
     }

@@ -16,7 +16,7 @@
     <title>Login</title>
 </head>
 
-<body>
+<body class="bg-tertiary">
     {{-- Toast Error --}}
     @if ($errors->any())
         <div class="fixed top-16 right-10 z-50 flex flex-col items-end gap-4">
@@ -80,7 +80,7 @@
             }">
                 <p class="text-3xl font-bold pb-2">Masuk yuk</p>
                 <span class="font-medium">Belum punya akun?</span>
-                <a href="/register"
+                <a href="{{ route('register') }}"
                     class="inline-block font-semibold bg-gradient-to-r from-primary to-secondary-purple bg-clip-text text-transparent transition-all hover:scale-90 active:scale-50">
                     Daftar
                 </a>
@@ -97,10 +97,11 @@
                     @enderror
 
                     {{-- Password --}}
-                    <x-textfield x-model="password" x-on:input="validatePassword()" type="password" name="password"
+                    <x-textfield-password x-model="password" x-on:input="validatePassword()" name="password"
                         placeholder="Masukkan password . . ." classCont="w-4/5 mt-6 mb-2" class="focus:ring"
                         x-bind:class="passwordError || passwordServerError ? 'ring ring-danger focus:ring-danger' :
-                            'focus:ring-primary'">Password</x-textfield>
+                            'focus:ring-primary'">Password</x-textfield-password>
+
                     <x-inline-error-message x-show="passwordError" x-text="passwordError"></x-inline-error-message>
                     @error('password')
                         <x-inline-error-message x-show="passwordServerError">{{ $message }}</x-inline-error-message>
