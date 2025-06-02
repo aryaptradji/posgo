@@ -8,7 +8,7 @@
                     <x-icons.print/>
                     Print
                 </a>
-                <a href="{{ route('product.export') }}" class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-primary transition-all hover:scale-105 active:scale-90">
+                <a href="{{ route('product.export') }}" class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-success transition-all hover:scale-105 active:scale-90">
                     <x-icons.export/>
                     Export
                 </a>
@@ -185,7 +185,7 @@
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
                                             <h2 class="text-lg font-bold">Hapus Produk</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 ml-6 mt-4 text-start">
+                                        <p class="mb-6 px-8 mt-4 text-start">
                                             Yakin ingin menghapus
                                             <span class="font-bold text-danger">{{ $product->name }}</span>
                                             ?

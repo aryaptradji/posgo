@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Order;
+use App\Exports\OrderExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -32,7 +34,12 @@ class OrderController extends Controller
         }
 
         // Sorting
-        if ($request->filled('sort')) {
+        if ($request->filled('sort') && $request->sort === 'name') {
+            $query
+                ->join('users', 'users.id', '=', 'orders.user_id')
+                ->orderBy('users.name', $request->boolean('desc') ? 'desc' : 'asc')
+                ->select('orders.*');
+        } else if ($request->filled('sort')) {
             $query->orderBy($request->sort, $request->boolean('desc') ? 'desc' : 'asc');
         } else {
             $query->latest('time');
@@ -43,6 +50,20 @@ class OrderController extends Controller
         $orders = $query->paginate($perPage)->withQueryString();
 
         return view('admin.order.index', compact('orders'));
+    }
+
+    public function print()
+    {
+        $orders = Order::with(['user', 'items'])
+            ->orderBy('time', 'desc')
+            ->get();
+
+        return view('admin.order.print', compact('orders'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new OrderExport(), 'daftar_pesanan.xlsx');
     }
 
     /**

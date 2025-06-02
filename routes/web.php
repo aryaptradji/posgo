@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
+use App\Models\Order;
 
 // Auth
 Route::get('/', function () {
@@ -59,6 +60,8 @@ Route::get('/admin/product/print', [AdminProductController::class, 'print'])->na
 Route::get('/admin/product/export', [AdminProductController::class, 'export'])->name('product.export');
 Route::resource('/admin/product', AdminProductController::class);
 
+Route::get('/admin/order/print', [OrderController::class, 'print'])->name('order.print');
+Route::get('/admin/order/export', [OrderController::class, 'export'])->name('order.export');
 Route::resource('/admin/order', OrderController::class);
 
 Route::get('/admin/expense/print', [ExpenseController::class, 'print'])->name('expense.print');

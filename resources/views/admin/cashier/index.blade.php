@@ -10,7 +10,7 @@
                     Print
                 </a>
                 <a href="{{ route('cashier.export') }}"
-                    class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-primary transition-all hover:scale-105 active:scale-90">
+                    class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-success transition-all hover:scale-105 active:scale-90">
                     <x-icons.export />
                     Export
                 </a>

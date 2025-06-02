@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Exports\CustomerExport;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 

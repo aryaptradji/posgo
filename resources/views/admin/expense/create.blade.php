@@ -48,7 +48,7 @@
         </div>
         <div class="col-span-1 flex flex-col gap-4">
             {{-- Kategori --}}
-            <x-dropdown class="mb-2" name="category" :items="['Operasional', 'Luar operasional']" :value="old('category', 'Pilih Salah Satu')">Kategori</x-dropdown>
+            <x-dropdown class="mb-2" name="category" :items="['Operasional', 'Luar Operasional']" :value="old('category', 'Pilih Salah Satu')">Kategori</x-dropdown>
             @error('category')
                 <x-inline-error-message class="mb-2 -mt-2" x-show="categoryServerError">{{ $message }}</x-inline-error-message>
             @enderror

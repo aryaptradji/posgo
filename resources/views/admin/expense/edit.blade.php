@@ -3,7 +3,7 @@
     <x-slot:header>
         <div class="flex mb-2 items-center gap-2 text-sm text-tertiary-title">
             <a href="{{ route('expense.index') }}"
-                class="font-semibold transition-all duration-300 hover:text-secondary-purple hover:scale-110 active:scale-90">Pengeluaran</a>
+                class="font-semibold transition-all duration-300 hover:text-primary hover:scale-110 active:scale-90">Pengeluaran</a>
             <x-icons.arrow-down class="mb-0.5 -rotate-90 text-tertiary-300" />
             <span class="font-semibold">Ubah</span>
         </div>
@@ -49,7 +49,7 @@
         </div>
         <div class="col-span-1 flex flex-col gap-4">
             {{-- Kategori --}}
-            <x-dropdown class="mb-2" name="category" :items="['operasional', 'luar operasional']" :value="old('category', $expense->category)">Kategori</x-dropdown>
+            <x-dropdown class="mb-2" name="category" :items="['Operasional', 'Luar Operasional']" :value="old('category', $expense->category)">Kategori</x-dropdown>
             @error('category')
                 <x-inline-error-message class="mb-2 -mt-2" x-show="categoryServerError">{{ $message }}</x-inline-error-message>
             @enderror
