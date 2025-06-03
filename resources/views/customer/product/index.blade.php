@@ -1,6 +1,21 @@
 <x-layout-main>
     <x-slot:title>Produk</x-slot:title>
 
+    {{-- Toast Error --}}
+    @if ($errors->any())
+        <div class="fixed top-16 right-10 z-50 flex flex-col items-end gap-4">
+            @foreach ($errors->all() as $error)
+                <x-toast id="toast-failed{{ $loop->index }}" iconClass="text-danger bg-danger/25" slotClass="text-danger"
+                    :duration="6000" :delay="$loop->index * 500">
+                    <x-slot:icon>
+                        <x-icons.toast-failed />
+                    </x-slot:icon>
+                    {{ $error }}
+                </x-toast>
+            @endforeach
+        </div>
+    @endif
+
     <div class="flex flex-col-2 px-14 pt-32 pb-10 gap-16 min-h-screen" x-data="{
         cart: {},
         cartOrder: [],

@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->string('code')->unique();
             $table->dateTime('time');
             $table->string('category');
-            $table->string('status');
+            $table->string('payment_status')->default('belum dibayar');
+            $table->string('shipping_status')->default('belum dikirim');
             $table->integer('item');
             $table->bigInteger('total');
             $table->timestamps();

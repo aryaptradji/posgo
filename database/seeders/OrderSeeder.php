@@ -7,7 +7,6 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderItem;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class OrderSeeder extends Seeder
 {
@@ -31,7 +30,8 @@ class OrderSeeder extends Seeder
                 'code' => 'ORD' . $time->format('Ymd') . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'time' => $time,
                 'category' => $category,
-                'status' => fake()->randomElement(['belum dikirim', 'dalam perjalanan', 'selesai']),
+                'payment_status' => fake()->randomElement(['belum dibayar', 'dibayar', 'batal']),
+                'shipping_status' => fake()->randomElement(['belum dikirim', 'dalam perjalanan', 'selesai']),
                 'item' => 0,
                 'total' => 0,
             ]);

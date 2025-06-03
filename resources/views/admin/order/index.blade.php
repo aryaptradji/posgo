@@ -33,7 +33,7 @@
         <div class="flex flex-col justify-between">
             <div class="px-7 py-4 flex justify-between">
                 <div class="w-fit flex gap-4 items-center justify-center font-semibold">
-                    @foreach (['semua', 'selesai', 'dalam perjalanan', 'belum dikirim'] as $status)
+                    @foreach (['semua', 'dibayar', 'belum dibayar', 'batal'] as $status)
                         <a href="{{ request()->fullUrlWithQuery(['filter' => $status, 'page' => 1]) }}"
                             class="px-3 py-2 rounded-lg capitalize transition-all duration-1000 cursor-pointer {{ request('filter', 'semua') === $status ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black' }}">
                             {{ $status }}
@@ -141,10 +141,10 @@
                         @forelse ($orders as $order)
                             @php
                                 $class =
-                                    $order->status === 'belum dikirim'
+                                    $order->payment_status === 'batal'
                                         ? 'bg-danger/15 text-danger border-danger'
-                                        : ($order->status === 'dalam perjalanan'
-                                            ? 'bg-warning-200/15 text-warning-200 border-warning-200'
+                                        : ($order->payment_status === 'belum dibayar'
+                                            ? 'bg-primary-200/15 text-primary-200 border-primary-200'
                                             : 'bg-success/15 text-success border-success');
                             @endphp
                             <tr class="border-b-2 border-b-tertiary-table-line">
@@ -155,7 +155,7 @@
                                 <td class="px-4 py-2 capitalize" align="center">{{ $order->category }}</td>
                                 <td class="px-4 py-4" align="center">
                                     <span
-                                        class="px-2 py-1 rounded-lg capitalize border-2 {{ $class }}">{{ $order->status }}</span>
+                                        class="px-2 py-1 rounded-lg capitalize border-2 {{ $class }}">{{ $order->payment_status }}</span>
                                 </td>
                                 <td class="px-4 py-2" align="center">{{ $order->item }}</td>
                                 <td class="px-4 py-2" align="left">Rp
@@ -219,7 +219,7 @@
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Status</span>
                                                         <span
-                                                            class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $order->status }}</span>
+                                                            class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $order->payment_status }}</span>
                                                     </div>
                                                 </div>
                                             </div>

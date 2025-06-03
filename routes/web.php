@@ -1,23 +1,20 @@
 <?php
 
-use App\Models\Expense;
-use App\Models\Product;
-use App\Models\Supplier;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\CashierController;
 use App\Http\Controllers\Admin\CourierController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
-use App\Models\Order;
 
 // Auth
 Route::get('/', function () {
@@ -49,6 +46,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Produk
     Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product.index');
     Route::post('/product', [CustomerProductController::class, 'checkout'])->name('customer.product.checkout');
+    Route::get('/order', [CustomerOrderController::class, 'index'])->name('customer.order.index');
 });
 
 // Admin
@@ -60,9 +58,9 @@ Route::get('/admin/product/print', [AdminProductController::class, 'print'])->na
 Route::get('/admin/product/export', [AdminProductController::class, 'export'])->name('product.export');
 Route::resource('/admin/product', AdminProductController::class);
 
-Route::get('/admin/order/print', [OrderController::class, 'print'])->name('order.print');
-Route::get('/admin/order/export', [OrderController::class, 'export'])->name('order.export');
-Route::resource('/admin/order', OrderController::class);
+Route::get('/admin/order/print', [AdminOrderController::class, 'print'])->name('order.print');
+Route::get('/admin/order/export', [AdminOrderController::class, 'export'])->name('order.export');
+Route::resource('/admin/order', AdminOrderController::class);
 
 Route::get('/admin/expense/print', [ExpenseController::class, 'print'])->name('expense.print');
 Route::get('/admin/expense/export', [ExpenseController::class, 'export'])->name('expense.export');
@@ -108,3 +106,6 @@ Route::get('/kasir', function () {
 Route::get('/dashboard', function () {
     return view('kasir.dashboard');
 });
+
+// Payment Gateway
+Route::post('/midtrans/callback', [MidtransController::class, 'handleCallback']);

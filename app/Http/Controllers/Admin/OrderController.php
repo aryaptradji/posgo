@@ -19,7 +19,7 @@ class OrderController extends Controller
 
         // Filter kategori
         if ($request->filled('filter') && $request->filter !== 'semua') {
-            $query->where('status', $request->filter);
+            $query->where('payment_status', $request->filter);
         }
 
         // Pencarian
