@@ -11,7 +11,7 @@ class MidtransController extends Controller
 {
     public function handleCallback(Request $request)
     {
-        // Optional: log buat debug
+        // Optional: log buat debugg
         Log::info('Midtrans callback received:', $request->all());
 
         $serverKey = config('midtrans.server_key');
