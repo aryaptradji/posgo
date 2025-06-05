@@ -46,7 +46,7 @@
         <div class="w-full">
             <div class="flex justify-between mb-16">
                 <span class="text-3xl font-bold">Produk</span>
-                <form action="{{ route('customer.product.index') }}" method="GET"
+                <form action="{{ route('customer.product') }}" method="GET"
                     class="w-3/12 ps-4 pe-2 py-2 flex flex-row text-sm outline-none ring-1 ring-tertiary-300 rounded-lg bg-gray-50">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari"
                         class="outline-none w-full pt-1 bg-transparent placeholder:text-tertiary-title">
@@ -55,7 +55,7 @@
                         <x-icons.cari />
                     </button>
                     @if (request('search'))
-                        <a href="{{ route('customer.product.index', request()->except(['search', 'page'])) }}"
+                        <a href="{{ route('customer.product', request()->except(['search', 'page'])) }}"
                             class="ml-1 text-tertiary-title hover:text-danger transition-all hover:scale-125 active:scale-95">
                             <x-icons.close />
                         </a>
@@ -179,34 +179,11 @@
                 </span>
             </div>
 
-            <form method="POST" action="{{ route('customer.product.checkout') }}" x-ref="form">
+            <form method="POST" action="{{ route('customer.checkout') }}" x-ref="form">
                 @csrf
                 <input type="hidden" name="cart" :value="JSON.stringify(cart)">
-                <x-button-lg type="submit" class="bg-primary shadow-outer-sidebar-primary">Checkout</x-button-lg>
+                <x-button-lg type="submit" class="bg-primary shadow-outer-sidebar-primary">Pesan</x-button-lg>
             </form>
         </div>
     </div>
-
-    @if (isset($snapToken))
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                snap.pay('{{ $snapToken }}', {
-                    onSuccess: function(result) {
-                        window.location.href = '/success';
-                    },
-                    onPending: function(result) {
-                        window.location.href = '/pending';
-                    },
-                    onError: function(result) {
-                        alert('Terjadi kesalahan saat pembayaran.');
-                        console.error(result);
-                    },
-                    onClose: function() {
-                        alert('Kamu menutup popup pembayaran.');
-                    }
-                });
-            });
-        </script>
-    @endif
-
 </x-layout-main>

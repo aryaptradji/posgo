@@ -127,7 +127,7 @@ class AuthController extends Controller
         $request->validate(
             [
                 'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
-                'password' => 'required|min:6',
+                'password' => 'required',
             ],
             [
                 'email.required' => 'Email wajib diisi',
@@ -151,7 +151,7 @@ class AuthController extends Controller
         }
 
         Auth::login($user);
-
+        $request->session()->regenerate();
         session()->flash('success', 'Selamat datang, ' . $user->name . '!');
 
         return match ($user->role) {

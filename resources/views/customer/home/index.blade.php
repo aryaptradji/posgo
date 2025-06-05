@@ -63,7 +63,7 @@
                         <p class="font-medium w-96 mt-4" x-text="slide.subTitle"></p>
                         <x-button-sm type="button"
                             class="w-fit px-8 py-3 mt-8 text-white bg-gradient-to-r from-primary to-secondary-purple">
-                            <a href="{{ route('customer.product.index') }}">Pesan</a>
+                            <a href="{{ route('customer.product') }}">Pesan</a>
                         </x-button-sm>
                     </div>
                     <img :src="slide.image" class="relative right-16 -top-8" width="700" />

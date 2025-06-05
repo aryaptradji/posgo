@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
     <style>[x-cloak] { display: none !important; }</style>
     <title>{{ $title }}</title>
 </head>
@@ -17,7 +17,7 @@
     <div id="container" class="flex h-full">
         <x-navbar-main/>
 
-        <main {{ $attributes->merge(['class' => 'pb-8 w-full']) }}>
+        <main {{ $attributes->merge(['class' => 'pb-8 w-full h-full']) }}>
             {{ $slot }}
         </main>
     </div>

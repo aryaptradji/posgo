@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Enums\PaymentStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -11,51 +10,77 @@ class MidtransController extends Controller
 {
     public function handleCallback(Request $request)
     {
-        // Optional: log buat debugg
-        Log::info('Midtrans callback received:', $request->all());
+        Log::debug('🚀 Midtrans callback received', $request->all());
 
+        // Ambil data yang diperlukan
         $serverKey = config('midtrans.server_key');
-        $signatureKey = hash('sha512',
-            $request->order_id .
-            $request->status_code .
-            $request->gross_amount .
-            $serverKey
-        );
+        $orderId = $request->order_id;
+        $statusCode = $request->status_code;
+        $grossAmount = $request->gross_amount;
+        $signature = $request->signature_key;
 
-        // Cek signature dulu (penting!)
-        if ($signatureKey !== $request->signature_key) {
-            Log::warning('Midtrans signature mismatch');
+        // Hitung signature yang valid
+        $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+
+        Log::debug('🔐 Signature debug', [
+            'order_id' => $orderId,
+            'expected' => $expectedSignature,
+            'actual' => $signature,
+        ]);
+
+        if ($expectedSignature !== $signature) {
+            Log::warning('❌ Invalid Midtrans signature', ['order_id' => $orderId]);
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        // Cari order dari kode
-        $order = Order::where('code', $request->order_id)->first();
+        // Cari order
+        $order = Order::where('code', $orderId)->first();
 
-        if (! $order) {
+        if (!$order) {
+            Log::warning('❌ Order not found', ['order_id' => $orderId]);
             return response()->json(['message' => 'Order not found'], 404);
         }
 
-        // Update status
-        switch ($request->transaction_status) {
-            case 'capture':
-            case 'settlement':
-                $order->payment_status = PaymentStatus::Dibayar;
-                break;
+        Log::debug('🔍 Sebelum save:', [
+            'payment_status (class)' => $order->payment_status,
+            'payment_status (value)' => $order->payment_status ?? null,
+            'payment_status (raw)' => $order->getRawOriginal('payment_status'),
+        ]);
 
-            case 'expire':
-            case 'cancel':
-            case 'deny':
-                $order->payment_status = PaymentStatus::Batal;
-                break;
+        // Tentukan status baru
+        $status = match ($request->transaction_status) {
+            'capture', 'settlement' => 'dibayar',
+            'cancel' => 'dibatalkan',
+            'expire' => 'kadaluwarsa',
+            'deny' => 'ditolak',
+            'pending' => 'belum dibayar',
+            default => null,
+        };
 
-            case 'pending':
-            default:
-                $order->payment_status = PaymentStatus::BelumDibayar;
-                break;
+        if (!$status) {
+            Log::warning('⚠️ Unhandled transaction_status from Midtrans', [
+                'transaction_status' => $request->transaction_status,
+                'order_id' => $orderId,
+            ]);
+            return response()->json(['message' => 'Unhandled transaction status'], 400);
         }
 
-        $order->save();
+        // Update jika berbeda
+        if ($order->payment_status !== $status) {
+            $order->payment_status = $status;
+            $order->save();
 
-        return response()->json(['message' => 'Callback processed']);
+            Log::info('🆕 Payment status updated', [
+                'order_id' => $orderId,
+                'new_status' => $status,
+            ]);
+        } else {
+            Log::info('ℹ️ Status unchanged', [
+                'order_id' => $orderId,
+                'status' => $status,
+            ]);
+        }
+
+        return response()->json(['message' => 'Callback processed'], 200);
     }
 }

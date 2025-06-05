@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Midtrans\Config as Midtrans;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,5 +26,9 @@ class AppServiceProvider extends ServiceProvider
         Midtrans::$isProduction = env('MIDTRANS_PRODUCTION', false);
         Midtrans::$isSanitized = true;
         Midtrans::$is3ds = true;
+
+        if (request()->header('X-Forwarded-Proto') === 'https') {
+            URL::forceScheme('https');
+        }
     }
 }

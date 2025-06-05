@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Customer;
 
 use Midtrans\Snap;
 use App\Models\User;
+use Midtrans\Config;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderItem;
-use App\Enums\PaymentStatus;
 use Illuminate\Http\Request;
-use App\Enums\ShippingStatus;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,29 +17,38 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = $this->getProductList($request);
+        $query = Product::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->paginate(12)->withQueryString();
 
         return view('customer.product.index', compact('products'));
     }
 
     public function checkout(Request $request)
     {
-        $request->validate(
-            [
-                'cart' => 'required|json',
-            ],
-            [
-                'cart.required' => 'Maaf keranjang masih kosong',
-            ],
-        );
+        $user = User::with('address.neighborhood.subDistrict.district.city')->find(Auth::id());
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = false;
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        $request->validate(['cart' => 'required|json'], ['cart.required' => 'Maaf keranjang masih kosong']);
 
         $cart = json_decode($request->input('cart', '{}'), true);
 
-        if (empty($cart) || count($cart) === 0) {
+        if (empty($cart)) {
             return redirect()->back()->with('error', 'Maaf keranjang masih kosong');
         }
 
-        // Ambil produk yang ada di cart
         $productIds = array_keys($cart);
         $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
@@ -71,36 +80,44 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Produk tidak valid');
         }
 
-        $user = User::with('address.neighborhood.subDistrict.district.city')->find(Auth::id());
-        $category = $user->role === 'cashier' ? 'Offline' : 'Online';
+        $category = $user->role === 'cashier' ? 'offline' : 'online';
 
-        if (!$user) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
-        }
+        $orderId = null; // disiapkan di luar supaya bisa dipakai nanti
 
-        $order = Order::create([
-            'user_id' => $user->id,
-            'code' => '',
-            'time' => now(),
-            'category' => $category,
-            'payment_status' => PaymentStatus::BelumDibayar,
-            'shipping_status' => ShippingStatus::BelumDikirim,
-            'item' => array_sum(array_column($items, 'quantity')),
-            'total' => $totalPrice,
-        ]);
-
-        $orderId = 'ORD' . now()->format('Ymd') . str_pad($order->id, 4, '0', STR_PAD_LEFT);
-        $order->update(['code' => $orderId]);
-
-        foreach ($items as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item['id'],
-                'qty' => $item['quantity'],
-                'price' => $item['price'],
+        $order = DB::transaction(function () use (&$orderId, $user, $category, $items, $totalPrice) {
+            // Buat order kosong dulu
+            $order = Order::create([
+                'user_id' => $user->id,
+                'code' => '',
+                'time' => now(),
+                'category' => $category,
+                'payment_status' => 'belum dibayar',
+                'shipping_status' => 'belum dikirim',
+                'item' => array_sum(array_column($items, 'quantity')),
+                'total' => $totalPrice,
             ]);
-        }
 
+            // Generate kode order harian
+            $datePrefix = now()->format('Ymd');
+            $countToday = Order::where('code', 'like', "ORD{$datePrefix}%")->count() + 1;
+            $orderId = 'ORD' . $datePrefix . str_pad($countToday, 4, '0', STR_PAD_LEFT);
+
+            $order->update(['code' => $orderId]);
+
+            // Simpan detail item
+            foreach ($items as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['id'],
+                    'qty' => $item['quantity'],
+                    'price' => $item['price'],
+                ]);
+            }
+
+            return $order;
+        });
+
+        // Payload Snap Midtrans
         $payload = [
             'transaction_details' => [
                 'order_id' => $orderId,
@@ -109,7 +126,7 @@ class ProductController extends Controller
             'expiry' => [
                 'start_time' => now()->format('Y-m-d H:i:s O'),
                 'unit' => 'minute',
-                'duration' => 60,
+                'duration' => 1,
             ],
             'item_details' => $items,
             'customer_details' => [
@@ -120,14 +137,13 @@ class ProductController extends Controller
                     'first_name' => $user->name,
                     'email' => $user->email,
                     'phone' => $user->phone_number,
-                    'address' => $user->address->street . ', RT ' . $user->address->neighborhood->rt . '/RW ' . $user->address->neighborhood->rw . ', Kec. ' . $user->address->neighborhood->subDistrict->district->name . ', Kel. ' . $user->address->neighborhood->subDistrict->name . ', ',
+                    'address' => $user->address->street . ', RT ' . $user->address->neighborhood->rt . '/RW ' . $user->address->neighborhood->rw . ', Kec. ' . $user->address->neighborhood->subDistrict->district->name . ', Kel. ' . $user->address->neighborhood->subDistrict->name,
                     'city' => $user->address->neighborhood->subDistrict->district->city->name,
                     'postal_code' => $user->address->neighborhood->postal_code,
                 ],
             ],
         ];
 
-        // Buat Snap Token Midtrans
         try {
             $snapToken = Snap::getSnapToken($payload);
         } catch (\Exception $e) {
@@ -135,21 +151,7 @@ class ProductController extends Controller
                 ->back()
                 ->with('error', 'Gagal membuat token pembayaran: ' . $e->getMessage());
         }
-        // Kirim snap token ke halaman index + ulang produk
-        $products = $this->getProductList($request);
 
-        return view('customer.product.index', compact('products', 'snapToken', 'orderId'));
-    }
-
-    // Helper function biar DRY
-    private function getProductList(Request $request)
-    {
-        $query = Product::query();
-
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        return $query->paginate(12)->withQueryString();
+        return view('customer.product.checkout', compact('snapToken', 'order'));
     }
 }

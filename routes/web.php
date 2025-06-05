@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MidtransController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
@@ -44,8 +46,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Home
     Route::get('/home', fn() => view('customer.home.index'))->name('customer.home');
     // Produk
-    Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product.index');
-    Route::post('/product', [CustomerProductController::class, 'checkout'])->name('customer.product.checkout');
+    Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product');
+    Route::post('/product/checkout', [CustomerProductController::class, 'checkout'])->name('customer.checkout');
     Route::get('/order', [CustomerOrderController::class, 'index'])->name('customer.order.index');
 });
 
@@ -106,6 +108,3 @@ Route::get('/kasir', function () {
 Route::get('/dashboard', function () {
     return view('kasir.dashboard');
 });
-
-// Payment Gateway
-Route::post('/midtrans/callback', [MidtransController::class, 'handleCallback']);

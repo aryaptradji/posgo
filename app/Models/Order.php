@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\PaymentStatus;
-use App\Enums\ShippingStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -24,9 +22,28 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function scopeBelumDibayar($query)
+    {
+        return $query->where('payment_status', 'belum dibayar')->where('shipping_status', 'belum dikirim');
+    }
+
+    public function scopeDikemas($query) {
+        return $query->where('payment_status', 'dibayar')->where('shipping_status', 'belum dikirim');
+    }
+
+    public function scopeDikirim($query) {
+        return $query->where('payment_status', 'dibayar')->where('shipping_status', 'dalam perjalanan');
+    }
+
+    public function scopeSelesai($query) {
+        return $query->where('payment_status', 'dibayar')->where('shipping_status', 'selesai');
+    }
+
+    public function scopeBatal($query) {
+        return $query->whereIn('payment_status', ['dibatalkan', 'kadaluwarsa', 'ditolak']);
+    }
+
     protected $casts = [
         'time' => 'datetime',
-        'payment_status' => PaymentStatus::class,
-        'shipping_status' => ShippingStatus::class,
     ];
 }
