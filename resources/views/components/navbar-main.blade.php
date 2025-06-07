@@ -41,7 +41,7 @@
             class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
             x-data="{ isOrderActive: false }" @mouseenter="isOrderActive = true" @mouseleave="isOrderActive = false">
             <span class="{{ request()->is('order') ? 'text-primary' : 'text-black' }}">Pesananku</span>
-            @if (request()->is('order'))
+            @if (request()->is('order') || request()->is('order' . '*'))
                 <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
                     x-bind:class="isOrderActive ? 'scale-x-100' : 'scale-x-50'">
             @endif

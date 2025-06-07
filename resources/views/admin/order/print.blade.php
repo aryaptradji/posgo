@@ -123,7 +123,7 @@
                     <td>{{ $order->time->translatedFormat('d M Y H:i:s') }}</td>
                     <td class="capitalize">{{ $order->user->name }}</td>
                     <td class="capitalize">{{ $order->category }}</td>
-                    <td class="capitalize">{{ $order->status }}</td>
+                    <td class="capitalize">{{ $order->payment_status }}</td>
                     <td>{{ $order->item }}</td>
                     <td>Rp {{ number_format($order->total, 0, ',', '.') }}</td>
                 </tr>

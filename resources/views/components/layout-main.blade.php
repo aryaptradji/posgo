@@ -13,11 +13,11 @@
     <title>{{ $title }}</title>
 </head>
 
-<body class="bg-tertiary h-screen">
+<body class="bg-tertiary min-h-screen">
     <div id="container" class="flex h-full">
         <x-navbar-main/>
 
-        <main {{ $attributes->merge(['class' => 'pb-8 w-full h-full']) }}>
+        <main {{ $attributes->merge(['class' => 'pb-8 w-full flex flex-col min-h-screen']) }}>
             {{ $slot }}
         </main>
     </div>

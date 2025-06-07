@@ -249,15 +249,41 @@
                     @endif
 
                     {{-- Nomor Halaman --}}
-                    @foreach ($customers->getUrlRange(1, $customers->lastPage()) as $page => $url)
-                        @if ($page == $customers->currentPage())
-                            <span
-                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $page }}</span>
-                        @else
-                            <a href="{{ $url }}"
-                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $page }}</a>
+                    @php
+                        $currentPage = $customers->currentPage();
+                        $lastPage = $customers->lastPage();
+                        $start = max(1, $currentPage - 2);
+                        $end = min($lastPage, $currentPage + 2);
+                    @endphp
+
+                    <!-- First page -->
+                    @if ($start > 1)
+                        <a href="{{ $customers->url(1) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">1</a>
+                        @if ($start > 2)
+                            <span class="px-3 py-2 text-gray-500">...</span>
                         @endif
-                    @endforeach
+                    @endif
+
+                    <!-- Middle pages -->
+                    @for ($i = $start; $i <= $end; $i++)
+                        @if ($i == $currentPage)
+                            <span
+                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $i }}</span>
+                        @else
+                            <a href="{{ $customers->url($i) }}"
+                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $i }}</a>
+                        @endif
+                    @endfor
+
+                    <!-- Last page -->
+                    @if ($end < $lastPage)
+                        @if ($end < $lastPage - 1)
+                            <span class="px-3 py-2 text-gray-500">...</span>
+                        @endif
+                        <a href="{{ $customers->url($lastPage) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $lastPage }}</a>
+                    @endif
 
                     {{-- Tombol Selanjutnya --}}
                     @if ($customers->hasMorePages())

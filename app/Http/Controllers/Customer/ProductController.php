@@ -98,7 +98,7 @@ class ProductController extends Controller
                 'shipping_status' => 'belum dikirim',
                 'item' => array_sum(array_column($items, 'quantity')),
                 'total' => $totalPrice,
-                'snap_order_id' => $orderIdMidtrans
+                'snap_order_id' => $orderIdMidtrans,
             ]);
 
             // Simpan detail item
@@ -146,7 +146,7 @@ class ProductController extends Controller
 
             $order->update([
                 'snap_token' => $snapToken,
-                'snap_expires_at' => now()->addMinutes(5)
+                'snap_expires_at' => now()->addMinutes(5),
             ]);
         } catch (Exception $e) {
             return redirect()
@@ -154,6 +154,14 @@ class ProductController extends Controller
                 ->with('error', 'Gagal membuat token pembayaran: ' . $e->getMessage());
         }
 
-        return view('customer.product.checkout', compact('snapToken', 'order'));
+        return redirect()->route('customer.product.checkout.show', compact('order'));
+    }
+
+    public function showCheckout(Order $order)
+    {
+        return view('customer.product.checkout', [
+            'order' => $order,
+            'snapToken' => $order->snap_token,
+        ]);
     }
 }

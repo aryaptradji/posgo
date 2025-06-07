@@ -20,7 +20,7 @@ class OrderSeeder extends Seeder
         $users = User::whereIn('role', ['cashier', 'customer'])->get();
         $products = Product::all();
 
-        $jumlahOrder = 20;
+        $jumlahOrder = 100;
 
         for ($i = 1; $i <= $jumlahOrder; $i++) {
             // $user = $users->find(14);

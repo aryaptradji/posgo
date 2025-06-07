@@ -68,6 +68,7 @@ class MidtransController extends Controller
         // Update jika berbeda
         if ($order->payment_status !== $status) {
             $order->payment_status = $status;
+            $order->snap_token = null;
             $order->snap_expires_at = null;
 
             Log::info('🆕 Payment status updated', [

@@ -38,11 +38,11 @@
     ] as $key => $label)
                     <a href="{{ route('customer.order.index', ['status' => $key]) }}"
                         class="group flex flex-col items-center transition-all">
-                        <span class="{{ $status === $key ? 'text-secondary-purple' : 'text-tertiary-title' }}">
+                        <span class="{{ $status === $key ? 'bg-gradient-to-r from-primary/85 to-secondary-purple/85 bg-clip-text text-transparent' : 'text-tertiary-title' }}">
                             {{ $label }}
                         </span>
                         <hr
-                            class="h-[3.5px] relative top-2 w-full bg-secondary-purple rounded-full border-0
+                            class="h-[3.5px] relative top-2 w-full bg-gradient-to-r from-primary/85 to-secondary-purple/85 rounded-full border-0
                         transition-all duration-300
                         transform
                         {{ $status === $key ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100' }}">
@@ -96,7 +96,7 @@
                                 pesan lagi.
                             </div>
                             <x-slot:action>
-                                <form :action="expireActionUrl" method="GET">
+                                <form :action="actionUrl" method="GET">
                                     <button type="submit"
                                         class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
                                         OK
@@ -118,7 +118,7 @@
                                 #{{ $order ? $order->code : request('snap_error') }}
                             </div>
                             <x-slot:action>
-                                <form :action="errorActionUrl" method="GET">
+                                <form :action="actionUrl" method="GET">
                                     <button type="submit"
                                         class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
                                         OK
@@ -177,7 +177,7 @@
                                     x-transition:leave-end="-translate-y-4 opacity-0"
                                     class="flex items-center gap-3 mt-4 w-fit">
                                     <div
-                                        class="flex items-center justify-center bg-gradient-to-br from-primary/60 to-secondary-purple/60 h-20 p-3 aspect-square object-contain rounded-xl">
+                                        class="flex items-center justify-center bg-tertiary-500/30 h-20 p-3 aspect-square object-contain rounded-xl">
                                         <img src="{{ asset('storage/' . $item->product->image) }}" class="max-h-16">
                                     </div>
                                     <div class="flex h-full flex-col gap-4 justify-between">
@@ -211,12 +211,13 @@
                             @endif
                             @if (request()->status == 'belum-dibayar')
                                 <x-button-sm @click="handlePayClick($event.target.closest('button'))"
-                                    class="absolute bottom-8 right-8 w-fit py-1 px-10 bg-secondary-purple transition-all duration-300 hover:shadow-xl text-white"
-                                    id="btn-pay-{{ $order->id }}" type="button"
+                                    class="absolute bottom-8 right-8 w-fit py-1 px-10 bg-primary shadow-outer-sidebar-primary transition-all duration-300 hover:shadow-xl text-white"
+                                    type="button"
                                     data-snap-token="{{ $order->snap_token }}"
                                     data-snap-expires-at="{{ $order->snap_expires_at->timestamp ?? 0 }}"
                                     data-order-code="{{ $order->code }}"
-                                    data-expire-url="{{ route('customer.order.expire', ['order' => '__ORDER_CODE__']) }}">
+                                    data-expire-url="{{ route('customer.order.expire', ['order' => '__ORDER_CODE__']) }}"
+                                    data-pay-url="{{ route('customer.order.pay.show', ['order' => '__ORDER_CODE__']) }}">
                                     Bayar
                                 </x-button-sm>
                             @endif
@@ -297,16 +298,17 @@
             return {
                 showExpiredModal: false,
                 showErrorModal: false,
-                expireOrderCode: null,
-                expireActionUrl: '',
-                errorOrderCode: null,
-                errorActionUrl: '',
+                orderCode: null,
+                actionUrl: '',
+                payUrl: '',
 
                 handlePayClick(button) {
                     const snapToken = button.dataset.snapToken;
                     const snapExpiresAt = parseInt(button.dataset.snapExpiresAt) * 1000;
                     const orderCode = button.dataset.orderCode;
                     const now = new Date().getTime();
+                    const expireUrl = button.dataset.expireUrl.replace('__ORDER_CODE__', orderCode);
+                    const payUrl = button.dataset.payUrl.replace('__ORDER_CODE__', orderCode);
 
                     console.log({
                         snapToken,
@@ -315,14 +317,13 @@
                         now
                     });
 
-                    // Handle snapToken kosong
+                    // Handle Token Kosong
                     if (!snapToken || snapToken.trim() === '') {
-                        this.errorOrderCode = orderCode;
-                        this.errorActionUrl = button.dataset.expireUrl.replace('__ORDER_CODE__', orderCode);
+                        this.orderCode = orderCode;
+                        this.actionUrl = expireUrl
                         this.showErrorModal = true;
                         return;
                     }
-
 
                     console.log({
                         snapToken,
@@ -333,31 +334,13 @@
                         comparison: now > snapExpiresAt
                     });
 
+                    // Handle Token Expired
                     if (now > snapExpiresAt) {
-                        this.expireOrderCode = orderCode;
-                        this.expireActionUrl = button.dataset.expireUrl.replace('__ORDER_CODE__', orderCode);
+                        this.orderCode = orderCode;
+                        this.actionUrl = expireUrl;
                         this.showExpiredModal = true;
                     } else {
-                        window.snap.pay(snapToken, {
-                            onSuccess: function(result) {
-                                window.location.href =
-                                    "{{ route('customer.order.index', ['status' => 'dikemas']) }}";
-                            },
-                            onPending: function(result) {
-                                window.location.href =
-                                    "{{ route('customer.order.index', ['status' => 'belum-dibayar']) }}";
-                            },
-                            onError: function(result) {
-                                alert('Terjadi kesalahan saat pembayaran.');
-                                console.error(result);
-                                window.location.href =
-                                    "{{ route('customer.order.index', ['status' => 'belum-dibayar']) }}";
-                            },
-                            onClose: function() {
-                                window.location.href =
-                                    "{{ route('customer.order.index', ['status' => 'belum-dibayar']) }}";
-                            }
-                        });
+                        window.location.href = payUrl;
                     }
                 }
             }

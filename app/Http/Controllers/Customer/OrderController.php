@@ -50,4 +50,12 @@ class OrderController extends Controller
 
         return redirect()->route('customer.order.index', ['status' => 'batal']);
     }
+
+    public function pay(Order $order)
+    {
+        return view('customer.order.pay', [
+            'order' => $order,
+            'snapToken' => $order->snap_token,
+        ]);
+    }
 }

@@ -268,15 +268,41 @@
                     @endif
 
                     {{-- Nomor Halaman --}}
-                    @foreach ($cashiers->getUrlRange(1, $cashiers->lastPage()) as $page => $url)
-                        @if ($page == $cashiers->currentPage())
-                            <span
-                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $page }}</span>
-                        @else
-                            <a href="{{ $url }}"
-                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $page }}</a>
+                    @php
+                        $currentPage = $cashiers->currentPage();
+                        $lastPage = $cashiers->lastPage();
+                        $start = max(1, $currentPage - 2);
+                        $end = min($lastPage, $currentPage + 2);
+                    @endphp
+
+                    <!-- First page -->
+                    @if ($start > 1)
+                        <a href="{{ $cashiers->url(1) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">1</a>
+                        @if ($start > 2)
+                            <span class="px-3 py-2 text-gray-500">...</span>
                         @endif
-                    @endforeach
+                    @endif
+
+                    <!-- Middle pages -->
+                    @for ($i = $start; $i <= $end; $i++)
+                        @if ($i == $currentPage)
+                            <span
+                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $i }}</span>
+                        @else
+                            <a href="{{ $cashiers->url($i) }}"
+                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $i }}</a>
+                        @endif
+                    @endfor
+
+                    <!-- Last page -->
+                    @if ($end < $lastPage)
+                        @if ($end < $lastPage - 1)
+                            <span class="px-3 py-2 text-gray-500">...</span>
+                        @endif
+                        <a href="{{ $cashiers->url($lastPage) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $lastPage }}</a>
+                    @endif
 
                     {{-- Tombol Selanjutnya --}}
                     @if ($cashiers->hasMorePages())

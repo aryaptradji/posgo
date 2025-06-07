@@ -48,7 +48,9 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Produk
     Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product');
     Route::post('/product/checkout', [CustomerProductController::class, 'checkout'])->name('customer.checkout');
+    Route::get('/product/checkout/{order}', [CustomerProductController::class, 'showCheckout'])->name('customer.product.checkout.show');
     Route::get('/order', [CustomerOrderController::class, 'index'])->name('customer.order.index');
+    Route::get('/order/{order}/pay', [CustomerOrderController::class, 'pay'])->name('customer.order.pay.show');
     Route::get('/order/{order}/expire', [CustomerOrderController::class, 'expire'])->name('customer.order.expire');
 });
 
