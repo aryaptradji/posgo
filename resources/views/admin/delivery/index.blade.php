@@ -1,15 +1,15 @@
 <x-layout>
-    <x-slot:title>Riwayat</x-slot:title>
+    <x-slot:title>Pengiriman</x-slot:title>
     <x-slot:header>
         <div class="flex justify-between items-center">
-            <span>Riwayat</span>
+            <span>Pengiriman</span>
             <div class="flex gap-6">
-                <a href="{{ route('order.print') }}"
+                <a href="{{ route('delivery.print') }}"
                     class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
                     <x-icons.print />
                     Print
                 </a>
-                <a href="{{ route('order.export') }}"
+                <a href="{{ route('delivery.export') }}"
                     class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-success transition-all hover:scale-105 active:scale-90">
                     <x-icons.export />
                     Export
@@ -33,14 +33,14 @@
         <div class="flex flex-col justify-between">
             <div class="px-7 py-4 flex justify-between">
                 <div class="w-fit flex gap-4 items-center justify-center font-semibold">
-                    @foreach (['semua', 'dibayar', 'belum dibayar', 'ditolak', 'kadaluwarsa', 'dibatalkan'] as $status)
+                    @foreach (['semua', 'selesai', 'dalam perjalanan', 'belum dikirim'] as $status)
                         <a href="{{ request()->fullUrlWithQuery(['filter' => $status, 'page' => 1]) }}"
                             class="px-3 py-2 rounded-lg capitalize transition-all duration-1000 cursor-pointer {{ request('filter', 'semua') === $status ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black' }}">
                             {{ $status }}
                         </a>
                     @endforeach
                 </div>
-                <form action="{{ route('order.index') }}" method="GET"
+                <form action="{{ route('delivery.index') }}" method="GET"
                     class="w-1/5 ps-4 pe-2 py-2 flex flex-row text-sm outline-none ring-1 ring-tertiary-300 rounded-lg bg-gray-50">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari"
                         class="outline-none w-full pt-1 bg-transparent placeholder:text-tertiary-title">
@@ -49,7 +49,7 @@
                         <x-icons.cari />
                     </button>
                     @if (request('search'))
-                        <a href="{{ route('order.index', request()->except(['search', 'filter', 'page'])) }}"
+                        <a href="{{ route('delivery.index', request()->except(['search', 'filter', 'page'])) }}"
                             class="ml-1 text-tertiary-title hover:text-danger transition-all hover:scale-125 active:scale-95">
                             <x-icons.close />
                         </a>
@@ -138,42 +138,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($orders as $order)
+                        @forelse ($deliveries as $delivery)
                             @php
                                 $class =
-                                    $order->payment_status === 'belum dibayar' ||
-                                    $order->payment_status === 'ditolak' ||
-                                    $order->payment_status === 'kadaluwarsa' ||
-                                    $order->payment_status === 'dibatalkan'
+                                    $delivery->shipping_status == 'belum dikirim'
                                         ? 'bg-danger/15 text-danger border-danger'
-                                        : 'bg-success/15 text-success border-success';
+                                        : ($delivery->shipping_status == 'dalam perjalanan'
+                                            ? 'bg-warning-200/15 text-warning-200 border-warning-200'
+                                            : 'bg-success/15 text-success border-success');
                             @endphp
                             <tr class="border-b-2 border-b-tertiary-table-line">
-                                <td class="px-4 py-2" align="left">{{ $order->code }}</td>
+                                <td class="px-4 py-2" align="left">{{ $delivery->code }}</td>
                                 <td class="px-4 py-2" align="left">
-                                    {{ $order->time->translatedFormat('d M Y H:i:s') }}</td>
-                                <td class="px-4 py-2" align="center">{{ $order->user->name }}</td>
-                                <td class="px-4 py-2 capitalize" align="center">{{ $order->category }}</td>
+                                    {{ $delivery->time->translatedFormat('d M Y H:i:s') }}</td>
+                                <td class="px-4 py-2" align="center">{{ $delivery->user->name }}</td>
+                                <td class="px-4 py-2 capitalize" align="center">{{ $delivery->category }}</td>
                                 <td class="px-4 py-4" align="center">
                                     <span
-                                        class="px-2 py-1 rounded-lg capitalize border-2 {{ $class }}">{{ $order->payment_status }}</span>
+                                        class="px-2 py-1 rounded-lg capitalize border-2 {{ $class }}">{{ $delivery->shipping_status }}</span>
                                 </td>
-                                <td class="px-4 py-2" align="center">{{ $order->item }}</td>
+                                <td class="px-4 py-2" align="center">{{ $delivery->item }}</td>
                                 <td class="px-4 py-2" align="left">Rp
-                                    {{ number_format($order->total, 0, ',', '.') }}</td>
+                                    {{ number_format($delivery->total, 0, ',', '.') }}</td>
                                 <td class="px-4 py-2" align="center" x-data="{ showModalView: false }">
                                     <div class="flex justify-center gap-2">
                                         <button type="button" @click="showModalView = true"
                                             class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                             <x-icons.detail-icon />
                                         </button>
-                                        <template x-if="{{ $order->status === 'belum dikirim' }}">
+                                        <template x-if="{{ $delivery->shipping_status === 'belum dikirim' }}">
                                             <button type="button"
                                                 class="text-secondary-blue transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.send-icon />
                                             </button>
                                         </template>
-                                        <template x-if="{{ $order->status === 'dalam perjalanan' }}">
+                                        <template x-if="{{ $delivery->shipping_status === 'dalam perjalanan' }}">
                                             <button type="button"
                                                 class="transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.upload-icon />
@@ -187,7 +186,7 @@
                                             <div class="w-full flex justify-between">
                                                 <div class="flex">
                                                     <x-icons.info-icon class="mr-3" />
-                                                    <h2 class="text-lg font-bold">Detail Pesanan</h2>
+                                                    <h2 class="text-lg font-bold">Detail Pengiriman</h2>
                                                 </div>
                                                 <button
                                                     class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95"
@@ -201,26 +200,26 @@
                                                 <div class="flex flex-col gap-4 col-span-1 justify-self-start">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Kode</span>
-                                                        <span>{{ $order->code }}</span>
+                                                        <span>{{ $delivery->code }}</span>
                                                     </div>
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Waktu</span>
-                                                        <span>{{ $order->time }}</span>
+                                                        <span>{{ $delivery->time }}</span>
                                                     </div>
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Nama</span>
-                                                        <span>{{ $order->user->name }}</span>
+                                                        <span>{{ $delivery->user->name }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="flex flex-col gap-4 col-span-1 justify-self-end">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Kategori</span>
-                                                        <span class="capitalize">{{ $order->category }}</span>
+                                                        <span class="capitalize">{{ $delivery->category }}</span>
                                                     </div>
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Status</span>
                                                         <span
-                                                            class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $order->payment_status }}</span>
+                                                            class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $delivery->shipping_status }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -242,7 +241,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach ($order->items as $item)
+                                                            @foreach ($delivery->items as $item)
                                                                 <tr class="font-medium text-xs">
                                                                     <td class="px-4 py-2" align="left">
                                                                         {{ $item->product->name }}</td>
@@ -260,22 +259,22 @@
                                                             <tr class="font-bold border-t border-tertiary-table-line">
                                                                 <td class="px-4 py-2" align="left">TOTAL</td>
                                                                 <td class="px-4 py-2" align="center">
-                                                                    {{ $order->items->sum(function ($item) {
+                                                                    {{ $delivery->items->sum(function ($item) {
                                                                         return $item->product->pcs;
                                                                     }) }}
                                                                 </td>
                                                                 <td class="px-4 py-2" align="center">
-                                                                    {{ $order->items->sum(function ($item) {
+                                                                    {{ $delivery->items->sum(function ($item) {
                                                                         return $item->qty;
                                                                     }) }}
                                                                 </td>
                                                                 <td class="px-4 py-2" align="center">
-                                                                    {{ $order->items->sum(function ($item) {
+                                                                    {{ $delivery->items->sum(function ($item) {
                                                                         return $item->product->pcs * $item->qty;
                                                                     }) }}
                                                                 </td>
                                                                 @php
-                                                                    $totalHarga = $order->items->sum(function ($item) {
+                                                                    $totalHarga = $delivery->items->sum(function ($item) {
                                                                         return $item->product->price;
                                                                     });
                                                                 @endphp
@@ -293,7 +292,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-10 text-gray-500 italic">Data pesanan tidak
+                                <td colspan="5" class="text-center py-10 text-gray-500 italic">Data pengiriman pesanan tidak
                                     ditemukan
                                 </td>
                             </tr>
@@ -304,8 +303,8 @@
 
             <div class="flex items-center mx-7 justify-between pb-4">
                 <span class="text-sm italic">
-                    Menampilkan {{ $orders->firstItem() }} - {{ $orders->lastItem() }} dari
-                    {{ $orders->total() }}
+                    Menampilkan {{ $deliveries->firstItem() }} - {{ $deliveries->lastItem() }} dari
+                    {{ $deliveries->total() }}
                 </span>
 
                 <form method="GET" action="{{ route('order.index') }}" class="flex items-center gap-2">
@@ -327,27 +326,27 @@
 
                 <div
                     class="flex items-center gap-px rounded-full overflow-hidden border border-gray-300 shadow-sm w-fit">
-                    @if ($orders->onFirstPage())
+                    @if ($deliveries->onFirstPage())
                         <span class="px-3 py-2 text-gray-400 bg-tertiary cursor-default">
                             <x-icons.arrow-down class="rotate-90 text-tertiary-title" />
                         </span>
                     @else
-                        <a href="{{ $orders->previousPageUrl() }}"
+                        <a href="{{ $deliveries->previousPageUrl() }}"
                             class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">
                             <x-icons.arrow-down class="rotate-90 text-tertiary-title" />
                         </a>
                     @endif
 
                     @php
-                        $currentPage = $orders->currentPage();
-                        $lastPage = $orders->lastPage();
+                        $currentPage = $deliveries->currentPage();
+                        $lastPage = $deliveries->lastPage();
                         $start = max(1, $currentPage - 2);
                         $end = min($lastPage, $currentPage + 2);
                     @endphp
 
                     <!-- First page -->
                     @if ($start > 1)
-                        <a href="{{ $orders->url(1) }}"
+                        <a href="{{ $deliveries->url(1) }}"
                             class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">1</a>
                         @if ($start > 2)
                             <span class="px-3 py-2 text-gray-500">...</span>
@@ -360,7 +359,7 @@
                             <span
                                 class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $i }}</span>
                         @else
-                            <a href="{{ $orders->url($i) }}"
+                            <a href="{{ $deliveries->url($i) }}"
                                 class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $i }}</a>
                         @endif
                     @endfor
@@ -370,13 +369,13 @@
                         @if ($end < $lastPage - 1)
                             <span class="px-3 py-2 text-gray-500">...</span>
                         @endif
-                        <a href="{{ $orders->url($lastPage) }}"
+                        <a href="{{ $deliveries->url($lastPage) }}"
                             class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $lastPage }}</a>
                     @endif
 
 
-                    @if ($orders->hasMorePages())
-                        <a href="{{ $orders->nextPageUrl() }}" class="px-3 py-2 bg-tertiary hover:bg-gray-100">
+                    @if ($deliveries->hasMorePages())
+                        <a href="{{ $deliveries->nextPageUrl() }}" class="px-3 py-2 bg-tertiary hover:bg-gray-100">
                             <x-icons.arrow-down class="-rotate-90 text-tertiary-title" />
                         </a>
                     @else

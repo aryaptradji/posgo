@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DeliveryController;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -55,37 +56,52 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 });
 
 // Admin
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard.index');
-})->name('admin.dashboard');
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard.index');
+    })->name('admin.dashboard');
 
-Route::get('/admin/product/print', [AdminProductController::class, 'print'])->name('product.print');
-Route::get('/admin/product/export', [AdminProductController::class, 'export'])->name('product.export');
-Route::resource('/admin/product', AdminProductController::class);
+    // Produk
+    Route::get('/product/print', [AdminProductController::class, 'print'])->name('product.print');
+    Route::get('/product/export', [AdminProductController::class, 'export'])->name('product.export');
+    Route::resource('/product', AdminProductController::class);
 
-Route::get('/admin/order/print', [AdminOrderController::class, 'print'])->name('order.print');
-Route::get('/admin/order/export', [AdminOrderController::class, 'export'])->name('order.export');
-Route::resource('/admin/order', AdminOrderController::class);
+    // Riwayat
+    Route::get('/order/print', [AdminOrderController::class, 'print'])->name('order.print');
+    Route::get('/order/export', [AdminOrderController::class, 'export'])->name('order.export');
+    Route::resource('/order', AdminOrderController::class);
 
-Route::get('/admin/expense/print', [ExpenseController::class, 'print'])->name('expense.print');
-Route::get('/admin/expense/export', [ExpenseController::class, 'export'])->name('expense.export');
-Route::resource('/admin/expense', ExpenseController::class);
+    // Pengiriman
+    Route::get('/delivery/print', [DeliveryController::class, 'print'])->name('delivery.print');
+    Route::get('/delivery/export', [DeliveryController::class, 'export'])->name('delivery.export');
+    Route::resource('/delivery', DeliveryController::class);
 
-Route::get('/admin/cashier/print', [CashierController::class, 'print'])->name('cashier.print');
-Route::get('/admin/cashier/export', [CashierController::class, 'export'])->name('cashier.export');
-Route::resource('/admin/cashier', CashierController::class);
+    // Pengeluaran
+    Route::get('/expense/print', [ExpenseController::class, 'print'])->name('expense.print');
+    Route::get('/expense/export', [ExpenseController::class, 'export'])->name('expense.export');
+    Route::resource('/expense', ExpenseController::class);
 
-Route::get('/admin/supplier/print', [SupplierController::class, 'print'])->name('supplier.print');
-Route::get('/admin/supplier/export', [SupplierController::class, 'export'])->name('supplier.export');
-Route::resource('/admin/supplier', SupplierController::class);
+    // Kasir
+    Route::get('/cashier/print', [CashierController::class, 'print'])->name('cashier.print');
+    Route::get('/cashier/export', [CashierController::class, 'export'])->name('cashier.export');
+    Route::resource('/cashier', CashierController::class);
 
-Route::get('/admin/courier/print', [CourierController::class, 'print'])->name('courier.print');
-Route::get('/admin/courier/export', [CourierController::class, 'export'])->name('courier.export');
-Route::resource('/admin/courier', CourierController::class);
+    // Supplier
+    Route::get('/supplier/print', [SupplierController::class, 'print'])->name('supplier.print');
+    Route::get('/supplier/export', [SupplierController::class, 'export'])->name('supplier.export');
+    Route::resource('/supplier', SupplierController::class);
 
-Route::get('/admin/customer/print', [CustomerController::class, 'print'])->name('customer.print');
-Route::get('/admin/customer/export', [CustomerController::class, 'export'])->name('customer.export');
-Route::get('/admin/customer', [CustomerController::class, 'index'])->name('customer.index');
+    // Kurir
+    Route::get('/courier/print', [CourierController::class, 'print'])->name('courier.print');
+    Route::get('/courier/export', [CourierController::class, 'export'])->name('courier.export');
+    Route::resource('/courier', CourierController::class);
+
+    // Customer
+    Route::get('/customer/print', [CustomerController::class, 'print'])->name('customer.print');
+    Route::get('/customer/export', [CustomerController::class, 'export'])->name('customer.export');
+    Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
+});
 
 Route::get('/riwayat', function () {
     return view('riwayat');

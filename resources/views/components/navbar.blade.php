@@ -86,10 +86,10 @@
                     'route' => route('order.index'),
                 ],
                 [
-                    'name' => 'Retur',
-                    'active' => request()->is('retur'),
-                    'icon' => view('components.icons.retur')->render(),
-                    'route' => '',
+                    'name' => 'Pengiriman',
+                    'active' => request()->is('delivery') || request()->is('admin/delivery' . '*'),
+                    'icon' => view('components.icons.delivery')->render(),
+                    'route' => route('delivery.index'),
                 ],
             ]">
                 <x-slot:titleIcon>
