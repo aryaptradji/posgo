@@ -25,7 +25,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->name();
-        $email = Str::lower(str_replace(' ', '.', $name)) . '@' . fake()->freeEmailDomain();
+        $localPart = Str::lower(str_replace(' ', '.', $name));
+        $localPart = rtrim($localPart, '.'); // Hapus titik di akhir
+        $localPart = preg_replace('/\.{2,}/', '.', $localPart); // Replace double dot jadi single dot
+        $email = $localPart . '@' . fake()->freeEmailDomain();
         $plain = '123';
 
         return [

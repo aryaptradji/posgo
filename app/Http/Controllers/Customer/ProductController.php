@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
+use Exception;
 use Midtrans\Snap;
 use App\Models\User;
 use Midtrans\Config;
@@ -33,15 +34,13 @@ class ProductController extends Controller
         $user = User::with('address.neighborhood.subDistrict.district.city')->find(Auth::id());
 
         if (!$user) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
         }
 
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = false;
         Config::$isSanitized = true;
         Config::$is3ds = true;
-
-        $request->validate(['cart' => 'required|json'], ['cart.required' => 'Maaf keranjang masih kosong']);
 
         $cart = json_decode($request->input('cart', '{}'), true);
 
@@ -82,27 +81,25 @@ class ProductController extends Controller
 
         $category = $user->role === 'cashier' ? 'offline' : 'online';
 
-        $orderId = null; // disiapkan di luar supaya bisa dipakai nanti
+        $orderIdMidtrans = null;
 
-        $order = DB::transaction(function () use (&$orderId, $user, $category, $items, $totalPrice) {
-            // Buat order kosong dulu
+        $order = DB::transaction(function () use (&$orderIdMidtrans, $user, $category, $items, $totalPrice) {
+            $datePrefix = now()->format('Ymd');
+            $countToday = Order::where('code', 'like', "ORD{$datePrefix}%")->count() + 1;
+            $orderId = 'ORD' . $datePrefix . str_pad($countToday, 4, '0', STR_PAD_LEFT);
+            $orderIdMidtrans = $orderId . '-' . now()->format('His') . '-' . now()->timestamp;
+
             $order = Order::create([
                 'user_id' => $user->id,
-                'code' => '',
+                'code' => $orderId,
                 'time' => now(),
                 'category' => $category,
                 'payment_status' => 'belum dibayar',
                 'shipping_status' => 'belum dikirim',
                 'item' => array_sum(array_column($items, 'quantity')),
                 'total' => $totalPrice,
+                'snap_order_id' => $orderIdMidtrans
             ]);
-
-            // Generate kode order harian
-            $datePrefix = now()->format('Ymd');
-            $countToday = Order::where('code', 'like', "ORD{$datePrefix}%")->count() + 1;
-            $orderId = 'ORD' . $datePrefix . str_pad($countToday, 4, '0', STR_PAD_LEFT);
-
-            $order->update(['code' => $orderId]);
 
             // Simpan detail item
             foreach ($items as $item) {
@@ -120,13 +117,13 @@ class ProductController extends Controller
         // Payload Snap Midtrans
         $payload = [
             'transaction_details' => [
-                'order_id' => $orderId,
+                'order_id' => $orderIdMidtrans,
                 'gross_amount' => $totalPrice,
             ],
             'expiry' => [
                 'start_time' => now()->format('Y-m-d H:i:s O'),
                 'unit' => 'minute',
-                'duration' => 1,
+                'duration' => 5,
             ],
             'item_details' => $items,
             'customer_details' => [
@@ -146,7 +143,12 @@ class ProductController extends Controller
 
         try {
             $snapToken = Snap::getSnapToken($payload);
-        } catch (\Exception $e) {
+
+            $order->update([
+                'snap_token' => $snapToken,
+                'snap_expires_at' => now()->addMinutes(5)
+            ]);
+        } catch (Exception $e) {
             return redirect()
                 ->back()
                 ->with('error', 'Gagal membuat token pembayaran: ' . $e->getMessage());

@@ -28,8 +28,26 @@ class OrderController extends Controller
             $query->belumDibayar();
         }
 
-        $orders = $query->paginate(10)->withQueryString();
+        // Search
+        if ($request->filled('search')) {
+            $query->where('code', 'like', '%' . $request->search . '%');
+        }
+
+        // Pagination
+        $perPage = $request->input('per_page', 5);
+        $orders = $query->paginate($perPage)->withQueryString();
 
         return view('customer.order.index', compact('orders'));
+    }
+
+    public function expire(Order $order)
+    {
+        $order->update([
+            'payment_status' => 'kadaluwarsa',
+            'snap_token' => null,
+            'snap_expires_at' => null,
+        ]);
+
+        return redirect()->route('customer.order.index', ['status' => 'batal']);
     }
 }

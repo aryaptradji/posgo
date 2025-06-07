@@ -8,7 +8,7 @@
     x-transition:enter="transition-all ease duration-700" x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100" x-transition:leave="transition-all ease duration-700"
     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-    @click.self="{{ $show }} = false">
+    @click.self="{{ $show }}">
     <div x-cloak x-show="{{ $show }}" x-transition:enter="transition-all ease duration-700"
         x-transition:enter-start="opacity-0 -translate-y-full" x-transition:enter-end="opacity-100 translate-y-0"
         x-transition:leave="transition-all ease duration-700" x-transition:leave-start="opacity-100 translate-y-0"

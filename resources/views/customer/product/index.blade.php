@@ -2,17 +2,14 @@
     <x-slot:title>Produk</x-slot:title>
 
     {{-- Toast Error --}}
-    @if ($errors->any())
+    @if (session('error'))
         <div class="fixed top-16 right-10 z-50 flex flex-col items-end gap-4">
-            @foreach ($errors->all() as $error)
-                <x-toast id="toast-failed{{ $loop->index }}" iconClass="text-danger bg-danger/25" slotClass="text-danger"
-                    :duration="6000" :delay="$loop->index * 500">
-                    <x-slot:icon>
-                        <x-icons.toast-failed />
-                    </x-slot:icon>
-                    {{ $error }}
-                </x-toast>
-            @endforeach
+            <x-toast id="toast-failed" iconClass="text-danger bg-danger/25" slotClass="text-danger" :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-failed />
+                </x-slot:icon>
+                {{ session('error') }}
+            </x-toast>
         </div>
     @endif
 

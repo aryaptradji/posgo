@@ -40,8 +40,8 @@
                             {{ $initials }}
                         </div>
                     @endif
-                    <div class="flex flex-col text-sm justify-between items-start">
-                        <span class="font-semibold max-w-44">{{ $user->name }}</span>
+                    <div class="flex flex-col gap-1 text-sm justify-between items-start">
+                        <span class="font-semibold max-w-44 text-start">{{ $user->name }}</span>
                         <span
                             class="px-2 rounded-full capitalize border-2 w-fit text-xs {{ $class }}">{{ $user->role }}</span>
                     </div>

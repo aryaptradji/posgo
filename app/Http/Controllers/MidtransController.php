@@ -14,30 +14,30 @@ class MidtransController extends Controller
 
         // Ambil data yang diperlukan
         $serverKey = config('midtrans.server_key');
-        $orderId = $request->order_id;
+        $orderIdMidtrans = $request->order_id;
         $statusCode = $request->status_code;
         $grossAmount = $request->gross_amount;
         $signature = $request->signature_key;
 
         // Hitung signature yang valid
-        $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+        $expectedSignature = hash('sha512', $orderIdMidtrans . $statusCode . $grossAmount . $serverKey);
 
         Log::debug('🔐 Signature debug', [
-            'order_id' => $orderId,
+            'order_id' => $orderIdMidtrans,
             'expected' => $expectedSignature,
             'actual' => $signature,
         ]);
 
         if ($expectedSignature !== $signature) {
-            Log::warning('❌ Invalid Midtrans signature', ['order_id' => $orderId]);
+            Log::warning('❌ Invalid Midtrans signature', ['order_id' => $orderIdMidtrans]);
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
         // Cari order
-        $order = Order::where('code', $orderId)->first();
+        $order = Order::where('snap_order_id', $orderIdMidtrans)->first();
 
         if (!$order) {
-            Log::warning('❌ Order not found', ['order_id' => $orderId]);
+            Log::warning('❌ Order not found', ['order_id' => $orderIdMidtrans]);
             return response()->json(['message' => 'Order not found'], 404);
         }
 
@@ -47,7 +47,7 @@ class MidtransController extends Controller
             'payment_status (raw)' => $order->getRawOriginal('payment_status'),
         ]);
 
-        // Tentukan status baru
+        // Status
         $status = match ($request->transaction_status) {
             'capture', 'settlement' => 'dibayar',
             'cancel' => 'dibatalkan',
@@ -60,7 +60,7 @@ class MidtransController extends Controller
         if (!$status) {
             Log::warning('⚠️ Unhandled transaction_status from Midtrans', [
                 'transaction_status' => $request->transaction_status,
-                'order_id' => $orderId,
+                'order_id' => $orderIdMidtrans,
             ]);
             return response()->json(['message' => 'Unhandled transaction status'], 400);
         }
@@ -68,19 +68,54 @@ class MidtransController extends Controller
         // Update jika berbeda
         if ($order->payment_status !== $status) {
             $order->payment_status = $status;
-            $order->save();
+            $order->snap_expires_at = null;
 
             Log::info('🆕 Payment status updated', [
-                'order_id' => $orderId,
+                'order_id' => $orderIdMidtrans,
                 'new_status' => $status,
             ]);
         } else {
             Log::info('ℹ️ Status unchanged', [
-                'order_id' => $orderId,
+                'order_id' => $orderIdMidtrans,
                 'status' => $status,
             ]);
         }
 
+        $order->payment_method = $this->resolvePaymentMethod($request);
+
+        $order->save();
+
         return response()->json(['message' => 'Callback processed'], 200);
+    }
+
+    protected function resolvePaymentMethod(Request $request): string
+    {
+        return match ($request->payment_type) {
+            'bank_transfer' => $this->resolveBankName($request->va_numbers[0]['bank'] ?? null),
+            'echannel' => 'Bank Mandiri',
+            'gopay' => 'GoPay',
+            'shopeepay' => 'ShopeePay',
+            'qris' => $this->resolveQrisIssuer($request->issuer ?? ($request->acquirer ?? null)),
+            default => ucfirst(str_replace('_', ' ', $request->payment_type)),
+        };
+    }
+
+    protected function resolveBankName(?string $bankCode): string
+    {
+        return match (strtolower($bankCode)) {
+            'bca' => 'Bank BCA',
+            'bni' => 'Bank BNI',
+            'mandiri' => 'Bank Mandiri',
+            default => 'Bank ' . strtoupper($bankCode),
+        };
+    }
+
+    protected function resolveQrisIssuer(?string $issuer): string
+    {
+        return match (strtolower($issuer)) {
+            'gopay' => 'QRIS GoPay',
+            'airpay shopee', 'shopeepay' => 'QRIS ShopeePay',
+            default => 'QRIS',
+        };
     }
 }

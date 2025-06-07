@@ -1,24 +1,26 @@
 <x-layout-main>
     <x-slot:title>Detail Pesanan</x-slot:title>
 
-    <div class="w-full px-14 pt-32">
-        <div class="text-3xl font-bold mb-16">Detail Pesanan</div>
-        <div class="mb-10 font-semibold">Order ID : {{ $order->code }}</div>
-        <div class="flex gap-6 mb-6">
-            @foreach ($order->items as $item)
-                <div class="flex gap-4">
-                    <img src="{{ asset('storage/' . $item->product->image) }}" class="max-h-20">
-                    <div>
-                        <span class="block">{{ $item->product->name }}</span>
-                        <span class="block">{{ $item->product->pcs }} pcs</span>
-                        <span class="block">{{ $item->qty }}x</span>
-                        <span class="block">Rp {{ $item->qty * $item->price }}</span>
+    <div class="mx-14 mt-32">
+        <div class="text-3xl font-bold mb-6">Detail Pesanan</div>
+        <div class="shadow-outer p-6 rounded-xl">
+            <div class="mb-10 font-semibold">Order ID : {{ $order->code }}</div>
+            <div class="flex gap-6 mb-6">
+                @foreach ($order->items as $item)
+                    <div class="flex gap-4">
+                        <img src="{{ asset('storage/' . $item->product->image) }}" class="max-h-20">
+                        <div>
+                            <span class="block">{{ $item->product->name }}</span>
+                            <span class="block">{{ $item->product->pcs }} pcs</span>
+                            <span class="block">{{ $item->qty }}x</span>
+                            <span class="block">Rp {{ $item->qty * $item->price }}</span>
+                        </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+            <x-button-sm id="btn-pay" type="button"
+                class="bg-secondary-blue text-white w-fit py-2 px-6">Bayar</x-button-sm>
         </div>
-        <x-button-sm id="btn-pay" type="button"
-            class="bg-secondary-blue text-white w-fit py-2 px-6">Bayar</x-button-sm>
     </div>
 
     <script type="text/javascript">
@@ -37,7 +39,7 @@
                 onError: function(result) {
                     alert('Terjadi kesalahan saat pembayaran.');
                     console.error(result);
-                    window.location.href = "{{ route('customer.order.index') }}";
+                    window.location.href = "{{ route('customer.order.index', ['status' => 'belum-dibayar']) }}";
                 },
                 onClose: function() {
                     window.location.href = "{{ route('customer.order.index', ['status' => 'belum-dibayar']) }}";

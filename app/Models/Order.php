@@ -10,7 +10,7 @@ class Order extends Model
     /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
 
-    protected $fillable = ['user_id', 'time', 'code', 'category', 'payment_status', 'shipping_status', 'item', 'total'];
+    protected $fillable = ['user_id', 'time', 'code', 'category', 'payment_status', 'payment_method', 'shipping_status', 'item', 'total', 'snap_token', 'snap_expires_at', 'snap_order_id'];
 
     public function user()
     {
@@ -22,28 +22,38 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function scopeBelumDibayar($query)
+    public function getRouteKeyName()
     {
-        return $query->where('payment_status', 'belum dibayar')->where('shipping_status', 'belum dikirim');
+        return 'code';
     }
 
-    public function scopeDikemas($query) {
+    public function scopeBelumDibayar($query)
+    {
+        return $query->where('payment_status', 'belum dibayar');
+    }
+
+    public function scopeDikemas($query)
+    {
         return $query->where('payment_status', 'dibayar')->where('shipping_status', 'belum dikirim');
     }
 
-    public function scopeDikirim($query) {
+    public function scopeDikirim($query)
+    {
         return $query->where('payment_status', 'dibayar')->where('shipping_status', 'dalam perjalanan');
     }
 
-    public function scopeSelesai($query) {
+    public function scopeSelesai($query)
+    {
         return $query->where('payment_status', 'dibayar')->where('shipping_status', 'selesai');
     }
 
-    public function scopeBatal($query) {
+    public function scopeBatal($query)
+    {
         return $query->whereIn('payment_status', ['dibatalkan', 'kadaluwarsa', 'ditolak']);
     }
 
     protected $casts = [
         'time' => 'datetime',
+        'snap_expires_at' => 'datetime'
     ];
 }
