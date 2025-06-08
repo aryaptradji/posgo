@@ -16,4 +16,8 @@ class Courier extends Model
     {
         return 'slug';
     }
+
+    public function orders() {
+        return $this->hasMany(Order::class);
+    }
 }

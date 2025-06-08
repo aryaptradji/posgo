@@ -2,7 +2,7 @@
     'name' => null,
     'items' => [],
     'value' => 'Pilih Salah Satu',
-    'contClass' => null,
+    'contClass' => '',
     'errorClass' => '',
 ])
 

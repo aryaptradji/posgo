@@ -75,6 +75,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // Pengiriman
     Route::get('/delivery/print', [DeliveryController::class, 'print'])->name('delivery.print');
     Route::get('/delivery/export', [DeliveryController::class, 'export'])->name('delivery.export');
+    Route::put('/delivery/{delivery}/kirim', [DeliveryController::class, 'kirim'])->name('delivery.kirim');
+    Route::put('/delivery/{delivery}/upload', [DeliveryController::class, 'upload'])->name('delivery.upload');
     Route::resource('/delivery', DeliveryController::class);
 
     // Pengeluaran

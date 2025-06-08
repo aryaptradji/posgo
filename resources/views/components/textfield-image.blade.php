@@ -2,6 +2,8 @@
     'name' => 'image',
     'uploadClass' => null,
     'previewClass' => null,
+    'fileNameClass' => null,
+    'closeSideClass' => null,
     'initialImageUrl' => null,
     'initialFileName' => null,
     'initialFileSize' => null,
@@ -26,13 +28,12 @@
         <div
             class="relative bg-gradient-to-b from-green-400 to-white p-4 rounded-xl h-full shadow-md flex flex-col justify-center items-center {{ $previewClass }}">
             <div class="absolute top-4 left-6 text-left">
-
-                <p class="text-sm font-bold text-white max-w-56" x-show="fromUpload === true" x-text="fileName"></p>
+                <p class="text-sm font-bold text-white max-w-56 {{ $fileNameClass }}" x-show="fromUpload === true" x-text="fileName"></p>
                 <p class="text-xs text-white opacity-80" x-text="fileSize + ' KB'"></p>
             </div>
             <div class="absolute top-4 right-14 text-right">
-                <p class="text-sm font-semibold text-white">Upload complete</p>
-                <p class="text-xs text-white opacity-80">tap to undo</p>
+                <p class="text-sm font-semibold text-white {{ $closeSideClass }}">Upload complete</p>
+                <p class="text-xs text-white opacity-80 {{ $closeSideClass }}">tap to undo</p>
             </div>
             <button @click="reset()"
                 class="absolute top-4 right-5 aspect-square rounded-full transition-all hover:scale-110 active:scale-90 bg-white/70 text-xl font-bold">

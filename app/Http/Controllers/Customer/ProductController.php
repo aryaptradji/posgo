@@ -96,7 +96,7 @@ class ProductController extends Controller
                 'category' => $category,
                 'payment_status' => 'belum dibayar',
                 'shipping_status' => 'belum dikirim',
-                'item' => array_sum(array_column($items, 'quantity')),
+                'item' => count($items),
                 'total' => $totalPrice,
                 'snap_order_id' => $orderIdMidtrans,
             ]);

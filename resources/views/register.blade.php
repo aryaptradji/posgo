@@ -157,7 +157,7 @@
                 } else if (!/^(?=.*[!@#$%^&*._]).*$/.test(this.password)) {
                     this.passwordError = 'Password setidaknya harus mengandung 1 karakter khusus';
                 }
-                if (this.password) {
+                if (this.password !== '') {
                     this.passwordServerError = '';
                 }
             }

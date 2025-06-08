@@ -15,9 +15,12 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('code')->unique();
             $table->dateTime('time');
+            $table->dateTime('shipped_at')->nullable();
+            $table->dateTime('arrived_at')->nullable();
             $table->string('category');
             $table->string('payment_status')->default('belum dibayar');
             $table->string('shipping_status')->default('belum dikirim');
+            $table->string('photo')->nullable();
             $table->integer('item');
             $table->bigInteger('total');
             $table->timestamps();

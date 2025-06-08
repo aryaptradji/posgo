@@ -1,7 +1,7 @@
 @props([
     'show' => false,
     'title' => null,
-    'action' => null
+    'action' => null,
 ])
 
 <div class="fixed flex justify-center inset-0 z-50 pt-16 bg-black/20 backdrop-blur-sm" x-cloak x-show="{{ $show }}"

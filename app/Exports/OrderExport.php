@@ -21,7 +21,7 @@ class OrderExport implements FromCollection, WithHeadings, WithStyles
                 'Waktu' => $o->time,
                 'Nama' => $o->user->name,
                 'Kategori' => $o->category,
-                'Status' => $o->status,
+                'Status' => $o->payment_status,
                 'Item' => $o->item,
                 'Total' => $o->total
             ];

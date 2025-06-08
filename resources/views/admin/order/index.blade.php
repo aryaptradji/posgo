@@ -80,7 +80,7 @@
                                     'page' => 1,
                                 ]) }}"
                                     class="flex items-center justify-center uppercase">
-                                    Waktu
+                                    Waktu Dibuat
                                     <x-icons.arrow-down
                                         class="ml-2 text-tertiary-300 {{ request('sort') == 'time' && request('desc') ? 'rotate-180' : '' }}" />
                                 </a>
@@ -204,7 +204,7 @@
                                                         <span>{{ $order->code }}</span>
                                                     </div>
                                                     <div class="flex flex-col gap-1">
-                                                        <span class="font-bold">Waktu</span>
+                                                        <span class="font-bold">Waktu Dibuat</span>
                                                         <span>{{ $order->time }}</span>
                                                     </div>
                                                     <div class="flex flex-col gap-1">
@@ -237,7 +237,6 @@
                                                                 </th>
                                                                 <th class="px-4 py-2" align="center">Pcs</th>
                                                                 <th class="px-4 py-2" align="center">Qty</th>
-                                                                <th class="px-4 py-2" align="center">Item</th>
                                                                 <th class="px-4 py-2" align="center">Harga</th>
                                                             </tr>
                                                         </thead>
@@ -250,8 +249,6 @@
                                                                         {{ $item->product->pcs }}</td>
                                                                     <td class="px-4 py-2" align="center">
                                                                         {{ $item->qty }}</td>
-                                                                    <td class="px-4 py-2" align="center">
-                                                                        {{ $item->product->pcs * $item->qty }}</td>
                                                                     <td class="px-4 py-2" align="left">Rp
                                                                         {{ number_format($item->product->price, 0, ',', '.') }}
                                                                     </td>
@@ -267,11 +264,6 @@
                                                                 <td class="px-4 py-2" align="center">
                                                                     {{ $order->items->sum(function ($item) {
                                                                         return $item->qty;
-                                                                    }) }}
-                                                                </td>
-                                                                <td class="px-4 py-2" align="center">
-                                                                    {{ $order->items->sum(function ($item) {
-                                                                        return $item->product->pcs * $item->qty;
                                                                     }) }}
                                                                 </td>
                                                                 @php
