@@ -48,7 +48,7 @@
         <div class="flex flex-col justify-between">
             <div class="px-7 py-4 flex justify-between">
                 <div class="w-fit flex gap-4 items-center justify-center font-semibold">
-                    @foreach (['semua', 'selesai', 'dalam perjalanan', 'belum dikirim'] as $status)
+                    @foreach (['semua', 'selesai', 'dikirim', 'belum dikirim'] as $status)
                         <a href="{{ request()->fullUrlWithQuery(['filter' => $status, 'page' => 1]) }}"
                             class="px-3 py-2 rounded-lg capitalize transition-all duration-1000 cursor-pointer {{ request('filter', 'semua') === $status ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black' }}">
                             {{ $status }}
@@ -170,15 +170,15 @@
                                 $class =
                                     $delivery->shipping_status == 'belum dikirim'
                                         ? 'bg-danger/15 text-danger border-danger'
-                                        : ($delivery->shipping_status == 'dalam perjalanan'
+                                        : ($delivery->shipping_status == 'dikirim'
                                             ? 'bg-warning-200/15 text-warning-200 border-warning-200'
                                             : 'bg-success/15 text-success border-success');
                             @endphp
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="left">{{ $delivery->code }}</td>
-                                <td class="px-4 py-2 w-32" align="center">
+                                <td class="px-4 py-2 w-28" align="center">
                                     {{ $delivery->shipped_at_formatted }}</td>
-                                <td class="px-4 py-2 w-32" align="center">{{ $delivery->arrived_at_formatted }}</td>
+                                <td class="px-4 py-2 w-28" align="center">{{ $delivery->arrived_at_formatted }}</td>
                                 <td class="px-4 py-2 w-36" align="left">{{ $delivery->user->name }}</td>
                                 <td class="px-4 py-2 capitalize" align="center">{{ $delivery->category }}</td>
                                 <td class="px-4 py-4" align="center">
@@ -200,11 +200,17 @@
                                                 <x-icons.send-icon />
                                             </button>
                                         </template>
-                                        <template x-if="{{ $delivery->shipping_status === 'dalam perjalanan' }}">
+                                        <template x-if="{{ $delivery->shipping_status === 'dikirim' }}">
                                             <button type="button" @click="showModalUpload = true"
                                                 class="transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.upload-icon />
                                             </button>
+                                        </template>
+                                        <template x-if="{{ $delivery->shipping_status === 'selesai' || $delivery->shipping_status === 'dikirim' }}">
+                                            <a href="{{ route('delivery.deliveryNote', $delivery) }}"
+                                                class="transition-transform hover:scale-125 active:scale-90 mt-1">
+                                                <x-icons.print-sm />
+                                            </a>
                                         </template>
                                     </div>
 

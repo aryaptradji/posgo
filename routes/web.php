@@ -70,11 +70,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // Riwayat
     Route::get('/order/print', [AdminOrderController::class, 'print'])->name('order.print');
     Route::get('/order/export', [AdminOrderController::class, 'export'])->name('order.export');
+    Route::get('/order/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('order.invoice');
     Route::resource('/order', AdminOrderController::class);
 
     // Pengiriman
     Route::get('/delivery/print', [DeliveryController::class, 'print'])->name('delivery.print');
     Route::get('/delivery/export', [DeliveryController::class, 'export'])->name('delivery.export');
+    Route::get('/delivery/{delivery}/deliveryNote', [DeliveryController::class, 'deliveryNote'])->name('delivery.deliveryNote');
     Route::put('/delivery/{delivery}/kirim', [DeliveryController::class, 'kirim'])->name('delivery.kirim');
     Route::put('/delivery/{delivery}/upload', [DeliveryController::class, 'upload'])->name('delivery.upload');
     Route::resource('/delivery', DeliveryController::class);

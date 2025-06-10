@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Order;
 use App\Exports\OrderExport;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -39,7 +40,7 @@ class OrderController extends Controller
                 ->join('users', 'users.id', '=', 'orders.user_id')
                 ->orderBy('users.name', $request->boolean('desc') ? 'desc' : 'asc')
                 ->select('orders.*');
-        } else if ($request->filled('sort')) {
+        } elseif ($request->filled('sort')) {
             $query->orderBy($request->sort, $request->boolean('desc') ? 'desc' : 'asc');
         } else {
             $query->latest('time');
@@ -64,6 +65,19 @@ class OrderController extends Controller
     public function export()
     {
         return Excel::download(new OrderExport(), 'daftar_pesanan.xlsx');
+    }
+
+    public function invoice(Order $order)
+    {
+        $order->load(['user', 'items.product']);
+
+        $pdf = Pdf::loadView('admin.order.invoice', compact('order'));
+
+        // Stream di browser:
+        return $pdf->stream('Invoice-' . $order->code . '.pdf');
+
+        // Kalau mau langsung download:
+        // return $pdf->download('Invoice-'.$order->code.'.pdf');
     }
 
     /**

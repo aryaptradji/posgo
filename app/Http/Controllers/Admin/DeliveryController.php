@@ -58,7 +58,7 @@ class DeliveryController extends Controller
     public function print()
     {
         $deliveries = Order::with(['user', 'items'])
-            ->orderBy('time', 'desc')
+            ->orderBy('shipped_at', 'asc')
             ->get();
 
         return view('admin.delivery.print', compact('deliveries'));
@@ -67,6 +67,11 @@ class DeliveryController extends Controller
     public function export()
     {
         return Excel::download(new DeliveryExport(), 'daftar_pengiriman_pesanan.xlsx');
+    }
+
+    public function deliveryNote(Order $delivery)
+    {
+        return view('admin.delivery.delivery_note', compact('delivery'));
     }
 
     public function kirim(Request $request, Order $delivery)
@@ -85,7 +90,7 @@ class DeliveryController extends Controller
 
         $delivery->update([
             'courier_id' => $validated['courier_id'],
-            'shipping_status' => 'dalam perjalanan',
+            'shipping_status' => 'dikirim',
             'shipped_at' => $validated['shipped_at'],
         ]);
 
@@ -110,7 +115,7 @@ class DeliveryController extends Controller
 
         $delivery->update([
             'photo' => $imagePath,
-            'shipping_status' => 'selesai'
+            'shipping_status' => 'selesai',
         ]);
 
         return redirect()->route('delivery.index')->with('success', 'Bukti pengiriman pesanan berhasil diupload');

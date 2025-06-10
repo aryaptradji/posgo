@@ -56,7 +56,7 @@ class Order extends Model
 
     public function scopeDikirim($query)
     {
-        return $query->where('payment_status', 'dibayar')->where('shipping_status', 'dalam perjalanan');
+        return $query->where('payment_status', 'dibayar')->where('shipping_status', 'dikirim');
     }
 
     public function scopeSelesai($query)

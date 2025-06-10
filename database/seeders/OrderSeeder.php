@@ -52,7 +52,7 @@ class OrderSeeder extends Seeder
                     // 70% dari 'dibayar' → udah punya kurir & shipping_status jalan
                     $courier = $couriers->random();
                     $courier_id = $courier->id;
-                    $shipping_status = fake()->randomElement(['dalam perjalanan', 'selesai']);
+                    $shipping_status = fake()->randomElement(['dikirim', 'selesai']);
 
                     // shipped_at harus diisi > time
                     $shipped_at = Carbon::parse($time)->addHours(rand(1, 72));
