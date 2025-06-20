@@ -10,7 +10,7 @@ class Order extends Model
     /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
 
-    protected $fillable = ['user_id', 'courier_id', 'time', 'shipped_at', 'arrived_at', 'code', 'category', 'payment_status', 'payment_method', 'shipping_status', 'photo', 'item', 'total', 'snap_token', 'snap_expires_at', 'snap_order_id'];
+    protected $fillable = ['user_id', 'courier_id', 'time', 'shipped_at', 'arrived_at', 'code', 'category', 'payment_status', 'payment_method', 'shipping_status', 'photo', 'item', 'total', 'paid', 'change', 'snap_token', 'snap_expires_at', 'snap_order_id'];
 
     public function user()
     {
@@ -66,7 +66,7 @@ class Order extends Model
 
     public function scopeBatal($query)
     {
-        return $query->whereIn('payment_status', ['dibatalkan', 'kadaluwarsa', 'ditolak']);
+        return $query->whereIn('payment_status', ['kadaluwarsa', 'ditolak']);
     }
 
     protected $casts = [

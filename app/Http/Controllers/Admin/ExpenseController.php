@@ -73,7 +73,10 @@ class ExpenseController extends Controller
             ],
         );
 
+        $productId = Product::where('name', $validated['source'])->value('id');
+
         Expense::create([
+            'product_id' => $productId,
             'date' => $validated['date'],
             'source' => $validated['source'],
             'category' => $validated['category'],
@@ -122,8 +125,11 @@ class ExpenseController extends Controller
             ],
         );
 
+        $productId = Product::where('name', $validated['source'])->value('id');
+
         // Simpan perubahan
         $expense->update([
+            'product_id' => $productId,
             'date' => $validated['date'],
             'source' => $validated['source'],
             'category' => $validated['category'],

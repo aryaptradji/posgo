@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete(); // relasi opsional ke produk
             $table->string('source'); // fallback untuk input manual
-            $table->enum('category', ['Operasional', 'Luar Operasional']);
+            $table->string('category');
             $table->dateTime('date');
             $table->bigInteger('total');
             $table->timestamps();

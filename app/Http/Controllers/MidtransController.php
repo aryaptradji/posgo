@@ -50,7 +50,6 @@ class MidtransController extends Controller
         // Status
         $status = match ($request->transaction_status) {
             'capture', 'settlement' => 'dibayar',
-            'cancel' => 'dibatalkan',
             'expire' => 'kadaluwarsa',
             'deny' => 'ditolak',
             'pending' => 'belum dibayar',

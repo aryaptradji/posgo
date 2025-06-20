@@ -16,6 +16,31 @@
 </head>
 
 <body class="bg-tertiary">
+    {{-- Toast Error --}}
+    @if ($errors->any())
+        <div class="fixed top-16 right-10 z-50 flex flex-col items-end gap-4">
+            @foreach ($errors->all() as $error)
+                <x-toast id="toast-failed{{ $loop->index }}" iconClass="text-danger bg-danger/25"
+                    slotClass="text-danger" :duration="6000" :delay="$loop->index * 500">
+                    <x-slot:icon>
+                        <x-icons.toast-failed />
+                    </x-slot:icon>
+                    {{ $error }}
+                </x-toast>
+            @endforeach
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="fixed top-16 right-10 z-50 flex flex-col items-end gap-4">
+            <x-toast id="toast-failed" iconClass="text-danger bg-danger/25" slotClass="text-danger" :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-failed />
+                </x-slot:icon>
+                {{ session('error') }}
+            </x-toast>
+        </div>
+    @endif
+
     <div class="h-screen bg-tertiary px-8 py-8 flex">
         <section class="ps-24 w-3/5" x-data="{
             name: @js(old('name')),
@@ -334,7 +359,7 @@
             <!-- Carousel wrapper -->
             <div class="relative overflow-hidden rounded-2xl h-full">
                 <!-- Item 1 -->
-                <div class="hidden duration-700 ease-in-out bg-primary" data-carousel-item>
+                <div class="hidden duration-700 ease-in-out bg-gradient-to-r from-primary/80 to-secondary-purple/80" data-carousel-item>
                     <img src="{{ asset('img/Koordinasi tim lebih mudah.svg') }}"
                         class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
                         alt="Koordinasi tim lebih mudah.svg">
@@ -344,7 +369,7 @@
                     </p>
                 </div>
                 <!-- Item 2 -->
-                <div class="hidden duration-700 ease-in-out bg-secondary-purple" data-carousel-item>
+                <div class="hidden duration-700 ease-in-out bg-gradient-to-tr from-primary/80 to-secondary-purple/80" data-carousel-item>
                     <img src="{{ asset('img/Waktu menjadi lebih efisien.svg') }}"
                         class="absolute block w-3/5 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
                         alt="Waktu menjadi lebih efisien.svg">
@@ -354,7 +379,7 @@
                     </p>
                 </div>
                 <!-- Item 3 -->
-                <div class="hidden duration-700 ease-in-out bg-primary" data-carousel-item>
+                <div class="hidden duration-700 ease-in-out bg-gradient-to-bl from-primary/80 to-secondary-purple/80" data-carousel-item>
                     <img src="{{ asset('img/Pengelolaan keuangan lebih baik.svg') }}"
                         class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
                         alt="Pengelolaan keuangan lebih baik.svg">

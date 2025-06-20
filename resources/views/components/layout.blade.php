@@ -1,3 +1,5 @@
+@props(['header' => null])
+
 <!DOCTYPE html>
 <html>
 

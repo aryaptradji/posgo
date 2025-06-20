@@ -24,7 +24,13 @@ class AuthController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'name' => ['required', 'string', 'regex:/^[a-zA-Z]+[a-zA-Z.\s]*$/', Rule::unique('users')->where(fn($q) => $q->where('role', 'customer')), 'max:50'],
+                'name' => [
+                    'required',
+                    'string',
+                    'regex:/^[a-zA-Z]+[a-zA-Z.\s]*$/',
+                    Rule::unique('users')->where(fn ($q) => $q->where('role', 'customer')),
+                    'max:50'
+                ],
                 'phone' => 'required|string|regex:/^08[0-9]{8,13}$/',
                 'address' => 'required|string|max:75',
                 'city' => 'required|exists:cities,slug',
@@ -33,8 +39,13 @@ class AuthController extends Controller
                 'rt' => 'required|string|regex:/^[0-9]{3}$/',
                 'rw' => 'required|string|regex:/^[0-9]{3}$/',
                 'postal_code' => 'required|string|regex:/^[0-9]{5}$/',
-                'email' => ['required', 'email', 'regex:/^[a-zA-Z0-9](\.?[a-zA-Z0-9_]+)*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', Rule::unique('users')->where(fn($q) => $q->where('role', 'customer'))],
-                'password' => 'required|regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*._]).{8,}$/',
+                'email' => [
+                    'required',
+                    'email',
+                    'regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+                    Rule::unique('users')->where(fn ($q) => $q->where('role', 'customer'))
+                ],
+                'password' => 'required|regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*._]).{8,}$/'
             ],
             [
                 'name.required' => 'Nama wajib diisi',
@@ -55,11 +66,10 @@ class AuthController extends Controller
                 'postal_code.required' => 'Kode pos wajib diisi',
                 'postal_code.regex' => 'Format kode pos tidak valid',
                 'email.required' => 'Email wajib diisi',
-                'email.email' => 'Format email tidak valid',
                 'email.regex' => 'Format email tidak valid',
                 'email.unique' => 'Email ini sudah terdaftar',
                 'password.required' => 'Password wajib diisi',
-                'password.regex' => 'Format password tidak valid',
+                'password.regex' => 'Format password tidak valid'
             ],
         );
 
@@ -70,9 +80,9 @@ class AuthController extends Controller
 
             if ($errors->hasAny(['name', 'phone', 'address'])) {
                 $step = 0;
-            } elseif ($errors->hasAny(['city', 'district', 'sub_district', 'rt', 'rw', 'postal_code'])) {
+            } else if ($errors->hasAny(['city', 'district', 'sub_district', 'rt', 'rw', 'postal_code'])) {
                 $step = 1;
-            } elseif ($errors->hasAny(['email', 'password'])) {
+            } else if ($errors->hasAny(['email', 'password'])) {
                 $step = 2;
             }
 
@@ -88,7 +98,7 @@ class AuthController extends Controller
             'sub_district_id' => $subDistrict->id,
             'rt' => $request->rt,
             'rw' => $request->rw,
-            'postal_code' => $request->postal_code,
+            'postal_code' => $request->postal_code
         ]);
 
         $address = Address::create([
@@ -116,13 +126,12 @@ class AuthController extends Controller
     {
         $request->validate(
             [
-                'email' => 'required|email|regex:/^[a-zA-Z0-9](\.?[a-zA-Z0-9_]+)*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+                'email' => 'required|email|regex:/^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
                 'password' => 'required',
             ],
             [
                 'email.required' => 'Email wajib diisi',
                 'email.regex' => 'Format email tidak valid',
-                'email.email' => 'Format email tidak valid',
                 'password.required' => 'Password wajib diisi',
             ],
         );
@@ -142,12 +151,12 @@ class AuthController extends Controller
         }
 
         Auth::login($user);
-        $request->session()->regenerate();
+
         session()->flash('success', 'Selamat datang, ' . $user->name . '!');
 
         return match ($user->role) {
             'admin' => redirect()->route('admin.dashboard'),
-            'cashier' => redirect()->route('kasir.dashboard'),
+            'cashier' => redirect()->route('pos-menu'),
             'customer' => redirect()->route('customer.home'),
             default => abort(403, 'Role tidak dikenali.'),
         };

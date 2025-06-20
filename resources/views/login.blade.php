@@ -98,7 +98,7 @@
                 <form action="{{ route('auth.login') }}" method="POST">
                     @csrf
                     {{-- Email --}}
-                    <x-textfield x-model="email" x-on:input="validateEmail()" type="email" name="email"
+                    <x-textfield x-model="email" x-on:input="validateEmail()" type="email" name="email" id="email"
                         placeholder="Masukkan email . . ." classCont="w-4/5 mt-10 mb-2" class="focus:ring"
                         x-bind:class="emailError || emailServerError ? 'ring ring-danger focus:ring-danger' : 'focus:ring-primary'">Email</x-textfield>
                     <x-inline-error-message x-show="emailError" x-text="emailError"></x-inline-error-message>
@@ -107,7 +107,7 @@
                     @enderror
 
                     {{-- Password --}}
-                    <x-textfield-password x-model="password" x-on:input="validatePassword()" name="password"
+                    <x-textfield-password x-model="password" x-on:input="validatePassword()" name="password" id="password"
                         placeholder="Masukkan password . . ." classCont="w-4/5 mt-6 mb-2" class="focus:ring"
                         x-bind:class="passwordError || passwordServerError ? 'ring ring-danger focus:ring-danger' :
                             'focus:ring-primary'">Password</x-textfield-password>
@@ -126,7 +126,7 @@
             <!-- Carousel wrapper -->
             <div class="relative overflow-hidden rounded-2xl h-full">
                 <!-- Item 1 -->
-                <div class="hidden duration-700 ease-in-out bg-primary" data-carousel-item>
+                <div class="hidden duration-700 ease-in-out bg-gradient-to-r from-primary/80 to-secondary-purple/80" data-carousel-item>
                     <img src="{{ asset('img/Koordinasi tim lebih mudah.svg') }}"
                         class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
                         alt="Koordinasi tim lebih mudah.svg">
@@ -136,7 +136,7 @@
                     </p>
                 </div>
                 <!-- Item 2 -->
-                <div class="hidden duration-700 ease-in-out bg-secondary-purple" data-carousel-item>
+                <div class="hidden duration-700 ease-in-out bg-gradient-to-tr from-primary/80 to-secondary-purple/80" data-carousel-item>
                     <img src="{{ asset('img/Waktu menjadi lebih efisien.svg') }}"
                         class="absolute block w-3/5 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
                         alt="Waktu menjadi lebih efisien.svg">
@@ -146,7 +146,7 @@
                     </p>
                 </div>
                 <!-- Item 3 -->
-                <div class="hidden duration-700 ease-in-out bg-primary" data-carousel-item>
+                <div class="hidden duration-700 ease-in-out bg-gradient-to-bl from-primary/80 to-secondary-purple/80" data-carousel-item>
                     <img src="{{ asset('img/Pengelolaan keuangan lebih baik.svg') }}"
                         class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
                         alt="Pengelolaan keuangan lebih baik.svg">

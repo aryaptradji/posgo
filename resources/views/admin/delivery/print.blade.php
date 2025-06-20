@@ -121,7 +121,7 @@
                 <tr>
                     <td>{{ $delivery->code }}</td>
                     <td>{{ $delivery->shipped_at_formatted }}</td>
-                    <td class="capitalize">{{ $delivery->user->name }}</td>
+                    <td class="capitalize">{{ $delivery->user ? $delivery->user->name : '-' }}</td>
                     <td class="capitalize">{{ $delivery->category }}</td>
                     <td class="capitalize">{{ $delivery->shipping_status }}</td>
                     <td>{{ $delivery->item }}</td>

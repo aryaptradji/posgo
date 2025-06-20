@@ -19,33 +19,55 @@
     class="fixed z-20 top-0 w-screen h-24 px-12 flex justify-between items-center">
     <img src="{{ asset('img/posgo-logo.svg') }}" alt="posgo-logo.svg" class="w-28">
     <li class="flex uppercase gap-16 font-bold mt-2">
-        <a href="{{ route('customer.home') }}"
-            class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
-            x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">
-            <span class="{{ request()->is('home') ? 'text-primary' : 'text-black' }}">Home</span>
-            @if (request()->is('home'))
-                <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
-                    x-bind:class="isHomeActive ? 'scale-x-100' : 'scale-x-50'">
-            @endif
-        </a>
-        <a href="{{ route('customer.product') }}"
-            class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
-            x-data="{ isProductActive: false }" @mouseenter="isProductActive = true" @mouseleave="isProductActive = false">
-            <span class="{{ request()->is('product') || request()->is('product' . '*') ? 'text-primary' : 'text-black' }}">Produk</span>
-            @if (request()->is('product') || request()->is('product' . '*'))
-                <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
-                    x-bind:class="isProductActive ? 'scale-x-100' : 'scale-x-50'">
-            @endif
-        </a>
-        <a href="{{ route('customer.order.index', ['status' => 'selesai']) }}"
-            class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
-            x-data="{ isOrderActive: false }" @mouseenter="isOrderActive = true" @mouseleave="isOrderActive = false">
-            <span class="{{ request()->is('order') ? 'text-primary' : 'text-black' }}">Pesananku</span>
-            @if (request()->is('order') || request()->is('order' . '*'))
-                <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
-                    x-bind:class="isOrderActive ? 'scale-x-100' : 'scale-x-50'">
-            @endif
-        </a>
+        @if ($user->role === 'customer')
+            <a href="{{ route('customer.home') }}"
+                class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
+                x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">
+                <span class="{{ request()->is('home') ? 'text-primary' : 'text-black' }}">Home</span>
+                @if (request()->is('home'))
+                    <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
+                        x-bind:class="isHomeActive ? 'scale-x-100' : 'scale-x-50'">
+                @endif
+            </a>
+            <a href="{{ route('customer.product') }}"
+                class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
+                x-data="{ isProductActive: false }" @mouseenter="isProductActive = true" @mouseleave="isProductActive = false">
+                <span
+                    class="{{ request()->is('product') || request()->is('product' . '*') ? 'text-primary' : 'text-black' }}">Produk</span>
+                @if (request()->is('product') || request()->is('product' . '*'))
+                    <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
+                        x-bind:class="isProductActive ? 'scale-x-100' : 'scale-x-50'">
+                @endif
+            </a>
+            <a href="{{ route('customer.order.index', ['status' => 'selesai']) }}"
+                class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
+                x-data="{ isOrderActive: false }" @mouseenter="isOrderActive = true" @mouseleave="isOrderActive = false">
+                <span class="{{ request()->is('order') ? 'text-primary' : 'text-black' }}">Pesananku</span>
+                @if (request()->is('order') || request()->is('order' . '*'))
+                    <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
+                        x-bind:class="isOrderActive ? 'scale-x-100' : 'scale-x-50'">
+                @endif
+            </a>
+        @else
+            <a href="{{ route('pos-menu') }}"
+                class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
+                x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">
+                <span class="{{ request()->is('cashier/pos-menu') || request()->is('cashier/pos-menu/' . '*') ? 'text-primary' : 'text-black' }}">POS Menu</span>
+                @if (request()->is('cashier/pos-menu') || request()->is('cashier/pos-menu/' . '*'))
+                    <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
+                        x-bind:class="isHomeActive ? 'scale-x-100' : 'scale-x-50'">
+                @endif
+            </a>
+            <a href="{{ route('transaction') }}"
+                class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
+                x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">
+                <span class="{{ request()->is('cashier/transaction') || request()->is('cashier/transaction/' . '*') ? 'text-primary' : 'text-black' }}">Riwayat</span>
+                @if (request()->is('cashier/transaction') || request()->is('cashier/transaction/' . '*'))
+                    <hr class="inline-block w-full h-[4px] bg-primary rounded-full border-0 transition-all duration-500"
+                        x-bind:class="isHomeActive ? 'scale-x-100' : 'scale-x-50'">
+                @endif
+            </a>
+        @endif
     </li>
     <div class="flex justify-between items-center w-fit gap-2 mr-5 relative" x-data="{ open: false }">
         @if ($user->photo_url)

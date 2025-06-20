@@ -103,7 +103,7 @@
                         @endphp
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="center">{{ $expense->date->translatedFormat('d M Y H:i:s') }}</td>
-                                <td class="px-4 py-2" align="center">{{ $expense->source }}</td>
+                                <td class="px-4 py-2" align="center">{{ $expense->product_id ? $expense->product->name : $expense->source }}</td>
                                 <td class="px-4 py-2" align="center">
                                     <span class="px-2 py-1 rounded-lg capitalize border-2 {{ $class }}">{{ $expense->category }}</span>
                                 </td>

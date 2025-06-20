@@ -121,7 +121,7 @@
                 <tr>
                     <td>{{ $order->code }}</td>
                     <td>{{ $order->time->translatedFormat('d M Y H:i:s') }}</td>
-                    <td class="capitalize">{{ $order->user->name }}</td>
+                    <td class="capitalize">{{ $order->user ? $order->user->name : '-' }}</td>
                     <td class="capitalize">{{ $order->category }}</td>
                     <td class="capitalize">{{ $order->payment_status }}</td>
                     <td>{{ $order->item }}</td>

@@ -44,7 +44,7 @@
             setInterval(() => this.next(), 3000)
         }
     }" x-init="autoplay()">
-        <div class="relative w-full min-h-[calc(100vh)] overflow-hidden">
+        <div class="relative w-full min-h-[calc(100vh-2rem)] overflow-hidden">
             <template x-for="(slide, index) in slides" :key="index">
                 <div x-cloak x-show="active === index" class="absolute inset-0 flex justify-between items-center px-14"
                     x-transition:enter="transition-all duration-500"

@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('code')->unique();
             $table->dateTime('time');
             $table->dateTime('shipped_at')->nullable();
@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->string('photo')->nullable();
             $table->integer('item');
             $table->bigInteger('total');
+            $table->bigInteger('paid')->default(0);
+            $table->bigInteger('change')->default(0);
             $table->timestamps();
         });
     }

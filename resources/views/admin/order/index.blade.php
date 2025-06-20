@@ -152,7 +152,7 @@
                                 <td class="px-4 py-2" align="left">{{ $order->code }}</td>
                                 <td class="px-4 py-2" align="left">
                                     {{ $order->time->translatedFormat('d M Y H:i:s') }}</td>
-                                <td class="px-4 py-2" align="center">{{ $order->user->name }}</td>
+                                <td class="px-4 py-2" align="center">{{ $order->user ? $order->user->name : '-' }}</td>
                                 <td class="px-4 py-2 capitalize" align="center">{{ $order->category }}</td>
                                 <td class="px-4 py-4" align="center">
                                     <span
@@ -209,7 +209,7 @@
                                                     </div>
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Nama</span>
-                                                        <span>{{ $order->user->name }}</span>
+                                                        <span>{{ $order->user ? $order->user->name : '-' }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="flex flex-col gap-4 col-span-1 justify-self-end">

@@ -18,7 +18,7 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::whereIn('role', ['cashier', 'customer'])->get();
+        $users = User::where('role', 'customer')->get();
         $products = Product::all();
         $couriers = Courier::all();
         $photos = ['sample-foto-paket-1.jpg', 'sample-foto-paket-2.jpeg', 'sample-foto-paket-3.jpg'];
@@ -31,51 +31,55 @@ class OrderSeeder extends Seeder
 
         for ($i = 1; $i <= $jumlahOrder; $i++) {
             $user = $users->random();
-            $category = $user->role === 'cashier' ? 'offline' : 'online';
+            $category = fake()->randomElement(['offline', 'online']);
             $time = fake()->dateTimeBetween('-30 days', 'now');
 
             // 70% chance 'dibayar'
             $payment_status = fake()->randomElement([
-                ...array_fill(0, 7, 'dibayar'), // ~70%
+                ...array_fill(0, 7, 'dibayar'),
                 'belum dibayar',
-                'dibatalkan',
                 'kadaluwarsa',
                 'ditolak',
             ]);
 
+            $payment_method = null;
+            $paid = 0;
+            $change = 0;
+
+            // Logic payment_method
+            if ($category == 'offline') {
+                // Offline bisa tunai atau non-tunai
+                $payment_method = fake()->randomElement(['tunai', 'QRIS ShopeePay', 'QRIS GoPay', 'Bank Mandiri', 'Bank BCA', 'Bank BNI']);
+            } else {
+                // Online non-tunai semua
+                $payment_method = fake()->randomElement(['QRIS ShopeePay', 'QRIS GoPay', 'Bank Mandiri', 'Bank BCA', 'Bank BNI']);
+            }
+
+            // --- Courier ---
             $courier_id = null;
             $shipping_status = 'belum dikirim';
             $shipped_at = null;
 
             if ($payment_status === 'dibayar') {
                 if (fake()->boolean(70)) {
-                    // 70% dari 'dibayar' → udah punya kurir & shipping_status jalan
                     $courier = $couriers->random();
                     $courier_id = $courier->id;
                     $shipping_status = fake()->randomElement(['dikirim', 'selesai']);
-
-                    // shipped_at harus diisi > time
                     $shipped_at = Carbon::parse($time)->addHours(rand(1, 72));
-                } else {
-                    // Dibayar tapi belum dikirim
-                    $courier_id = null;
-                    $shipping_status = 'belum dikirim';
-                    $shipped_at = null;
                 }
             }
 
             $photo = null;
             $arrived_at = null;
 
-            if ($shipping_status === 'selesai' && !empty($photos)) {
+            if ($shipping_status === 'selesai') {
                 $photo = 'deliveries/' . fake()->randomElement($photos);
-
                 if ($shipped_at) {
                     $arrived_at = Carbon::parse($shipped_at)->addHours(rand(1, 72));
                 }
             }
 
-            // Create order
+            // Create Order (sementara item dan total kosong)
             $order = Order::create([
                 'user_id' => $user->id,
                 'courier_id' => $courier_id,
@@ -83,10 +87,12 @@ class OrderSeeder extends Seeder
                 'time' => $time,
                 'category' => $category,
                 'payment_status' => $payment_status,
-                'payment_method' => fake()->randomElement(['QRIS ShopeePay', 'QRIS GoPay', 'QRIS', 'Bank Mandiri', 'Bank BCA', 'Bank BNI']),
+                'payment_method' => $payment_method,
                 'shipping_status' => $shipping_status,
-                'item' => 0, // updated setelah insert item
-                'total' => 0, // updated setelah insert item
+                'item' => 0,
+                'total' => 0,
+                'paid' => 0,
+                'change' => 0,
                 'snap_token' => null,
                 'snap_expires_at' => null,
                 'snap_order_id' => null,
@@ -102,22 +108,40 @@ class OrderSeeder extends Seeder
 
             foreach ($selectedProducts as $product) {
                 $qty = rand(1, 5);
-
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'qty' => $qty,
                     'price' => $product->price,
                 ]);
-
                 $totalQty += $qty;
                 $totalPrice += $qty * $product->price;
             }
 
-            // Update order item & total
+            // --- Logic Paid & Change ---
+            if ($payment_status === 'dibayar') {
+                if ($payment_method === 'tunai') {
+                    // 50% bayar pas, 50% bayar lebih (ada kembalian)
+                    if (fake()->boolean(50)) {
+                        $paid = $totalPrice; // bayar pas
+                        $change = 0;
+                    } else {
+                        $paid = $totalPrice + rand(1000, 50000); // bayar lebih
+                        $change = $paid - $totalPrice;
+                    }
+                } else {
+                    // Non tunai pasti tidak ada kembalian
+                    $paid = $totalPrice;
+                    $change = 0;
+                }
+            }
+
+            // Update order final
             $order->update([
                 'item' => $selectedProducts->count(),
                 'total' => $totalPrice,
+                'paid' => $paid,
+                'change' => $change,
             ]);
         }
     }
