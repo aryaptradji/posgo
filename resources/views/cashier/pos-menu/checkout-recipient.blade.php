@@ -28,7 +28,7 @@
 
     <form action="{{ route('pos-menu.checkout.recipient.store', $order) }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="flex flex-grow min-h-0 gap-6 mx-14 mt-32 h-full">
+        <div class="flex flex-grow max-h-[74vh] h-full gap-6 mx-14 mt-32">
             <!-- Detail Pesanan -->
             <div class="w-3/4 shadow-outer py-6 rounded-xl flex flex-col">
                 <div class="text-2xl px-8 font-bold pb-4 border-b border-tertiary-title-line">Informasi Pemesan</div>

@@ -228,7 +228,7 @@
         @else
             <div class="h-3/5 flex flex-col justify-center items-center">
                 <x-images.empty-order class="max-w-64" />
-                <span class="italic xtext-gray-500">Belum ada pesanan</span>
+                <span class="italic text-gray-500">Belum ada pesanan</span>
             </div>
         @endif
 

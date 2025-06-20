@@ -8,16 +8,17 @@ use App\Models\City;
 use App\Models\User;
 use Midtrans\Config;
 use App\Models\Order;
+use App\Models\Address;
 use App\Models\Product;
 use App\Models\District;
 use App\Models\OrderItem;
 use App\Models\SubDistrict;
 use Illuminate\Support\Str;
+use App\Models\Neighborhood;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
 class PosMenuController extends Controller
 {
@@ -147,6 +148,10 @@ class PosMenuController extends Controller
         // Ambil data user beserta relasi alamat jika tersedia
         $user = $userId ? User::with('address.neighborhood.subDistrict.district.city')->find($userId) : null;
 
+        if ($user) {
+            $user->loadMissing(['address.neighborhood.subDistrict.district.city']);
+        }
+
         // Inisialisasi default
         $districts = collect();
         $subDistricts = collect();
@@ -183,16 +188,33 @@ class PosMenuController extends Controller
     public function storeCheckoutAddress(Request $request, Order $order)
     {
         // Validasi input
-        $validated = $request->validate([
-            'phone' => 'required|string|regex:/^08[0-9]{8,13}$/',
-            'city' => 'required|exists:cities,slug',
-            'district' => 'required|exists:districts,slug',
-            'sub_district' => 'required|exists:sub_districts,slug',
-            'address' => 'required|string|max:75',
-            'rt' => 'required|string|regex:/^[0-9]{3}$/',
-            'rw' => 'required|string|regex:/^[0-9]{3}$/',
-            'postal_code' => 'required|string|regex:/^[0-9]{5}$/',
-        ]);
+        $validated = $request->validate(
+            [
+                'phone' => 'required|string|regex:/^08[0-9]{8,13}$/',
+                'city' => 'required|exists:cities,slug',
+                'district' => 'required|exists:districts,slug',
+                'sub_district' => 'required|exists:sub_districts,slug',
+                'address' => 'required|string|max:75',
+                'rt' => 'required|string|regex:/^[0-9]{3}$/',
+                'rw' => 'required|string|regex:/^[0-9]{3}$/',
+                'postal_code' => 'required|string|regex:/^[0-9]{5}$/',
+            ],
+            [
+                'phone.required' => 'Nomor telepon wajib diisi',
+                'phone.regex' => 'Format nomor telepon tidak valid',
+                'address.required' => 'Alamat wajib diisi',
+                'address.max' => 'Alamat maksimal 75 huruf',
+                'city.required' => 'Kota wajib diisi',
+                'district.required' => 'Kecamatan wajib diisi',
+                'sub_district.required' => 'Kelurahan wajib diisi',
+                'rt.required' => 'Nomor RT wajib diisi',
+                'rt.regex' => 'Format nomor RT tidak valid',
+                'rw.required' => 'Nomor RW wajib diisi',
+                'rw.regex' => 'Format nomor RW tidak valid',
+                'postal_code.required' => 'Kode pos wajib diisi',
+                'postal_code.regex' => 'Format kode pos tidak valid',
+            ],
+        );
 
         // Ambil user_id dari session
         $userId = session()->get("checkout.{$order->id}.user_id");
@@ -204,17 +226,40 @@ class PosMenuController extends Controller
         $user = User::with('address.neighborhood')->findOrFail($userId);
         $subDistrict = SubDistrict::where('slug', $validated['sub_district'])->firstOrFail();
 
-        // Update data user & alamat
+        // Update phone_number user
         $user->update(['phone_number' => $validated['phone']]);
-        $user->address->update(['street' => $validated['address']]);
-        $user->address->neighborhood->update([
-            'sub_district_id' => $subDistrict->id,
-            'rt' => $validated['rt'],
-            'rw' => $validated['rw'],
-            'postal_code' => $validated['postal_code'],
-        ]);
 
-        // Update order assign user
+        // Cek apakah user sudah punya address
+        if (!$user->address) {
+            // Buat neighborhood baru
+            $neighborhood = Neighborhood::create([
+                'sub_district_id' => $subDistrict->id,
+                'rt' => $validated['rt'],
+                'rw' => $validated['rw'],
+                'postal_code' => $validated['postal_code'],
+            ]);
+
+            // Buat address baru
+            $address = Address::create([
+                'neighborhood_id' => $neighborhood->id,
+                'street' => $validated['address'],
+            ]);
+
+            $user->update(['address_id' => $address->id]);
+        } else {
+            // Jika address sudah ada, tinggal update
+            $user->address->update([
+                'street' => $validated['address'],
+            ]);
+            $user->address->neighborhood->update([
+                'sub_district_id' => $subDistrict->id,
+                'rt' => $validated['rt'],
+                'rw' => $validated['rw'],
+                'postal_code' => $validated['postal_code'],
+            ]);
+        }
+
+        // Assign user ke order
         $order->update(['user_id' => $userId]);
 
         // Cek jenis pembayaran
@@ -323,6 +368,7 @@ class PosMenuController extends Controller
         // Update order
         $order->update([
             'payment_status' => 'dibayar',
+            'shipping_status' => 'selesai',
             'payment_method' => 'tunai',
             'paid' => $validated['cash'],
             'change' => $change,
@@ -336,9 +382,17 @@ class PosMenuController extends Controller
 
     public function createUser(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:50',
-        ]);
+        $validated = $request->validate(
+            [
+                'name' => ['required', 'string', 'regex:/^[a-zA-Z]+[a-zA-Z.\s]*$/', Rule::unique('users')->where(fn($q) => $q->where('role', 'customer')), 'max:50'],
+            ],
+            [
+                'name.required' => 'Nama wajib diisi',
+                'name.regex' => 'Format nama masih salah',
+                'name.unique' => 'Nama ini sudah terdaftar',
+                'name.max' => 'Nama maksimal 50 huruf',
+            ],
+        );
 
         $user = User::create([
             'created' => now(),

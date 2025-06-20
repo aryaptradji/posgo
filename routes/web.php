@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +78,7 @@ Route::middleware(['auth', 'role:cashier'])
         // Riwayat
         Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
         Route::get('/transaction/{order}/receipt', [TransactionController::class, 'receipt'])->name('transaction.receipt');
+        Route::get('/transaction/{order}/print-receipt', [TransactionController::class, 'printReceipt'])->name('transaction.print-receipt');
     });
 
 // Admin
@@ -131,4 +133,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/customer/print', [CustomerController::class, 'print'])->name('customer.print');
         Route::get('/customer/export', [CustomerController::class, 'export'])->name('customer.export');
         Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
+
+        // Kelola PO
+        Route::resource('/purchase-order', PurchaseOrderController::class);
     });

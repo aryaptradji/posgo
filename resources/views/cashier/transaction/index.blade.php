@@ -164,17 +164,11 @@
                                                 class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.detail-icon />
                                             </button>
-                                            <template x-if="{{ $transaction->status === 'belum dikirim' }}">
-                                                <button type="button"
-                                                    class="text-secondary-blue transition-transform hover:scale-125 active:scale-90">
-                                                    <x-icons.send-icon />
-                                                </button>
-                                            </template>
-                                            <template x-if="{{ $transaction->status === 'dalam perjalanan' }}">
-                                                <button type="button"
-                                                    class="transition-transform hover:scale-125 active:scale-90">
-                                                    <x-icons.upload-icon />
-                                                </button>
+                                            <template x-if="{{ $transaction->payment_status == 'dibayar'}}">
+                                                <a href="{{ route('transaction.print-receipt', $transaction) }}"
+                                                    class="transition-transform hover:scale-125 active:scale-90 mt-1">
+                                                    <x-icons.print-sm />
+                                                </a>
                                             </template>
                                         </div>
 

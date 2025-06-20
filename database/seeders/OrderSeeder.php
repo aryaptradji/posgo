@@ -35,12 +35,7 @@ class OrderSeeder extends Seeder
             $time = fake()->dateTimeBetween('-30 days', 'now');
 
             // 70% chance 'dibayar'
-            $payment_status = fake()->randomElement([
-                ...array_fill(0, 7, 'dibayar'),
-                'belum dibayar',
-                'kadaluwarsa',
-                'ditolak',
-            ]);
+            $payment_status = fake()->randomElement([...array_fill(0, 7, 'dibayar'), 'belum dibayar', 'kadaluwarsa', 'ditolak']);
 
             $payment_method = null;
             $paid = 0;
@@ -61,11 +56,20 @@ class OrderSeeder extends Seeder
             $shipped_at = null;
 
             if ($payment_status === 'dibayar') {
-                if (fake()->boolean(70)) {
+                // Jika tunai => langsung selesai
+                if ($payment_method === 'tunai') {
                     $courier = $couriers->random();
                     $courier_id = $courier->id;
-                    $shipping_status = fake()->randomElement(['dikirim', 'selesai']);
+                    $shipping_status = 'selesai';
                     $shipped_at = Carbon::parse($time)->addHours(rand(1, 72));
+                } else {
+                    // Non-tunai: tetap random 70% dikirim/selesai
+                    if (fake()->boolean(70)) {
+                        $courier = $couriers->random();
+                        $courier_id = $courier->id;
+                        $shipping_status = fake()->randomElement(['dikirim', 'selesai']);
+                        $shipped_at = Carbon::parse($time)->addHours(rand(1, 72));
+                    }
                 }
             }
 

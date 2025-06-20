@@ -150,9 +150,9 @@
             <x-navlink-toggle :focusNo="6" :menus="[
                 [
                     'name' => 'Kelola',
-                    'active' => request()->is('kelola'),
+                    'active' => request()->routeIs('purchase-order*'),
                     'icon' => view('components.icons.kelola')->render(),
-                    'route' => '',
+                    'route' => route('purchase-order.index'),
                 ],
                 [
                     'name' => 'Invoice',

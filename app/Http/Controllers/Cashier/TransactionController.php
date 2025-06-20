@@ -53,4 +53,11 @@ class TransactionController extends Controller
 
         return view('cashier.transaction.receipt', compact('order'));
     }
+
+    public function printReceipt(Order $order)
+    {
+        $order->load('items.product', 'user.address.neighborhood.subDistrict.district.city');
+
+        return view('cashier.transaction.print-receipt', ['transaction' => $order]);
+    }
 }

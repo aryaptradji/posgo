@@ -32,10 +32,10 @@
             city: '{{ old('city', $citySlug) }}',
             district: '{{ old('district', $districtSlug) }}',
             sub_district: '{{ old('sub_district', $subDistrictSlug) }}',
-            address: @js(old('address', $user->address->street)),
-            rt: @js(old('rt', $user->address->neighborhood->rt)),
-            rw: @js(old('rw', $user->address->neighborhood->rw)),
-            postalCode: @js(old('postal_code', $user->address->neighborhood->postal_code)),
+            address: @js(old('address', optional($user->address)->street)),
+            rt: @js(old('rt', optional(optional($user->address)->neighborhood)->rt)),
+            rw: @js(old('rw', optional(optional($user->address)->neighborhood)->rw)),
+            postalCode: @js(old('postal_code', optional(optional($user->address)->neighborhood)->postal_code)),
             phoneError: '',
             addressError: '',
             rtError: '',
@@ -127,18 +127,6 @@
             <div class="text-2xl px-8 font-bold pb-4 border-b border-tertiary-title-line">Detail Pemesan</div>
             <div class="flex px-8 gap-36 mt-6">
                 <div class="flex flex-col gap-8 flex-1">
-                    {{-- No Telepon --}}
-                    <x-textfield x-model="phone" x-on:input="validatePhone()" type="text" name="phone"
-                        placeholder="08xxxxxxxxx" class="focus:border-[3.5px]"
-                        x-bind:class="phoneError || phoneServerError ? 'border-[3.5px] border-danger focus:border-danger' :
-                            'focus:border-primary'">Nomor
-                        Telepon</x-textfield>
-                    <x-inline-error-message class="mb-3 -mt-6" x-show="phoneError"
-                        x-text="phoneError"></x-inline-error-message>
-                    @error('phone')
-                        <x-inline-error-message class="mb-3 -mt-6"
-                            x-show="phoneServerError">{{ $message }}</x-inline-error-message>
-                    @enderror
                     {{-- Kota --}}
                     <x-dropdown-search :errorClass="$errors->has('city') ? 'border-[3.5px] border-danger focus:border-danger' : 'border-0'" name="city" :items="$cities->map(fn($c) => ['slug' => $c->slug, 'name' => $c->name])->toArray()" :value="$citySlug ?? 'Pilih Salah Satu'">
                         Kota
@@ -172,8 +160,7 @@
                             x-show="$errors->has('sub_district')">{{ $message }}</x-inline-error-message>
                     @enderror
                     <input type="hidden" name="sub_district" x-model="sub_district">
-                </div>
-                <div class="flex flex-col gap-8 flex-1">
+
                     {{-- Alamat --}}
                     <x-textfield x-model="address" x-on:input="validateAddress()" type="text" name="address"
                         placeholder="Masukkan alamat dan nomor rumah . . ." class="focus:border-[3.5px]"
@@ -185,6 +172,8 @@
                         <x-inline-error-message class="mb-3 -mt-6"
                             x-show="addressServerError">{{ $message }}</x-inline-error-message>
                     @enderror
+                </div>
+                <div class="flex flex-col gap-8 flex-1">
                     <div class="grid grid-cols-2 gap-6">
                         {{-- RT --}}
                         <div>
@@ -214,6 +203,7 @@
                             @enderror
                         </div>
                     </div>
+
                     {{-- Kode Pos --}}
                     <x-textfield x-model="postalCode" x-on:input="validatePostalCode()" class="focus:border-[3.5px]"
                         x-bind:class="postalCodeError || postalCodeServerError ?
@@ -224,6 +214,19 @@
                     @error('postal_code')
                         <x-inline-error-message class="mb-3 -mt-6"
                             x-show="postalCodeServerError">{{ $message }}</x-inline-error-message>
+                    @enderror
+
+                    {{-- No Telepon --}}
+                    <x-textfield x-model="phone" x-on:input="validatePhone()" type="text" name="phone"
+                        placeholder="08xxxxxxxxx" class="focus:border-[3.5px]"
+                        x-bind:class="phoneError || phoneServerError ? 'border-[3.5px] border-danger focus:border-danger' :
+                            'focus:border-primary'">Nomor
+                        Telepon</x-textfield>
+                    <x-inline-error-message class="mb-3 -mt-6" x-show="phoneError"
+                        x-text="phoneError"></x-inline-error-message>
+                    @error('phone')
+                        <x-inline-error-message class="mb-3 -mt-6"
+                            x-show="phoneServerError">{{ $message }}</x-inline-error-message>
                     @enderror
                 </div>
             </div>
