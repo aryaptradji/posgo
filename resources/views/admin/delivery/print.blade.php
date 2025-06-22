@@ -17,7 +17,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-right: 24   px;
+            padding-right: 24px;
         }
 
         .header span {

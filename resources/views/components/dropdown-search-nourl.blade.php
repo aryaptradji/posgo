@@ -7,18 +7,51 @@
 ])
 
 <div class="{{ $contClass }}">
-    <label for="{{ $name }}" class="block mb-4 text-base font-bold text-black dark:text-white">{{ $slot }}</label>
+    <label for="{{ $name }}"
+        class="block mb-4 text-base font-bold text-black dark:text-white">{{ $slot }}</label>
 
     <div x-data="{
         open: false,
         selected: '{{ $value }}',
+        name: '{{ $name }}',
         search: '',
         items: @js($items),
         get selectedName() {
-            const item = this.items.find(i => i.slug === this.selected);
+            console.log('DEBUG selectedName called:', { currentSelected: this.selected, itemsToSearch: this.items });
+            const item = this.items.find(i => {
+                console.log('  Comparing:', i.slug, 'with', this.selected);
+                return i.slug === this.selected;
+            });
+            console.log('  Found item:', item);
             return item ? item.name : 'Pilih Salah Satu';
         }
-    }" class="relative">
+    }" x-init="
+        // *** LOGIKA KRUSIAL DI SINI ***
+        // Dengarkan event 'selected-change' yang mungkin dipicu oleh parent
+        // atau oleh inisialisasi awal itu sendiri, dan gunakan untuk mengatur 'selected'.
+        this.$el.addEventListener('selected-change', (event) => {
+            const newValue = event.detail;
+            if (this.selected !== newValue) { // Hanya update jika berbeda untuk menghindari loop
+                this.selected = newValue;
+            }
+        });
+
+        // Setelah listener diatur, picu event 'selected-change' dengan nilai awal dari prop 'value'.
+        // Ini akan memastikan 'selected' diinisialisasi dengan nilai yang datang dari Blade.
+        // Gunakan $nextTick untuk memastikan semua ter-render dan listener siap.
+        this.$nextTick(() => {
+            if (this.selected !== 'Pilih Salah Satu' || ('{{ $value }}' !== 'Pilih Salah Satu')) {
+                 // Kirim nilai yang paling benar antara selected awal atau $value dari prop
+                const initialVal = (this.selected !== 'Pilih Salah Satu') ? this.selected : '{{ $value }}';
+                this.$el.dispatchEvent(new CustomEvent('selected-change', { detail: initialVal }));
+            }
+        });
+
+
+        // Ini tetap ada untuk watcher internal komponen yang memancarkan event ke luar
+        $watch('selected', value => $dispatch('selected-change', value));
+    "
+    class="relative">
         <!-- Button -->
         <button @click="open = !open"
             :class="{
@@ -38,7 +71,7 @@
         </button>
 
         <!-- Hidden input untuk submit -->
-        <input type="hidden" name="{{ $name }}" x-bind:value="selected">
+
 
         <!-- Dropdown -->
         <div x-show="open" x-cloak @click.away="open = false"
@@ -50,14 +83,17 @@
 
             <!-- Items -->
             <ul class="py-2 text-sm text-gray-700 max-h-52 overflow-y-auto">
-                <template x-for="(item, index) in items.filter(i => i.name.toLowerCase().includes(search.toLowerCase()))" :key="index">
+                <template
+                    x-for="(item, index) in items.filter(i => i.name.toLowerCase().includes(search.toLowerCase()))"
+                    :key="index">
                     <li>
                         <a class="block p-2 rounded-lg hover:bg-primary hover:text-white cursor-pointer"
-                            @click.prevent="selected = item.slug; open = false">
+                            @click.prevent="selected = item.slug; open = false; $dispatch('selected-change', selected)">
                             <span x-text="item.name"></span>
                         </a>
                     </li>
                 </template>
+                <input type="hidden" x-bind:name="name" x-bind:value="selected">
             </ul>
         </div>
     </div>

@@ -136,4 +136,5 @@ Route::middleware(['auth', 'role:admin'])
 
         // Kelola PO
         Route::resource('/purchase-order', PurchaseOrderController::class);
+        Route::get('/purchase-order/{purchaseOrder}/print-invoice', [PurchaseOrderController::class, 'printInvoice'])->name('purchase-order.print-invoice');
     });

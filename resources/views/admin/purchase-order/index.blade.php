@@ -86,7 +86,7 @@
                                     'page' => 1,
                                 ]) }}"
                                     class="flex items-center justify-center uppercase">
-                                    Kode
+                                    Nomor PO
                                     <x-icons.arrow-down
                                         class="ml-2 text-tertiary-300 {{ request('sort') == 'code' && request('desc') ? 'rotate-180' : '' }}" />
                                 </a>
@@ -144,8 +144,8 @@
                             <tr class="border-b-2 border-b-tertiary-table-line">
                                 <td class="px-4 py-2" align="center">{{ $po->created->translatedFormat('d M Y H:i:s') }}</td>
                                 <td class="px-4 py-2" align="center">{{ $po->code }}</td>
-                                <td class="px-4 py-2 w-64" align="left">{{ $po->supplier->name }}</td>
-                                <td class="px-4 py-2" align="center">
+                                <td class="px-4 py-2 w-64" align="center">{{ $po->supplier->name }}</td>
+                                <td class="px-4 py-4" align="center">
                                     <span
                                         class="px-2 py-1 rounded-lg capitalize border-2 {{ $class }}">{{ $po->status }}</span>
                                 </td>
@@ -154,14 +154,34 @@
                                     {{ number_format($po->total, 0, ',', '.') }}</td>
                                 <td class="px-4 py-2" align="center" x-data="{ showModal: false }">
                                     <div class="flex justify-center gap-2">
-                                        <a href="#"
-                                            class="text-primary transition-transform hover:scale-125 active:scale-90">
-                                            <x-icons.edit-icon />
+                                        <a href="{{ route('purchase-order.show', $po) }}"
+                                            class="text-secondary-purple transition-transform hover:scale-125 active:scale-90 mt-0.25">
+                                            <x-icons.detail-icon />
                                         </a>
-                                        <button type="submit" @click="showModal = true"
-                                            class="text-danger transition-transform hover:scale-125 active:scale-90">
-                                            @include('components.icons.delete-icon')
-                                        </button>
+                                        <template x-if="{{ $po->status === 'perlu dikirim' }}">
+                                            <a href="{{ route('purchase-order.edit', $po) }}"
+                                                class="text-primary transition-transform hover:scale-125 active:scale-90 mt-0.25">
+                                                <x-icons.edit-icon />
+                                            </a>
+                                        </template>
+                                        <template x-if="{{ $po->status === 'perlu dikirim' }}">
+                                            <button type="button" @click="showModal = true"
+                                                class="text-danger transition-transform hover:scale-125 active:scale-90">
+                                                <x-icons.delete-icon />
+                                            </button>
+                                        </template>
+                                        <template x-if="{{ $po->status === 'perlu dikirim' }}">
+                                            <button type="button"
+                                                class="text-secondary-blue transition-transform hover:scale-125 active:scale-90">
+                                                <x-icons.send-icon />
+                                            </button>
+                                        </template>
+                                        <template x-if="{{ $po->status === 'perlu invoice' }}">
+                                            <button type="button"
+                                                class="text-success transition-transform hover:scale-125 active:scale-90">
+                                                <x-icons.invoice-sm />
+                                            </button>
+                                        </template>
                                     </div>
 
                                     <!-- Modal Delete -->

@@ -28,26 +28,24 @@
         </div>
     @endif
 
-    <div class="mt-10" x-data="{
-        supplier: '',
-        items: [
-            { id: Date.now(), product: '', pcs: 0, qty: 0, show: false }
-        ],
-        addItem() {
-            this.items.push({ id: Date.now() + Math.random(), product: '', pcs: 0, qty: 0 });
-        },
-        removeItem(id) {
-            this.items = this.items.filter(item => item.id !== id);
-        }
-    }">
+    {{-- Hidden preload data --}}
+    <script type="application/json" id="purchaseData">
+        {!! json_encode(
+            old('purchase')
+                ? json_decode(old('purchase'), true)
+                : ['supplier' => '', 'items' => [['id' => time(), 'product' => '', 'pcs' => 0, 'qty' => 0]]]
+        ) !!}
+    </script>
 
-        <form action="#" method="POST">
+    <div class="mt-10 mb-4" x-data="purchaseOrderForm()">
+        <form action="{{ route('purchase-order.store') }}" method="POST" x-ref="form">
             @csrf
-
             {{-- Supplier --}}
-            <x-dropdown-search-nourl name="supplier" contClass="w-1/2 mb-10" :items="$suppliers->map(fn($s) => ['slug' => $s->slug, 'name' => $s->name])->toArray()" x-model="supplier">
-                Supplier
-            </x-dropdown-search-nourl>
+            <div x-data x-on:selected-change="supplier = $event.detail" class="w-1/2 mb-10">
+                <x-dropdown-search-nourl name="supplier" :items="$suppliers->map(fn($s) => ['slug' => $s->slug, 'name' => $s->name])->toArray()">
+                    Supplier
+                </x-dropdown-search-nourl>
+            </div>
 
             {{-- Items --}}
             <div class="shadow-outer py-4 rounded-xl flex flex-col">
@@ -69,7 +67,8 @@
                             }, 300)"
                             class="bg-white rounded-xl p-6">
                             <div class="flex justify-end mb-3">
-                                <button type="button" @click="item.show = false; setTimeout(() => removeItem(item.id), 500);"
+                                <button type="button"
+                                    @click="item.show = false; setTimeout(() => removeItem(item.id), 500);"
                                     class="text-danger transition-transform hover:scale-125 active:scale-90">
                                     <x-icons.delete-icon />
                                 </button>
@@ -77,22 +76,26 @@
 
                             <div class="flex justify-between gap-14">
                                 {{-- Produk --}}
-                                <x-dropdown-search-nourl contClass="w-3/5" :items="$products
-                                    ->map(fn($p) => ['slug' => $p->slug, 'name' => $p->name])
-                                    ->toArray()"
-                                    x-bind:name="'products[' + index + '][product]'" x-model="item.product">
-                                    Produk <span x-text="index + 1"></span>
-                                </x-dropdown-search-nourl>
+                                <div class="w-3/5" x-data x-on:selected-change="item.product = $event.detail">
+                                    <x-dropdown-search-nourl x-bind:name="'product-' + item.id" contClass="w-full"
+                                        :items="$products
+                                            ->map(fn($p) => ['slug' => $p->slug, 'name' => $p->name])
+                                            ->toArray()">
+                                        Produk <span x-text="index + 1"></span>
+                                    </x-dropdown-search-nourl>
+                                </div>
 
                                 {{-- Pcs --}}
-                                <x-textfield class="focus:ring focus:ring-primary" type="number" placeholder="0"
-                                    x-bind:name="'products[' + index + '][pcs]'" x-model="item.pcs">
+                                <x-textfield class="focus:ring focus:ring-primary" type="number" min="0"
+                                    placeholder="0" :value="old('pcs', 0)" oninput="this.value = Math.max(0, this.value)"
+                                    x-model="item.pcs">
                                     Pcs
                                 </x-textfield>
 
                                 {{-- Qty --}}
-                                <x-textfield class="focus:ring focus:ring-primary" type="number" placeholder="0"
-                                    x-bind:name="'products[' + index + '][qty]'" x-model="item.qty">
+                                <x-textfield class="focus:ring focus:ring-primary" type="number" min="0"
+                                    placeholder="0" :value="old('qty', 0)" oninput="this.value = Math.max(0, this.value)"
+                                    x-model="item.qty">
                                     Qty
                                 </x-textfield>
                             </div>
@@ -110,13 +113,64 @@
                 </div>
             </div>
 
+            {{-- Hidden input buat kirim JSON full --}}
+            <input type="hidden" name="purchase" :value="JSON.stringify({ supplier: supplier, items: items })">
+
             {{-- Tombol Submit --}}
-            <div class="flex justify-end mt-8">
-                <x-button-sm type="submit" class="bg-primary text-white px-8 py-3 shadow-outer-sidebar-primary">
-                    Simpan
+            <div class="flex justify-center gap-6 mt-8">
+                <x-button-sm class="w-fit px-7 text-black bg-btn-cancel">
+                    <a href="{{ route('purchase-order.index') }}">Batal</a>
+                </x-button-sm>
+                <x-button-sm type="submit" class="bg-secondary-purple/20 text-secondary-purple w-fit px-7">
+                    Buat
                 </x-button-sm>
             </div>
-
         </form>
     </div>
+
+    {{-- Alpine Logic --}}
+    <script>
+        function purchaseOrderForm() {
+            let rawJson = document.getElementById('purchaseData').textContent;
+            let oldData = {
+                supplier: '',
+                items: [{
+                    id: Date.now(),
+                    product: '',
+                    pcs: 0,
+                    qty: 0
+                }]
+            };
+
+            if (rawJson) {
+                try {
+                    oldData = JSON.parse(rawJson);
+                } catch (e) {}
+            }
+
+            oldData.items = oldData.items.map(i => ({
+                ...i,
+                show: true,
+                id: i.id || (Date.now() + Math.random())
+            }));
+
+            return {
+                supplier: oldData.supplier,
+                items: oldData.items,
+                addItem() {
+                    this.items.push({
+                        id: Date.now() + Math.random(),
+                        product: '',
+                        pcs: 0,
+                        qty: 0,
+                        show: true
+                    });
+                },
+                removeItem(id) {
+                    this.items = this.items.filter(item => item.id !== id);
+                }
+            }
+        }
+    </script>
+
 </x-layout>
