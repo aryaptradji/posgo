@@ -126,7 +126,7 @@
                                         </button>
                                     </div>
 
-                                    <!-- Modal View -->
+                                    {{-- Modal View --}}
                                     <x-modal show="showModalView">
                                         <x-slot:title>
                                             <div class="w-full flex justify-between">
@@ -192,7 +192,7 @@
                                         </div>
                                     </x-modal>
 
-                                    <!-- Modal Delete -->
+                                    {{-- Modal Delete --}}
                                     <x-modal show="showModalDelete">
                                         <x-slot:title>
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />

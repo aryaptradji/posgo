@@ -140,7 +140,7 @@
             padding-bottom: 5px;
         }
 
-        .text-right {
+        td.text-right, th.text-right {
             text-align: right;
         }
 
@@ -216,7 +216,7 @@
                 <p>Nama Perusahaan: Toko Biyan</p> {{-- Ganti dengan nama perusahaan Anda --}}
                 <p>Alamat: Jl. Inpres Raya No.2, RT.004/RW.004, Gaga, Kec. Larangan, Kota Tangerang, Banten 15154</p>
                 {{-- Ganti dengan alamat perusahaan Anda --}}
-                <p>Telepon: 0851-0027-0185</p> {{-- Ganti dengan telepon perusahaan Anda --}}
+                <p>Telepon: 085100270185</p> {{-- Ganti dengan telepon perusahaan Anda --}}
             </div>
         </div>
 
@@ -226,8 +226,8 @@
                 <tr>
                     <th style="width: 5%; text-align: center;">No</th>
                     <th style="width: 40%;">Nama Produk</th>
-                    <th style="width: 10%;" class="text-right">PCS</th>
-                    <th style="width: 10%;" class="text-right">QTY</th>
+                    <th class="text-right" style="width: 10%;" class="text-right">PCS</th>
+                    <th class="text-right" style="width: 10%;" class="text-right">QTY</th>
                 </tr>
             </thead>
             <tbody>

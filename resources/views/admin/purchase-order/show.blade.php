@@ -63,32 +63,33 @@
         </div>
     </div>
 
-    <div class="shadow-outer py-4 rounded-xl flex flex-col">
+    <div class="shadow-outer py-4 mb-6 rounded-xl flex flex-col">
         <div class="text-lg px-6 font-bold pb-4 border-b border-tertiary-title-line">Produk yang dipesan</div>
 
         <div class="pt-4 relative overflow-x-auto overflow-y-auto">
             <table class="w-full min-w-max text-left">
                 <thead class="text-sm uppercase bg-white">
                     <tr>
-                        <th class="ps-24 py-3" align="left">Produk</th>
-                        <th class="pe-32 py-3" align="right">Pcs</th>
-                        <th class="pe-32 py-3" align="right">Qty</th>
+                        <th class="w-1/12" align="center">No</th>
+                        <th class="w-6/12 px-8 py-3" align="left">Produk</th>
+                        <th class="pe-28 py-3" align="right">Pcs</th>
+                        <th class="pe-28 py-3" align="right">Qty</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($po->items as $item)
+                    @foreach ($po->items as $index => $item)
                         <tr class="border-b-2 border-b-tertiary-table-line">
-                            <td class="ps-24 py-3" align="left">{{ $item->product->name }}</td>
-                            <td class="pe-32 py-3" align="right">{{ $item->pcs }}</td>
-                            <td class="pe-32 py-3" align="right">{{ $item->qty }}</td>
+                            <td class="w-1/12" align="center">{{ $index + 1 }}</td>
+                            <td class="w-6/12 px-8 py-3" align="left">{{ $item->product->name }}</td>
+                            <td class="pe-28 py-3" align="right">{{ $item->pcs }}</td>
+                            <td class="pe-28 py-3" align="right">{{ $item->qty }}</td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-10 text-gray-500 italic">Belum ada produk yang
-                                dipilih
-                            </td>
-                        </tr>
-                    @endforelse
+                    @endforeach
+                    <tr class="font-bold text-lg">
+                        <td class="px-10 pt-3" colspan="2" align="left">TOTAL</td>
+                        <td class="pt-3" align="center">{{ $po->items->sum('pcs') }}</td>
+                        <td class="pt-3" align="center">{{ $po->items->sum('qty') }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

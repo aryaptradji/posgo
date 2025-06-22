@@ -79,18 +79,7 @@
                                         class="ml-2 text-tertiary-300 {{ request('sort') == 'created' && request('desc') ? 'rotate-180' : '' }}" />
                                 </a>
                             </th>
-                            <th class="px-4 py-3" align="center">
-                                <a href="{{ request()->fullUrlWithQuery([
-                                    'sort' => 'code',
-                                    'desc' => request('desc') ? null : 1,
-                                    'page' => 1,
-                                ]) }}"
-                                    class="flex items-center justify-center uppercase">
-                                    Nomor PO
-                                    <x-icons.arrow-down
-                                        class="ml-2 text-tertiary-300 {{ request('sort') == 'code' && request('desc') ? 'rotate-180' : '' }}" />
-                                </a>
-                            </th>
+                            <th class="px-4 py-3" align="center">Nomor PO</th>
                             <th class="px-4 py-3" align="center">
                                 <a href="{{ request()->fullUrlWithQuery([
                                     'sort' => 'supplier',
@@ -152,7 +141,7 @@
                                 <td class="px-4 py-2" align="center">{{ $po->item }}</td>
                                 <td class="px-4 py-2" align="center">Rp
                                     {{ number_format($po->total, 0, ',', '.') }}</td>
-                                <td class="px-4 py-2" align="center" x-data="{ showModal: false }">
+                                <td class="px-4 py-2" align="center" x-data="{ showModalDelete: false }">
                                     <div class="flex justify-center gap-2">
                                         <a href="{{ route('purchase-order.show', $po) }}"
                                             class="text-secondary-purple transition-transform hover:scale-125 active:scale-90 mt-0.25">
@@ -165,7 +154,7 @@
                                             </a>
                                         </template>
                                         <template x-if="{{ $po->status === 'perlu dikirim' }}">
-                                            <button type="button" @click="showModal = true"
+                                            <button type="button" @click="showModalDelete = true"
                                                 class="text-danger transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.delete-icon />
                                             </button>
@@ -184,11 +173,11 @@
                                         </template>
                                     </div>
 
-                                    <!-- Modal Delete -->
-                                    <x-modal show="showModal">
+                                    {{-- Modal Delete --}}
+                                    <x-modal show="showModalDelete">
                                         <x-slot:title>
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
-                                            <h2 class="text-lg font-bold">Hapus Data Pengeluaran</h2>
+                                            <h2 class="text-lg font-bold">Hapus Purchase Order</h2>
                                         </x-slot:title>
                                         <p class="mb-6 mx-6 mt-4 text-start">
                                             Yakin ingin menghapus data Purchase Order
@@ -196,12 +185,12 @@
                                             ini?
                                         </p>
                                         <x-slot:action>
-                                            <button type="button" @click="showModal = false"
+                                            <button type="button" @click="showModalDelete = false"
                                                 class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
                                                 Batal
                                             </button>
 
-                                            <form action="#" method="POST">
+                                            <form action="{{ route('purchase-order.destroy', $po) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
