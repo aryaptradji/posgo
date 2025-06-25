@@ -17,7 +17,10 @@ return new class extends Migration {
             $table->dateTime('created');
             $table->string('status');
             $table->integer('item');
+            $table->bigInteger('subtotal')->default(0);
             $table->bigInteger('total')->default(0);
+            $table->decimal('ppn_percentage', 5, 2)->default(0);
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

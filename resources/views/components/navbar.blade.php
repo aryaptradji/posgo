@@ -67,7 +67,16 @@
 
 <nav id="sidebar"
     class="fixed z-10 top-0 pt-24 left-0 w-80 h-full bg-gray-50 transition-transform -translate-x-full sm:translate-x-0"
-    aria-label="Sidebar">
+    aria-label="Sidebar" x-init="$nextTick(() => {
+        const activeLink = document.getElementById('active-nav-link');
+        if (activeLink) {
+            // Pastikan ini menunjuk ke elemen div di dalam nav yang memiliki overflow-y-auto
+            const sidebarScrollContainer = document.querySelector('#sidebar > div.h-full.p-6.overflow-y-auto');
+            if (sidebarScrollContainer) {
+                activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    })">
     <div class="h-full p-6 overflow-y-auto bg-gray-50">
         <ul class="space-y-3 font-medium" x-data="{ focus: 1 }">
             <x-navlink href="{{ route('admin.dashboard') }}" :active="request()->is('admin/dashboard')" :focusNo="1" @click="focus = 1">
@@ -147,25 +156,10 @@
                 </x-slot:titleIcon>
                 Pengguna
             </x-navlink-toggle>
-            <x-navlink-toggle :focusNo="6" :menus="[
-                [
-                    'name' => 'Kelola',
-                    'active' => request()->routeIs('purchase-order*'),
-                    'icon' => view('components.icons.kelola')->render(),
-                    'route' => route('purchase-order.index'),
-                ],
-                [
-                    'name' => 'Invoice',
-                    'active' => request()->is('invoice'),
-                    'icon' => view('components.icons.invoice')->render(),
-                    'route' => '',
-                ],
-            ]">
-                <x-slot:titleIcon>
-                    <x-icons.po />
-                </x-slot:titleIcon>
-                Purchase Order
-            </x-navlink-toggle>
+            <x-navlink href="{{ route('purchase-order.index') }}" :active="request()->is('admin/purchase-order/' . '*') || request()->is('admin/purchase-order')" :focusNo="6" @click="focus = 6">
+                <x-icons.po />
+                <x-slot:title>Purchase Order</x-slot:title>
+            </x-navlink>
         </ul>
     </div>
 </nav>

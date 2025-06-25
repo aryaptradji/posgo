@@ -519,12 +519,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="h-full w-96 text-start">
-                                                    <x-textfield-image name="photo" fileNameClass="text-xs max-w-40"
+                                                    <x-textfield-image name="photo[{{ $loop->index }}]" fileNameClass="text-xs max-w-40"
                                                         closeSideClass="text-xs" previewClass="min-h-80"
                                                         uploadClass="min-h-80">Bukti
-                                                        Pengiriman<span
-                                                            class="ml-2 text-xs text-tertiary-400 font-semibold">(format
-                                                            .jpg/.jpeg, max. 3 mb)</span></x-textfield-image>
+                                                        Pengiriman
+                                                        <span class="ml-2 text-xs text-tertiary-400 font-semibold">(format
+                                                            .jpg/.jpeg, max. 3 mb)</span>
+                                                    </x-textfield-image>
                                                     <div class="text-center">
                                                         <button type="submit"
                                                             class="mt-8 px-6 py-3 bg-success text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">

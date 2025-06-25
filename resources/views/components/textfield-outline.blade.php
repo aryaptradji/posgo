@@ -4,9 +4,10 @@
     'id' => null,
     'placeholder' => null,
     'required' => false,
+    'contClass' => null
 ])
 
-<div {{ $attributes }}>
+<div {{ $contClass }}>
     <label for="{{ $id }}" class="block mb-4 text-base font-semibold text-black dark:text-white">{{ $slot }}</label>
     <input
         type="{{ $type }}"
@@ -14,5 +15,5 @@
         id="{{ $id }}"
         placeholder="{{ $placeholder }}"
         {{ $required ? 'required' : null }}
-        class="bg-tertiary h-14 rounded-xl text-black text-sm ring-1 ring-tertiary-300 focus-within:ring focus-within:ring-primary outline-none placeholder-tertiary-200 w-full p-6">
+        {{ $attributes->merge(['class' => 'bg-tertiary h-14 rounded-xl text-black text-sm ring-1 ring-tertiary-300 outline-none placeholder-tertiary-200 w-full p-6']) }}>
 </div>

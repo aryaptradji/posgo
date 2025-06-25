@@ -8,10 +8,12 @@ use App\Models\Supplier;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
+use App\Exports\DeliveryExport;
 use App\Models\PurchaseOrderItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -22,7 +24,7 @@ class PurchaseOrderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = PurchaseOrder::with('supplier', 'items')->latest('created');
+        $query = PurchaseOrder::with(['supplier', 'items'])->latest('created');
 
         // Filter kategori
         if ($request->filled('filter') && $request->filter !== 'semua') {
@@ -144,13 +146,14 @@ class PurchaseOrderController extends Controller
      */
     public function show(PurchaseOrder $purchaseOrder)
     {
-        $po = $purchaseOrder->load('items.product', 'supplier');
+        $po = $purchaseOrder->load(['items.product', 'supplier']);
 
         return view('admin.purchase-order.show', compact('po'));
     }
 
-    public function printInvoice(PurchaseOrder $purchaseOrder) {
-        $po = $purchaseOrder->load('items.product', 'supplier');
+    public function printInvoice(PurchaseOrder $purchaseOrder)
+    {
+        $po = $purchaseOrder->load(['items.product', 'supplier']);
 
         return view('admin.purchase-order.print-invoice', compact('po'));
     }
@@ -306,5 +309,136 @@ class PurchaseOrderController extends Controller
         $purchaseOrder->delete();
 
         return redirect()->route('purchase-order.index')->with('success', 'Purchase Order berhasil dihapus');
+    }
+
+    public function kirim(PurchaseOrder $purchaseOrder)
+    {
+        $purchaseOrder->update(['status' => 'perlu invoice']);
+
+        return redirect()->route('purchase-order.index')->with('success', 'Purchase Order berhasil dikirim');
+    }
+
+    public function fillInvoice(PurchaseOrder $purchaseOrder)
+    {
+        $po = $purchaseOrder->load(['items.product', 'supplier']);
+
+        return view('admin.purchase-order.fill-invoice', compact('po'));
+    }
+
+    public function saveInvoice(Request $request, PurchaseOrder $purchaseOrder)
+    {
+        $itemsJson = $request->input('items_data');
+        $invoiceItemsData = json_decode($itemsJson, true); // convert ke array PHP
+
+        // Inject hasil decode ke request untuk keperluan validasi
+        $request->merge(['items_data' => $invoiceItemsData]);
+
+        $request->validate(
+            [
+                'items_data' => 'required|array|min:1', // Validasi input JSON utama
+                'items_data.*.id' => 'required|integer|exists:purchase_order_items,id',
+                'items_data.*.price_per_qty' => 'required|integer|min:0',
+                'items_data.*.total_price_per_product' => 'required|integer|min:0',
+                'ppn_percentage' => 'nullable|numeric|min:0|max:100',
+            ],
+            [
+                'items_data.required' => 'Data produk invoice wajib ada.',
+                'items_data.min' => 'Minimal ada satu produk dalam invoice.',
+                'items_data.*.id.required' => 'ID item produk wajib ada.',
+                'items_data.*.id.integer' => 'ID item produk tidak valid.',
+                'items_data.*.id.exists' => 'Item produk tidak ditemukan.',
+                'items_data.*.price_per_qty.required' => 'Harga per qty wajib diisi.',
+                'items_data.*.price_per_qty.integer' => 'Harga per qty harus berupa angka.',
+                'items_data.*.price_per_qty.min' => 'Harga per qty tidak boleh kurang dari 0.',
+                'items_data.*.total_price_per_product.required' => 'Total harga produk wajib diisi.',
+                'items_data.*.total_price_per_product.integer' => 'Total harga produk harus berupa angka.',
+                'items_data.*.total_price_per_product.min' => 'Total harga produk tidak boleh kurang dari 0.',
+                'ppn_percentage.numeric' => 'Persentase PPN harus berupa angka.',
+                'ppn_percentage.min' => 'Persentase PPN minimal 0%.',
+                'ppn_percentage.max' => 'Persentase PPN maksimal 100%.',
+            ],
+        );
+
+        $grandTotal = 0;
+        $ppnPercentage = (float) $request->input('ppn_percentage', 0);
+        $subtotal = 0;
+
+        foreach ($invoiceItemsData as $itemData) {
+            $itemData['price_per_qty'] = (int) $itemData['price_per_qty'];
+            $itemData['total_price_per_product'] = (int) $itemData['total_price_per_product'];
+
+            $item = PurchaseOrderItem::findOrFail($itemData['id']);
+            $item->price = $itemData['price_per_qty'];
+            $item->save();
+
+            $subtotal += $itemData['price_per_qty'] * $item->qty;
+        }
+
+        $ppnAmount = $subtotal * ($ppnPercentage / 100);
+        $grandTotal = $subtotal + $ppnAmount;
+
+        $purchaseOrder->subtotal = $subtotal;
+        $purchaseOrder->total = $grandTotal;
+        $purchaseOrder->ppn_percentage = $ppnPercentage;
+        $purchaseOrder->status = 'perlu dibayar';
+        $purchaseOrder->save();
+
+        return redirect()->route('purchase-order.index')->with('success', 'Invoice berhasil diisi');
+    }
+
+    public function pay(Request $request, PurchaseOrder $purchaseOrder)
+    {
+        // Validasi utama: pastikan minimal ada 1 file dikirim
+        $request->validate(
+            [
+                'photo' => 'required|array|min:1',
+            ],
+            [
+                'photo.required' => 'Gambar wajib diisi',
+                'photo.array' => 'Data gambar tidak valid',
+                'photo.min' => 'Minimal unggah 1 gambar',
+            ],
+        );
+
+        // Validasi per file
+        foreach ($request->file('photo') as $index => $file) {
+            $request->validate(
+                [
+                    "photo.$index" => 'required|image|mimes:jpg,jpeg,png|max:3048',
+                ],
+                [
+                    "photo.$index.required" => 'Gambar wajib diisi',
+                    "photo.$index.image" => 'File harus berbentuk gambar',
+                    "photo.$index.mimes" => 'Format gambar harus .jpg/.jpeg/.png',
+                    "photo.$index.max" => 'Ukuran maksimal 3 MB',
+                ],
+            );
+
+            // Store hanya file pertama (karena per PO cuma 1 gambar)
+            $imagePath = $file->store('purchase_order', 'public');
+
+            $purchaseOrder->update([
+                'photo' => $imagePath,
+                'status' => 'selesai',
+            ]);
+
+            break;
+        }
+
+        return redirect()->route('purchase-order.index')->with('success', 'Bukti pembayaran berhasil diupload');
+    }
+
+    public function print()
+    {
+        $po = PurchaseOrder::with(['items.product', 'supplier'])
+            ->orderBy('created', 'desc')
+            ->get();
+
+        return view('admin.purchase-order.print', compact('po'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new DeliveryExport(), 'daftar_invoice_purchase_order.xlsx');
     }
 }

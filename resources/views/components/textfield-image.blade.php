@@ -60,6 +60,7 @@
                     this.fileSize = Math.round(file.size / 1024);
                     this.imageUrl = URL.createObjectURL(file);
                     this.fromUpload = true;
+                    console.log('HANDLE FILE >>', this.fileName, this.fileSize, this.imageUrl);
                 }
             },
             handleDrop(event) {
@@ -70,6 +71,7 @@
                     this.imageUrl = URL.createObjectURL(droppedFile);
                     document.getElementById('{{ $name }}').files = event.dataTransfer.files;
                     this.fromUpload = true;
+                    console.log('HANDLE DROP >>', this.fileName, this.fileSize, this.imageUrl);
                 }
             },
             reset() {

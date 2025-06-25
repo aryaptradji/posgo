@@ -15,7 +15,10 @@ class PurchaseOrder extends Model
         'created',
         'status',
         'item',
+        'subtotal',
         'total',
+        'ppn_percentage',
+        'photo'
     ];
 
     protected $casts = [
@@ -35,5 +38,10 @@ class PurchaseOrder extends Model
     public function getRouteKeyName()
     {
         return 'code';
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo ? $this->photo : null;
     }
 }

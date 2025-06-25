@@ -99,26 +99,46 @@ class DeliveryController extends Controller
 
     public function upload(Request $request, Order $delivery)
     {
+        // Validasi awal: pastikan ada file dikirim minimal 1
         $request->validate(
             [
-                'photo' => 'required|image|mimes:jpg,jpeg|max:3048',
+                'photo' => 'required|array|min:1',
             ],
             [
                 'photo.required' => 'Gambar wajib diisi',
-                'photo.image' => 'File harus berbentuk gambar',
-                'photo.mimes' => 'Format gambar harus .jpg/.jpeg',
-                'photo.max' => 'Size gambar maksimal 3 mb',
+                'photo.array' => 'Data gambar tidak valid',
+                'photo.min' => 'Minimal unggah 1 gambar',
             ],
         );
 
-        $imagePath = $request->file('photo')->store('deliveries', 'public');
+        // Loop validasi per file
+        foreach ($request->file('photo') as $index => $file) {
+            $request->validate(
+                [
+                    "photo.$index" => 'required|image|mimes:jpg,jpeg|max:3048',
+                ],
+                [
+                    "photo.$index.required" => 'Gambar wajib diisi',
+                    "photo.$index.image" => 'File harus berbentuk gambar',
+                    "photo.$index.mimes" => 'Format gambar harus .jpg/.jpeg',
+                    "photo.$index.max" => 'Ukuran maksimal 3 MB',
+                ],
+            );
 
-        $delivery->update([
-            'photo' => $imagePath,
-            'shipping_status' => 'selesai',
-        ]);
+            $imagePath = $file->store('deliveries', 'public');
 
-        return redirect()->route('delivery.index')->with('success', 'Bukti pengiriman pesanan berhasil diupload');
+            $delivery->update([
+                'photo' => $imagePath,
+                'shipping_status' => 'selesai',
+                'arrived_at' => now()
+            ]);
+
+            break; // hanya proses file pertama
+        }
+
+        return redirect()
+            ->route('delivery.index', ['filter' => 'selesai', 'sort' => 'arrived_at', 'desc' => 1])
+            ->with('success', 'Bukti pengiriman pesanan berhasil diupload');
     }
 
     /**

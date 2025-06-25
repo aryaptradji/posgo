@@ -2,14 +2,14 @@
     <x-slot:title>Kelola PO</x-slot:title>
     <x-slot:header>
         <div class="flex justify-between items-center">
-            <span>Kelola Purchase Order</span>
+            <span>Purchase Order</span>
             <div class="flex gap-6">
-                <a href="#"
+                <a href="{{ route('purchase-order.print') }}"
                     class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
                     <x-icons.print />
                     Print
                 </a>
-                <a href="#"
+                <a href="{{ route('purchase-order.export') }}"
                     class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-success transition-all hover:scale-105 active:scale-90">
                     <x-icons.export />
                     Export
@@ -35,11 +35,26 @@
         </div>
     @endif
 
+    {{-- Toast Error --}}
+    @if ($errors->any())
+        <div class="fixed top-16 right-10 z-20 flex flex-col items-end gap-4">
+            @foreach ($errors->all() as $error)
+                <x-toast id="toast-failed{{ $loop->index }}" iconClass="text-danger bg-danger/25"
+                    slotClass="text-danger" :duration="6000" :delay="$loop->index * 500">
+                    <x-slot:icon>
+                        <x-icons.toast-failed />
+                    </x-slot:icon>
+                    {{ $error }}
+                </x-toast>
+            @endforeach
+        </div>
+    @endif
+
     <div class="w-full bg-tertiary rounded-2xl shadow-outer mt-12">
         <div class="flex flex-col justify-between">
             <div class="px-7 py-4 flex justify-between">
                 <div class="w-fit flex gap-4 items-center justify-center font-semibold">
-                    @foreach (['semua', 'perlu dikirim', 'perlu invoice', 'siap'] as $category)
+                    @foreach (['semua', 'perlu dikirim', 'perlu invoice', 'perlu dibayar', 'selesai'] as $category)
                         <a href="{{ request()->fullUrlWithQuery(['filter' => $category, 'page' => 1]) }}"
                             class="px-3 py-2 rounded-lg capitalize transition-all duration-1000 cursor-pointer {{ request('filter', 'semua') === $category ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black' }}">
                             {{ $category }}
@@ -127,11 +142,14 @@
                                     $po->status === 'perlu dikirim'
                                         ? 'bg-danger/15 text-danger border-danger'
                                         : ($po->status === 'perlu invoice'
-                                            ? 'bg-secondary-blue/15 text-secondary-blue border-secondary-blue'
-                                            : 'bg-success/15 text-success border-success');
+                                            ? 'bg-warning-100/15 text-warning-100 border-warning-100'
+                                            : ($po->status === 'perlu dibayar'
+                                                ? 'bg-success/15 text-success border-success'
+                                                : 'bg-secondary-blue/15 text-secondary-blue border-secondary-blue'));
                             @endphp
                             <tr class="border-b-2 border-b-tertiary-table-line">
-                                <td class="px-4 py-2" align="center">{{ $po->created->translatedFormat('d M Y H:i:s') }}</td>
+                                <td class="px-4 py-2" align="center">
+                                    {{ $po->created->translatedFormat('d M Y H:i:s') }}</td>
                                 <td class="px-4 py-2" align="center">{{ $po->code }}</td>
                                 <td class="px-4 py-2 w-64" align="center">{{ $po->supplier->name }}</td>
                                 <td class="px-4 py-4" align="center">
@@ -141,15 +159,24 @@
                                 <td class="px-4 py-2" align="center">{{ $po->item }}</td>
                                 <td class="px-4 py-2" align="center">Rp
                                     {{ number_format($po->total, 0, ',', '.') }}</td>
-                                <td class="px-4 py-2" align="center" x-data="{ showModalDelete: false }">
+                                <td class="px-4 py-2" align="center" x-data="{ showModalDelete: false, showModalSend: false, showModalPay: false, showModalView: false }">
                                     <div class="flex justify-center gap-2">
-                                        <a href="{{ route('purchase-order.show', $po) }}"
-                                            class="text-secondary-purple transition-transform hover:scale-125 active:scale-90 mt-0.25">
-                                            <x-icons.detail-icon />
-                                        </a>
+                                        <template
+                                            x-if="{{ $po->status !== 'perlu dibayar' && $po->status !== 'selesai' }}">
+                                            <a href="{{ route('purchase-order.show', $po) }}"
+                                                class="text-secondary-purple transition-transform hover:scale-125 active:scale-90 mt-1">
+                                                <x-icons.detail-icon />
+                                            </a>
+                                        </template>
+                                        <template x-if="{{ $po->status === 'selesai' }}">
+                                            <button type="button" @click="showModalView = true"
+                                                class="text-secondary-purple transition-transform hover:scale-125 active:scale-90 mt-1">
+                                                <x-icons.detail-icon />
+                                            </button>
+                                        </template>
                                         <template x-if="{{ $po->status === 'perlu dikirim' }}">
                                             <a href="{{ route('purchase-order.edit', $po) }}"
-                                                class="text-primary transition-transform hover:scale-125 active:scale-90 mt-0.25">
+                                                class="text-primary transition-transform hover:scale-125 active:scale-90 mt-1">
                                                 <x-icons.edit-icon />
                                             </a>
                                         </template>
@@ -160,15 +187,21 @@
                                             </button>
                                         </template>
                                         <template x-if="{{ $po->status === 'perlu dikirim' }}">
-                                            <button type="button"
-                                                class="text-secondary-blue transition-transform hover:scale-125 active:scale-90">
+                                            <button type="button" @click="showModalSend = true"
+                                                class="text-warning-100 transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.send-icon />
                                             </button>
                                         </template>
                                         <template x-if="{{ $po->status === 'perlu invoice' }}">
-                                            <button type="button"
+                                            <a href="{{ route('purchase-order.fill-invoice', $po) }}"
                                                 class="text-success transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.invoice-sm />
+                                            </a>
+                                        </template>
+                                        <template x-if="{{ $po->status === 'perlu dibayar' }}">
+                                            <button type="button" @click="showModalPay = true"
+                                                class="text-secondary-blue transition-transform hover:scale-125 active:scale-90">
+                                                <x-icons.pay />
                                             </button>
                                         </template>
                                     </div>
@@ -199,6 +232,326 @@
                                                 </button>
                                             </form>
                                         </x-slot:action>
+                                    </x-modal>
+
+                                    {{-- Modal Kirim --}}
+                                    <x-modal show="showModalSend">
+                                        <x-slot:title>
+                                            <x-icons.delivery class="mr-3 text-warning-100" />
+                                            <h2 class="text-lg font-bold">Kirim Purchase Order</h2>
+                                        </x-slot:title>
+                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                            Yakin ingin mengirim Purchase Order
+                                            <span class="font-bold text-warning-100">#{{ $po->code }}</span>
+                                            ini?
+                                        </p>
+                                        <x-slot:action>
+                                            <button type="button" @click="showModalSend = false"
+                                                class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                Batal
+                                            </button>
+
+                                            <form action="{{ route('purchase-order.kirim', $po) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit"
+                                                    class="px-4 py-2 bg-warning-100 text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                    Kirim
+                                                </button>
+                                            </form>
+                                        </x-slot:action>
+                                    </x-modal>
+
+                                    {{-- Modal Bayar --}}
+                                    <form action="{{ route('purchase-order.pay', $po) }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <x-modal show="showModalPay">
+                                            <x-slot:title>
+                                                <div class="w-full flex justify-between">
+                                                    <div class="flex">
+                                                        <x-icons.pay class="mr-3 text-secondary-blue" />
+                                                        <h2 class="text-lg font-bold">Upload Bukti Pembayaran</h2>
+                                                    </div>
+                                                    <button
+                                                        class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95"
+                                                        type="button" @click="showModalPay = false">
+                                                        <x-icons.close />
+                                                    </button>
+                                                </div>
+                                            </x-slot:title>
+
+                                            <div class="flex gap-8 px-10 mb-2">
+                                                <div>
+                                                    <div class="grid grid-cols-2 gap-8 text-start">
+                                                        <div class="flex flex-col gap-4 col-span-1">
+                                                            <div class="flex flex-col gap-1">
+                                                                <span class="font-bold">Waktu Dibuat</span>
+                                                                <span>{{ $po->created->translatedFormat('d M Y H:i:s') }}</span>
+                                                            </div>
+                                                            <div class="flex flex-col gap-1">
+                                                                <span class="font-bold">Nomor PO</span>
+                                                                <span>{{ $po->code }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex flex-col gap-4 col-span-1">
+                                                            <div class="flex flex-col gap-1">
+                                                                <span class="font-bold">Supplier</span>
+                                                                <span
+                                                                    class="capitalize">{{ $po->supplier->name }}</span>
+                                                            </div>
+                                                            <div class="flex flex-col gap-1">
+                                                                <span class="font-bold">Status</span>
+                                                                <span
+                                                                    class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $po->status }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Summary Produk --}}
+                                                    <div
+                                                        class="mt-6 py-3 rounded-lg bg-gradient-to-r from-primary/30 to-secondary-purple/30">
+                                                        <header class="px-4 text-start font-bold">Summary</header>
+                                                        <hr
+                                                            class="w-full h-[1px] my-2 bg-tertiary-table-line rounded-full border-0">
+
+                                                        <div class="relative overflow-x-auto overflow-y-auto">
+                                                            <table class="w-full min-w-max text-sm text-left">
+                                                                <thead class="text-xs uppercase">
+                                                                    <tr>
+                                                                        <th class="px-4 py-2 w-44" align="left">Nama
+                                                                            Produk</th>
+                                                                        <th class="px-4 py-2" align="center">Pcs</th>
+                                                                        <th class="px-4 py-2" align="center">Qty</th>
+                                                                        <th class="px-4 py-2" align="right">Harga per
+                                                                            qty</th>
+                                                                        <th class="px-4 py-2" align="right">Total
+                                                                            harga produk</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach ($po->items as $item)
+                                                                        <tr class="font-medium text-xs">
+                                                                            <td class="px-4 py-2" align="left">
+                                                                                {{ $item->product->name }}</td>
+                                                                            <td class="px-4 py-2" align="center">
+                                                                                {{ $item->pcs }}</td>
+                                                                            <td class="px-4 py-2" align="center">
+                                                                                {{ $item->qty }}</td>
+                                                                            <td class="px-4 py-2" align="right">
+                                                                                {{ 'Rp' . number_format($item->price, 0, ',', '.') }}
+                                                                            </td>
+                                                                            <td class="px-4 py-2" align="right">
+                                                                                {{ 'Rp' . number_format($item->qty * $item->price, 0, ',', '.') }}
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+
+                                                                    {{-- Subtotal --}}
+                                                                    <tr
+                                                                        class="font-bold border-t border-tertiary-table-line">
+                                                                        <td class="px-4 py-2" align="left"
+                                                                            colspan="3">SUBTOTAL
+                                                                        </td>
+                                                                        <td class="px-4 py-2" colspan="2"
+                                                                            align="right">
+                                                                            {{ 'Rp' . number_format($po->subtotal, 0, ',', '.') }}
+                                                                        </td>
+                                                                    </tr>
+
+                                                                    {{-- PPN --}}
+                                                                    <tr class="font-bold">
+                                                                        <td class="px-4 py-2" align="left">PPN</td>
+                                                                        <td colspan="3"></td>
+                                                                        <td class="px-4 py-2" align="right">
+                                                                            {{ number_format($po->ppn_percentage, 0, ',', '.') . '%' }}
+                                                                        </td>
+                                                                    </tr>
+
+                                                                    {{-- TOTAL --}}
+                                                                    <tr
+                                                                        class="font-bold text-lg border-t border-tertiary-table-line">
+                                                                        <td class="px-4 py-2" align="left">TOTAL
+                                                                        </td>
+                                                                        <td class="px-4 py-2" align="center">
+                                                                            {{ $po->items->sum('pcs') }}</td>
+                                                                        <td class="px-4 py-2" align="center">
+                                                                            {{ $po->items->sum('qty') }}</td>
+                                                                        <td class="px-4 py-2" align="right"
+                                                                            colspan="2">
+                                                                            {{ 'Rp' . number_format($po->total, 0, ',', '.') }}
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Upload Bukti --}}
+                                                <div class="h-full w-96 text-start">
+                                                    <x-textfield-image name="photo[{{ $loop->index }}]"
+                                                        fileNameClass="text-xs max-w-40" closeSideClass="text-xs"
+                                                        previewClass="min-h-80" uploadClass="min-h-80">Bukti
+                                                        Pembayaran
+                                                        <span
+                                                            class="ml-2 text-xs text-tertiary-400 font-semibold">(format
+                                                            .jpg/.jpeg/.png, max. 3 mb)</span>
+                                                    </x-textfield-image>
+                                                    <div class="text-center">
+                                                        <button type="submit"
+                                                            class="mt-8 px-6 py-3 bg-secondary-blue text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                            Upload
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </x-modal>
+                                    </form>
+
+                                    {{-- Modal View --}}
+                                    <x-modal show="showModalView">
+                                        <x-slot:title>
+                                            <div class="w-full flex justify-between">
+                                                <div class="flex">
+                                                    <x-icons.info-icon class="mr-3" />
+                                                    <h2 class="text-lg font-bold">Detail Purchase Order</h2>
+                                                </div>
+                                                <button
+                                                    class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95"
+                                                    type="button" @click="showModalView = false">
+                                                    <x-icons.close />
+                                                </button>
+                                            </div>
+                                        </x-slot:title>
+
+                                        <div class="flex gap-8 px-10 mb-2">
+                                            <div>
+                                                <div class="grid grid-cols-2 gap-8 text-start">
+                                                    <div class="flex flex-col gap-4 col-span-1">
+                                                        <div class="flex flex-col gap-1">
+                                                            <span class="font-bold">Waktu Dibuat</span>
+                                                            <span>{{ $po->created->translatedFormat('d M Y H:i:s') }}</span>
+                                                        </div>
+                                                        <div class="flex flex-col gap-1">
+                                                            <span class="font-bold">Nomor PO</span>
+                                                            <span>{{ $po->code }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col gap-4 col-span-1">
+                                                        <div class="flex flex-col gap-1">
+                                                            <span class="font-bold">Supplier</span>
+                                                            <span class="capitalize">{{ $po->supplier->name }}</span>
+                                                        </div>
+                                                        <div class="flex flex-col gap-1">
+                                                            <span class="font-bold">Status</span>
+                                                            <span
+                                                                class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $po->status }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Summary Produk --}}
+                                                <div
+                                                    class="mt-6 py-3 rounded-lg bg-gradient-to-r from-primary/30 to-secondary-purple/30">
+                                                    <header class="px-4 text-start font-bold">Summary</header>
+                                                    <hr
+                                                        class="w-full h-[1px] my-2 bg-tertiary-table-line rounded-full border-0">
+
+                                                    <div class="relative overflow-x-auto overflow-y-auto">
+                                                        <table class="w-full min-w-max text-sm text-left">
+                                                            <thead class="text-xs uppercase">
+                                                                <tr>
+                                                                    <th class="px-4 py-2 w-44" align="left">Nama
+                                                                        Produk</th>
+                                                                    <th class="px-4 py-2" align="center">Pcs</th>
+                                                                    <th class="px-4 py-2" align="center">Qty</th>
+                                                                    <th class="px-4 py-2" align="right">Harga per
+                                                                        qty</th>
+                                                                    <th class="px-4 py-2" align="right">Total
+                                                                        harga produk</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($po->items as $item)
+                                                                    <tr class="font-medium text-xs">
+                                                                        <td class="px-4 py-2" align="left">
+                                                                            {{ $item->product->name }}</td>
+                                                                        <td class="px-4 py-2" align="center">
+                                                                            {{ $item->pcs }}</td>
+                                                                        <td class="px-4 py-2" align="center">
+                                                                            {{ $item->qty }}</td>
+                                                                        <td class="px-4 py-2" align="right">
+                                                                            {{ 'Rp' . number_format($item->price, 0, ',', '.') }}
+                                                                        </td>
+                                                                        <td class="px-4 py-2" align="right">
+                                                                            {{ 'Rp' . number_format($item->qty * $item->price, 0, ',', '.') }}
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+
+                                                                {{-- Subtotal --}}
+                                                                <tr
+                                                                    class="font-bold border-t border-tertiary-table-line">
+                                                                    <td class="px-4 py-2" align="left"
+                                                                        colspan="3">SUBTOTAL
+                                                                    </td>
+                                                                    <td class="px-4 py-2" colspan="2"
+                                                                        align="right">
+                                                                        {{ 'Rp' . number_format($po->subtotal, 0, ',', '.') }}
+                                                                    </td>
+                                                                </tr>
+
+                                                                {{-- PPN --}}
+                                                                <tr class="font-bold">
+                                                                    <td class="px-4 py-2" align="left">PPN</td>
+                                                                    <td colspan="3"></td>
+                                                                    <td class="px-4 py-2" align="right">
+                                                                        {{ number_format($po->ppn_percentage, 0, ',', '.') . '%' }}
+                                                                    </td>
+                                                                </tr>
+
+                                                                {{-- TOTAL --}}
+                                                                <tr
+                                                                    class="font-bold text-lg border-t border-tertiary-table-line">
+                                                                    <td class="px-4 py-2" align="left">TOTAL
+                                                                    </td>
+                                                                    <td class="px-4 py-2" align="center">
+                                                                        {{ $po->items->sum('pcs') }}</td>
+                                                                    <td class="px-4 py-2" align="center">
+                                                                        {{ $po->items->sum('qty') }}</td>
+                                                                    <td class="px-4 py-2" align="right"
+                                                                        colspan="2">
+                                                                        {{ 'Rp' . number_format($po->total, 0, ',', '.') }}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Upload Bukti --}}
+                                            <div class="min-h-full w-96 text-start">
+                                                <span class="block font-bold pb-2">Bukti Pembayaran</span>
+                                                <div
+                                                    class="h-3/4 flex justify-center items-center bg-tertiary-table-line rounded-lg border-2 object-contain border-gray-300 text-gray-500 italic">
+                                                    @if ($po->photo_url)
+                                                        <img src="{{ asset('storage/' . $po->photo_url) }}"
+                                                            class="max-h-72">
+                                                    @else
+                                                        <span>Belum ada foto</span>
+                                                    @endif
+                                                </div>
+                                                <div class="flex justify-end mt-6">
+                                                    <button type="button" @click="showModalView = false"
+                                                        class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                                                        Tutup
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </x-modal>
                                 </td>
                             </tr>
@@ -286,7 +639,8 @@
                     @endif
 
                     @if ($purchase_orders->hasMorePages())
-                        <a href="{{ $purchase_orders->nextPageUrl() }}" class="px-3 py-2 bg-tertiary hover:bg-gray-100">
+                        <a href="{{ $purchase_orders->nextPageUrl() }}"
+                            class="px-3 py-2 bg-tertiary hover:bg-gray-100">
                             <x-icons.arrow-down class="-rotate-90 text-tertiary-title" />
                         </a>
                     @else

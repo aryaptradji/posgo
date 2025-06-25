@@ -135,6 +135,12 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
 
         // Kelola PO
+        Route::get('/purchase-order/print', [PurchaseOrderController::class, 'print'])->name('purchase-order.print');
+        Route::get('/purchase-order/export', [PurchaseOrderController::class, 'export'])->name('purchase-order.export');
         Route::resource('/purchase-order', PurchaseOrderController::class);
         Route::get('/purchase-order/{purchaseOrder}/print-invoice', [PurchaseOrderController::class, 'printInvoice'])->name('purchase-order.print-invoice');
+        Route::put('/purchase-order/{purchaseOrder}/kirim', [PurchaseOrderController::class, 'kirim'])->name('purchase-order.kirim');
+        Route::get('/purchase-order/{purchaseOrder}/fill-invoice', [PurchaseOrderController::class, 'fillInvoice'])->name('purchase-order.fill-invoice');
+        Route::put('/purchase-order/{purchaseOrder}/save-invoice', [PurchaseOrderController::class, 'saveInvoice'])->name('purchase-order.save-invoice');
+        Route::put('/purchase-order/{purchaseOrder}/pay', [PurchaseOrderController::class, 'pay'])->name('purchase-order.pay');
     });
