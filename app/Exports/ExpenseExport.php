@@ -17,7 +17,7 @@ class ExpenseExport implements FromCollection, WithHeadings, WithStyles
     {
         return Expense::latest('date')->get()->map(function ($expense) {
             return [
-                'Waktu' => $expense->date->translatedFormat('d M Y H:i:s'),
+                'Waktu' => $expense->date,
                 'Sumber' => $expense->source,
                 'Kategori' => $expense->category,
                 'Total' => (string) $expense->total

@@ -79,7 +79,7 @@
     })">
     <div class="h-full p-6 overflow-y-auto bg-gray-50">
         <ul class="space-y-3 font-medium" x-data="{ focus: 1 }">
-            <x-navlink href="{{ route('admin.dashboard') }}" :active="request()->is('admin/dashboard')" :focusNo="1" @click="focus = 1">
+            <x-navlink href="{{ route('dashboard') }}" :active="request()->is('admin/dashboard')" :focusNo="1" @click="focus = 1">
                 <x-icons.dashboard />
                 <x-slot:title>Dashboard</x-slot:title>
             </x-navlink>
@@ -109,9 +109,9 @@
             <x-navlink-toggle :focusNo="4" :menus="[
                 [
                     'name' => 'Pemasukan',
-                    'active' => request()->is('pemasukan'),
+                    'active' => request()->is('admin/revenue') || request()->is('admin/revenue' . '*'),
                     'icon' => view('components.icons.pemasukan')->render(),
-                    'route' => '',
+                    'route' => route('revenue.index'),
                 ],
                 [
                     'name' => 'Pengeluaran',

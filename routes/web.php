@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,12 +10,15 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\CashierController;
 use App\Http\Controllers\Admin\CourierController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\RevenueController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Cashier\PosMenuController;
 use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Http\Controllers\Cashier\TransactionController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -30,7 +32,7 @@ Route::get('/', function () {
     }
 
     return match (Auth::user()->role) {
-        'admin' => redirect()->route('admin.dashboard'),
+        'admin' => redirect()->route('dashboard'),
         'cashier' => redirect()->route('pos-menu'),
         'customer' => redirect()->route('customer.home'),
         default => abort(403, 'Role tidak dikenali.'),
@@ -86,9 +88,7 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->group(function () {
         // Dashboard
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard.index');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // Produk
         Route::get('/product/print', [AdminProductController::class, 'print'])->name('product.print');
@@ -108,6 +108,11 @@ Route::middleware(['auth', 'role:admin'])
         Route::put('/delivery/{delivery}/kirim', [DeliveryController::class, 'kirim'])->name('delivery.kirim');
         Route::put('/delivery/{delivery}/upload', [DeliveryController::class, 'upload'])->name('delivery.upload');
         Route::resource('/delivery', DeliveryController::class);
+
+        // Pemasukan
+        Route::get('/revenue/print', [RevenueController::class, 'print'])->name('revenue.print');
+        Route::get('/revenue/export', [RevenueController::class, 'export'])->name('revenue.export');
+        Route::resource('/revenue', RevenueController::class);
 
         // Pengeluaran
         Route::get('/expense/print', [ExpenseController::class, 'print'])->name('expense.print');

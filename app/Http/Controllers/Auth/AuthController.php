@@ -155,7 +155,7 @@ class AuthController extends Controller
         session()->flash('success', 'Selamat datang, ' . $user->name . '!');
 
         return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
+            'admin' => redirect()->route('dashboard'),
             'cashier' => redirect()->route('pos-menu'),
             'customer' => redirect()->route('customer.home'),
             default => abort(403, 'Role tidak dikenali.'),

@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\OrderItem;
 use Midtrans\Config as Midtrans;
 use Illuminate\Support\Facades\URL;
+use App\Observers\OrderItemObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
         Midtrans::$isProduction = env('MIDTRANS_PRODUCTION', false);
         Midtrans::$isSanitized = true;
         Midtrans::$is3ds = true;
+
+        OrderItem::observe(OrderItemObserver::class);
 
         if (request()->header('X-Forwarded-Proto') === 'https') {
             URL::forceScheme('https');

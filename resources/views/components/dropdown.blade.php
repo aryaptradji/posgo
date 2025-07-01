@@ -15,7 +15,25 @@
         selectedId: '{{ $value }}',
         selectedLabel: 'Pilih Salah Satu',
         items: Object.entries(@js($items)).map(([id, name]) => ({ id: id, name: name })),
-    }" class="relative">
+    }" x-init="
+        // Tambahkan console.log untuk debugging
+        console.log('x-dropdown init for:', '{{ $name }}');
+        console.log('  Prop value (selectedId):', selectedId);
+        console.log('  Internal items:', items);
+
+        // Logika untuk mencocokkan selectedId dengan item dan mengisi selectedLabel
+        const initialItem = items.find(item => item.id === selectedId);
+        if (initialItem) {
+            selectedLabel = initialItem.name;
+        } else if (selectedId && selectedId !== 'Pilih Salah Satu') {
+            // Fallback jika value ada tapi tidak ada di items (misal string yang tidak cocok dengan ID/key)
+            selectedLabel = selectedId; // Tampilkan saja valuenya
+            console.warn('  selectedId not found in items, displaying raw value:', selectedId);
+        }
+
+        console.log('  Final selectedLabel:', selectedLabel);
+    "
+    class="relative">
         <!-- Button to toggle dropdown -->
         <button
             x-bind:class="{

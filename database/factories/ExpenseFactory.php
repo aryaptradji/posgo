@@ -36,7 +36,7 @@ class ExpenseFactory extends Factory
         return [
             'date' => $this->faker->dateTimeBetween('-30 days', 'now'),
             'source' => $isProduct && $product ? $product->name : $this->faker->randomElement($otherSources),
-            'category' => $isProduct ? 'operasional' : 'luar operasional',
+            'category' => $isProduct ? 'Operasional' : 'Luar Operasional',
             'total' => $this->faker->numberBetween(10000, 300000),
             'product_id' => $isProduct && $product ? $product->id : null,
         ];
