@@ -144,7 +144,11 @@
         <div class="px-10 py-6 w-2/6 rounded-2xl shadow-outer sticky top-32 h-fit">
             <div class="text-2xl font-bold mb-10">Keranjang</div>
             <div x-show="Object.keys(cart).length === 0" class="text-center text-tertiary-title italic py-24">
-                Keranjang masih kosong
+                @if (Auth::check())
+                    Keranjang masih kosong
+                @else
+                    Silahkan masukkan akun terlebih dahulu
+                @endif
             </div>
             <template x-for="id in cartOrder" :key="id">
                 <div class="flex flex-col-2 gap-6 mb-6">
@@ -176,11 +180,16 @@
                 </span>
             </div>
 
-            <form method="POST" action="{{ route('customer.checkout') }}" x-ref="form">
-                @csrf
-                <input type="hidden" name="cart" :value="JSON.stringify(cart)">
-                <x-button-lg type="submit" class="bg-primary shadow-outer-sidebar-primary">Pesan</x-button-lg>
-            </form>
+            @if (Auth::check())
+                <form method="POST" action="{{ route('customer.checkout') }}" x-ref="form">
+                    @csrf
+                    <input type="hidden" name="cart" :value="JSON.stringify(cart)">
+                    <x-button-lg type="submit" class="bg-primary shadow-outer-sidebar-primary">Pesan</x-button-lg>
+                </form>
+            @else
+                <a href="{{ route('login') }}"
+                    class="bg-primary shadow-outer-sidebar-primary text-white py-3 flex justify-center rounded-full tracking-widest font-bold uppercase transition-all hover:scale-110 hover:shadow-drop active:shadow-outer-sidebar-primary active:scale-90 duration-300">Masuk</a>
+            @endif
         </div>
     </div>
 </x-layout-main>

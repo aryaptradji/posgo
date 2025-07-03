@@ -1,7 +1,7 @@
 <x-layout-main>
     <x-slot:title>Home</x-slot:title>
 
-    <!-- Toast Create Success -->
+    {{-- Toast Create Success --}}
     @if (session('success'))
         <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
             <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success" :duration="6000">
@@ -13,6 +13,7 @@
         </div>
     @endif
 
+    {{-- Carousel --}}
     <div class="flex px-14 justify-end relative w-full" x-data="{
         active: 0,
         slides: [{

@@ -78,9 +78,9 @@ class AuthController extends Controller
             $errors = $validator->errors();
             $step = 0;
 
-            if ($errors->hasAny(['name', 'phone', 'address'])) {
+            if ($errors->hasAny(['city', 'district', 'sub_district'])) {
                 $step = 0;
-            } else if ($errors->hasAny(['city', 'district', 'sub_district', 'rt', 'rw', 'postal_code'])) {
+            } else if ($errors->hasAny(['address', 'rt', 'rw', 'postal_code', 'name', 'phone'])) {
                 $step = 1;
             } else if ($errors->hasAny(['email', 'password'])) {
                 $step = 2;

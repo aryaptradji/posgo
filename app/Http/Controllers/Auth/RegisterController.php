@@ -36,7 +36,7 @@ class RegisterController extends Controller
             }
         }
 
-        return view('register', [
+        return view('auth.register.index', [
             'cities' => $cities,
             'districts' => $districts,
             'subDistricts' => $subDistricts,

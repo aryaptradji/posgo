@@ -51,7 +51,13 @@
             </div>
         </form>
 
-        @if (!$orders->isEmpty())
+        @if (!Auth::check())
+            <div class="h-3/5 flex flex-col gap-4 justify-center items-center">
+                <span class="italic text-gray-500">Silahkan masukkan akun terlebih dahulu</span>
+                <a href="{{ route('login') }}"
+                    class="bg-primary shadow-outer-sidebar-primary text-white px-8 py-3 flex justify-center rounded-full tracking-widest font-bold uppercase transition-all hover:scale-110 hover:shadow-drop active:shadow-outer-sidebar-primary active:scale-90 duration-300">Masuk</a>
+            </div>
+        @elseif (!$orders->isEmpty())
             <div class="flex flex-col gap-6">
                 @foreach ($orders as $order)
                     @php

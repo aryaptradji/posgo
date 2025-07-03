@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CashierController;
 use App\Http\Controllers\Admin\CourierController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\RevenueController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DeliveryController;
@@ -28,7 +29,7 @@ use App\Http\Controllers\Customer\ProductController as CustomerProductController
 // Auth
 Route::get('/', function () {
     if (!Auth::check()) {
-        return redirect()->route('login');
+        return redirect()->route('customer.home');
     }
 
     return match (Auth::user()->role) {
@@ -47,16 +48,24 @@ Route::post('/register', [AuthController::class, 'register'])->name('auth.regist
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('auth.logout');
+Route::get('/forget-password', [PasswordController::class, 'emailForm'])->name('password.email');
+Route::post('/forget-password', [PasswordController::class, 'sendEmail'])->name('password.send');
+Route::get('/reset-password/{token}', [PasswordController::class, 'resetForm'])->name('password.reset');
+Route::put('/reset-password', [PasswordController::class, 'updatePassword'])->name('password.update');
+
+// Landing Page
+// Home
+Route::get('/home', fn() => view('customer.home.index'))->name('customer.home');
+// Produk
+Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product');
+// Pesananku
+Route::get('/order', [CustomerOrderController::class, 'index'])->name('customer.order.index');
 
 // Customer
 Route::middleware(['auth', 'role:customer'])->group(function () {
-    // Home
-    Route::get('/home', fn() => view('customer.home.index'))->name('customer.home');
-    // Produk
-    Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product');
     Route::post('/product/checkout', [CustomerProductController::class, 'checkout'])->name('customer.checkout');
     Route::get('/product/checkout/{order}', [CustomerProductController::class, 'showCheckout'])->name('customer.product.checkout.show');
-    Route::get('/order', [CustomerOrderController::class, 'index'])->name('customer.order.index');
+
     Route::get('/order/{order}/pay', [CustomerOrderController::class, 'pay'])->name('customer.order.pay.show');
     Route::get('/order/{order}/expire', [CustomerOrderController::class, 'expire'])->name('customer.order.expire');
 });

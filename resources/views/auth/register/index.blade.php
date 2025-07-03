@@ -199,41 +199,50 @@
                             class="inline-block font-semibold bg-gradient-to-r from-primary to-secondary-purple bg-clip-text text-transparent transition-all hover:scale-90 active:scale-50">
                             Masuk
                         </a>
-                        <div class="pt-7 flex gap-2">
+                        <div class="pt-6 pb-4 flex gap-2">
                             <span
                                 class="bg-gradient-to-t from-primary to-secondary-purple w-6 h-6 aspect-square rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">1</span>
                             <span class="font-bold">Data Diri</span>
                         </div>
 
-                        {{-- Nama --}}
-                        <x-textfield x-model="name" x-on:input="validateName()" type="text" name="name"
-                            placeholder="Masukkan nama lengkap . . ." class="focus:border-[3.5px] capitalize"
-                            x-bind:class="nameError || nameServerError ? 'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'"
-                            classCont="w-4/5 mt-4 mb-6">Nama</x-textfield>
-                        <x-inline-error-message class="mb-3 -mt-4" x-show="nameError"
-                            x-text="nameError"></x-inline-error-message>
-                        @error('name')
-                            <x-inline-error-message class="mb-3 -mt-4" x-show="nameServerError">{{ $message }}</x-inline-error-message>
+                        {{-- Kota --}}
+                        <x-dropdown-search :errorClass="$errors->has('city')
+                            ? 'border-[3.5px] border-danger focus:border-danger'
+                            : 'border-0'" name="city" :items="$cities->map(fn($c) => ['slug' => $c->slug, 'name' => $c->name])->toArray()" :value="$citySlug ?? 'Pilih Salah Satu'"
+                            contClass="mb-6 w-4/5">
+                            Kota
+                        </x-dropdown-search>
+                        @error('city')
+                            <x-inline-error-message class="mb-3 -mt-4"
+                                x-show="$errors->has('city')">{{ $message }}</x-inline-error-message>
                         @enderror
+                        <input type="hidden" name="city" value="{{ request('city') }}">
 
-                        {{-- No Telepon --}}
-                        <x-textfield x-model="phone" x-on:input="validatePhone()" type="text" name="phone"
-                            inputmode="numeric" pattern="[0-9]*" placeholder="08xxxxxxxxx" class="focus:border-[3.5px]"
-                            x-bind:class="phoneError || phoneServerError ? 'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'"
-                            classCont="w-4/5 mb-6">Nomor
-                            Telepon</x-textfield>
-                        <x-inline-error-message class="mb-3 -mt-4" x-show="phoneError" x-text="phoneError"></x-inline-error-message>
-                        @error('phone')
-                            <x-inline-error-message class="mb-3 -mt-4" x-show="phoneServerError">{{ $message }}</x-inline-error-message>
+                        {{-- Kecamatan --}}
+                        <x-dropdown-search :errorClass="$errors->has('district')
+                            ? 'border-[3.5px] border-danger focus:border-danger'
+                            : 'border-0'" name="district" :items="$districts->map(fn($d) => ['slug' => $d->slug, 'name' => $d->name])->toArray()" :value="$districtSlug ?? 'Pilih Salah Satu'"
+                            contClass="mb-6 w-4/5">
+                            Kecamatan
+                        </x-dropdown-search>
+                        @error('district')
+                            <x-inline-error-message class="mb-3 -mt-4"
+                                x-show="$errors->has('district')">{{ $message }}</x-inline-error-message>
                         @enderror
+                        <input type="hidden" name="district" value="{{ request('district') }}">
 
-                        {{-- Alamat --}}
-                        <x-textfield x-model="address" x-on:input="validateAddress()" type="text" name="address" placeholder="Masukkan alamat dan nomor rumah . . ."
-                            class="focus:ring" x-bind:class="addressError || addressServerError ? 'ring ring-danger focus:ring-danger' : 'focus:ring-primary'" classCont="w-4/5 mb-6">Alamat</x-textfield>
-                        <x-inline-error-message class="mb-3 -mt-4" x-show="addressError" x-text="addressError"></x-inline-error-message>
-                        @error('address')
-                            <x-inline-error-message class="mb-3 -mt-4" x-show="addressServerError">{{ $message }}</x-inline-error-message>
+                        {{-- Kelurahan --}}
+                        <x-dropdown-search :errorClass="$errors->has('sub_district')
+                            ? 'border-[3.5px] border-danger focus:border-danger'
+                            : 'border-0'" name="sub_district" :items="$subDistricts->map(fn($s) => ['slug' => $s->slug, 'name' => $s->name])->toArray()" :value="$subDistrictSlug ?? 'Pilih Salah Satu'"
+                            contClass="mb-6 w-4/5">
+                            Kelurahan
+                        </x-dropdown-search>
+                        @error('sub_district')
+                            <x-inline-error-message class="mb-3 -mt-4"
+                                x-show="$errors->has('sub_district')">{{ $message }}</x-inline-error-message>
                         @enderror
+                        <input type="hidden" name="sub_district" value="{{ request('sub_district') }}">
 
                         <div class="w-4/5 mt-10 text-end">
                             <x-button-sm onclick="nextStep()" type="button"
@@ -243,71 +252,100 @@
                     {{-- Data Diri: Sec 2 --}}
                     <div
                         class="form-step w-full absolute top-0 transition-all duration-500 ease-in-out opacity-0 translate-x-full px-3">
-                        <div class="flex gap-2 mb-3">
+                        <div class="flex gap-2 mb-2">
                             <span
                                 class="bg-gradient-to-t from-primary to-secondary-purple w-6 h-6 aspect-square rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">1</span>
                             <span class="font-bold">Data Diri</span>
                         </div>
-                        {{-- Kota --}}
-                        <x-dropdown-search :errorClass="$errors->has('city') ? 'border-[3.5px] border-danger focus:border-danger' : 'border-0'" name="city" :items="$cities->map(fn($c) => ['slug' => $c->slug, 'name' => $c->name])->toArray()" :value="$citySlug ?? 'Pilih Salah Satu'" contClass="mb-6 w-4/5">
-                            Kota
-                        </x-dropdown-search>
-                        @error('city')
-                            <x-inline-error-message class="mb-3 -mt-4" x-show="$errors->has('city')">{{ $message }}</x-inline-error-message>
-                        @enderror
-                        <input type="hidden" name="city" value="{{ request('city') }}">
 
-                        {{-- Kecamatan --}}
-                        <x-dropdown-search :errorClass="$errors->has('district') ? 'border-[3.5px] border-danger focus:border-danger' : 'border-0'" name="district" :items="$districts->map(fn($d) => ['slug' => $d->slug, 'name' => $d->name])->toArray()" :value="$districtSlug ?? 'Pilih Salah Satu'" contClass="mb-6 w-4/5">
-                            Kecamatan
-                        </x-dropdown-search>
-                        @error('district')
-                            <x-inline-error-message class="mb-3 -mt-4" x-show="$errors->has('district')">{{ $message }}</x-inline-error-message>
+                        {{-- Alamat --}}
+                        <x-textfield x-model="address" x-on:input="validateAddress()" type="text" name="address"
+                            placeholder="Masukkan alamat dan nomor rumah . . ." class="focus:ring"
+                            x-bind:class="addressError || addressServerError ? 'ring ring-danger focus:ring-danger' :
+                                'focus:ring-primary'"
+                            classCont="w-4/5 mb-6">Alamat</x-textfield>
+                        <x-inline-error-message class="mb-3 -mt-4" x-show="addressError"
+                            x-text="addressError"></x-inline-error-message>
+                        @error('address')
+                            <x-inline-error-message class="mb-3 -mt-4"
+                                x-show="addressServerError">{{ $message }}</x-inline-error-message>
                         @enderror
-                        <input type="hidden" name="district" value="{{ request('district') }}">
-
-                        {{-- Kelurahan --}}
-                        <x-dropdown-search :errorClass="$errors->has('sub_district') ? 'border-[3.5px] border-danger focus:border-danger' : 'border-0'" name="sub_district" :items="$subDistricts->map(fn($s) => ['slug' => $s->slug, 'name' => $s->name])->toArray()" :value="$subDistrictSlug ?? 'Pilih Salah Satu'"
-                            contClass="mb-6 w-4/5">
-                            Kelurahan
-                        </x-dropdown-search>
-                        @error('sub_district')
-                            <x-inline-error-message class="mb-3 -mt-4" x-show="$errors->has('sub_district')">{{ $message }}</x-inline-error-message>
-                        @enderror
-                        <input type="hidden" name="sub_district" value="{{ request('sub_district') }}">
 
                         <div class="grid grid-cols-3 gap-10 mb-6 w-4/5">
                             {{-- RT --}}
                             <div>
-                                <x-textfield x-model="rt" x-on:input="validateRT()" classCont="mb-4" class="focus:border-[3.5px]" x-bind:class="rtError || rtServerError ? 'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'" type="text" name="rt"
-                                    placeholder="ex: 001">RT</x-textfield>
-                                <x-inline-error-message class="mb-3 -mt-2" x-show="rtError" x-text="rtError"></x-inline-error-message>
+                                <x-textfield x-model="rt" x-on:input="validateRT()"
+                                    class="focus:border-[3.5px]"
+                                    x-bind:class="rtError || rtServerError ? 'border-[3.5px] border-danger focus:border-danger' :
+                                        'focus:border-primary'"
+                                    type="text" name="rt" placeholder="ex: 001">RT</x-textfield>
+                                <x-inline-error-message class="mb-3 mt-2" x-show="rtError"
+                                    x-text="rtError"></x-inline-error-message>
                                 @error('rt')
-                                    <x-inline-error-message class="mb-3 -mt-2" x-show="rtServerError">{{ $message }}</x-inline-error-message>
+                                    <x-inline-error-message class="mb-3 mt-2"
+                                        x-show="rtServerError">{{ $message }}</x-inline-error-message>
                                 @enderror
                             </div>
 
                             {{-- RW --}}
                             <div>
-                                <x-textfield x-model="rw" x-on:input="validateRW()" classCont="mb-4" class="focus:border-[3.5px]" x-bind:class="rwError || rwServerError ? 'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'" type="text" name="rw"
-                                    placeholder="ex: 002">RW</x-textfield>
-                                <x-inline-error-message class="mb-3 -mt-2" x-show="rwError" x-text="rwError"></x-inline-error-message>
+                                <x-textfield x-model="rw" x-on:input="validateRW()"
+                                    class="focus:border-[3.5px]"
+                                    x-bind:class="rwError || rwServerError ? 'border-[3.5px] border-danger focus:border-danger' :
+                                        'focus:border-primary'"
+                                    type="text" name="rw" placeholder="ex: 002">RW</x-textfield>
+                                <x-inline-error-message class="mb-3 mt-2" x-show="rwError"
+                                    x-text="rwError"></x-inline-error-message>
                                 @error('rw')
-                                    <x-inline-error-message class="mb-3 -mt-2" x-show="rwServerError">{{ $message }}</x-inline-error-message>
+                                    <x-inline-error-message class="mb-3 mt-2"
+                                        x-show="rwServerError">{{ $message }}</x-inline-error-message>
                                 @enderror
                             </div>
 
                             {{-- Kode Pos --}}
                             <div>
-                                <x-textfield x-model="postalCode" x-on:input="validatePostalCode()" classCont="mb-4" class="focus:border-[3.5px]" x-bind:class="postalCodeError || postalCodeServerError ? 'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'" type="text" name="postal_code"
-                                    placeholder="ex: 12123">Kode Pos</x-textfield>
-                                <x-inline-error-message class="mb-3 -mt-2" x-show="postalCodeError" x-text="postalCodeError"></x-inline-error-message>
+                                <x-textfield x-model="postalCode" x-on:input="validatePostalCode()"
+                                    class="focus:border-[3.5px]"
+                                    x-bind:class="postalCodeError || postalCodeServerError ?
+                                        'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'"
+                                    type="text" name="postal_code" placeholder="ex: 12123">Kode Pos</x-textfield>
+                                <x-inline-error-message class="mb-3 mt-2" x-show="postalCodeError"
+                                    x-text="postalCodeError"></x-inline-error-message>
                                 @error('postal_code')
-                                    <x-inline-error-message class="mb-3 -mt-2" x-show="postalCodeServerError">{{ $message }}</x-inline-error-message>
+                                    <x-inline-error-message class="mb-3 mt-2"
+                                        x-show="postalCodeServerError">{{ $message }}</x-inline-error-message>
                                 @enderror
                             </div>
                         </div>
-                        <div class="w-4/5 flex justify-between">
+
+                        {{-- Nama --}}
+                        <x-textfield x-model="name" x-on:input="validateName()" type="text" name="name"
+                            placeholder="Masukkan nama lengkap . . ." class="focus:border-[3.5px] capitalize"
+                            x-bind:class="nameError || nameServerError ? 'border-[3.5px] border-danger focus:border-danger' :
+                                'focus:border-primary'"
+                            classCont="w-4/5 mb-6">Nama</x-textfield>
+                        <x-inline-error-message class="mb-3 -mt-4" x-show="nameError"
+                            x-text="nameError"></x-inline-error-message>
+                        @error('name')
+                            <x-inline-error-message class="mb-3 -mt-4"
+                                x-show="nameServerError">{{ $message }}</x-inline-error-message>
+                        @enderror
+
+                        {{-- No Telepon --}}
+                        <x-textfield x-model="phone" x-on:input="validatePhone()" type="text" name="phone"
+                            inputmode="numeric" pattern="[0-9]*" placeholder="08xxxxxxxxx" class="focus:border-[3.5px]"
+                            x-bind:class="phoneError || phoneServerError ? 'border-[3.5px] border-danger focus:border-danger' :
+                                'focus:border-primary'"
+                            classCont="w-4/5 mb-6">Nomor
+                            Telepon</x-textfield>
+                        <x-inline-error-message class="mb-3 -mt-4" x-show="phoneError"
+                            x-text="phoneError"></x-inline-error-message>
+                        @error('phone')
+                            <x-inline-error-message class="mb-3 -mt-4"
+                                x-show="phoneServerError">{{ $message }}</x-inline-error-message>
+                        @enderror
+
+                        <div class="w-4/5 flex justify-between mt-10">
                             <x-button-sm onclick="prevStep()" type="button"
                                 class="text-black bg-btn-cancel">kembali</x-button-sm>
                             <x-button-sm onclick="nextStep()" type="button"
@@ -329,19 +367,29 @@
                             <span class="font-bold">Akun</span>
                         </div>
                         {{-- Email --}}
-                        <x-textfield x-model="email" x-on:input="validateEmail()" type="email" name="email" placeholder="Masukkan email . . ."
-                            class="focus:border-[3.5px]" x-bind:class="emailError || emailServerError ? 'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'" classCont="w-4/5 mt-4 mb-6">Email</x-textfield>
-                        <x-inline-error-message class="mb-6 -mt-4" x-show="emailError" x-text="emailError"></x-inline-error-message>
+                        <x-textfield x-model="email" x-on:input="validateEmail()" type="email" name="email"
+                            placeholder="Masukkan email . . ." class="focus:border-[3.5px]"
+                            x-bind:class="emailError || emailServerError ? 'border-[3.5px] border-danger focus:border-danger' :
+                                'focus:border-primary'"
+                            classCont="w-4/5 mt-4 mb-6">Email</x-textfield>
+                        <x-inline-error-message class="mb-6 -mt-4" x-show="emailError"
+                            x-text="emailError"></x-inline-error-message>
                         @error('email')
-                            <x-inline-error-message class="mb-6 -mt-4" x-show="emailServerError">{{ $message }}</x-inline-error-message>
+                            <x-inline-error-message class="mb-6 -mt-4"
+                                x-show="emailServerError">{{ $message }}</x-inline-error-message>
                         @enderror
 
                         {{-- Password --}}
-                        <x-textfield-password x-model="password" x-on:input="validatePassword()" name="password" placeholder="Masukkan password . . ."
-                            class="focus:border-[3.5px]" x-bind:class="passwordError || passwordServerError ? 'border-[3.5px] border-danger focus:border-danger' : 'focus:border-primary'" classCont="w-4/5 mb-6">Password</x-textfield-password>
-                        <x-inline-error-message class="mb-6 -mt-4" x-show="passwordError" x-text="passwordError"></x-inline-error-message>
+                        <x-textfield-password x-model="password" x-on:input="validatePassword()" name="password"
+                            placeholder="Masukkan password . . ." class="focus:border-[3.5px]"
+                            x-bind:class="passwordError || passwordServerError ? 'border-[3.5px] border-danger focus:border-danger' :
+                                'focus:border-primary'"
+                            classCont="w-4/5 mb-6">Password</x-textfield-password>
+                        <x-inline-error-message class="mb-6 -mt-4" x-show="passwordError"
+                            x-text="passwordError"></x-inline-error-message>
                         @error('password')
-                            <x-inline-error-message class="mb-6 -mt-4" x-show="passwordServerError">{{ $message }}</x-inline-error-message>
+                            <x-inline-error-message class="mb-6 -mt-4"
+                                x-show="passwordServerError">{{ $message }}</x-inline-error-message>
                         @enderror
 
                         <div class="w-4/5 mt-16 flex justify-between">
@@ -353,78 +401,63 @@
                     </div>
                 </div>
             </form>
-
         </section>
-        <section id="default-carousel" class="relative w-2/5" data-carousel="slide">
-            <!-- Carousel wrapper -->
-            <div class="relative overflow-hidden rounded-2xl h-full">
-                <!-- Item 1 -->
-                <div class="hidden duration-700 ease-in-out bg-gradient-to-r from-primary/80 to-secondary-purple/80" data-carousel-item>
-                    <img src="{{ asset('img/Koordinasi tim lebih mudah.svg') }}"
-                        class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
-                        alt="Koordinasi tim lebih mudah.svg">
-                    <p
-                        class="absolute w-full text-center top-3/4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
-                        Koordinasi tim lebih mudah
-                    </p>
-                </div>
-                <!-- Item 2 -->
-                <div class="hidden duration-700 ease-in-out bg-gradient-to-tr from-primary/80 to-secondary-purple/80" data-carousel-item>
-                    <img src="{{ asset('img/Waktu menjadi lebih efisien.svg') }}"
-                        class="absolute block w-3/5 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
-                        alt="Waktu menjadi lebih efisien.svg">
-                    <p
-                        class="absolute w-full text-center top-3/4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
-                        Waktu menjadi lebih efisien
-                    </p>
-                </div>
-                <!-- Item 3 -->
-                <div class="hidden duration-700 ease-in-out bg-gradient-to-bl from-primary/80 to-secondary-purple/80" data-carousel-item>
-                    <img src="{{ asset('img/Pengelolaan keuangan lebih baik.svg') }}"
-                        class="absolute block w-4/6 -translate-x-1/2 -translate-y-1/2 top-1/3 left-1/2"
-                        alt="Pengelolaan keuangan lebih baik.svg">
-                    <p
-                        class="absolute w-full text-center top-3/4 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold">
-                        Pengelolaan keuangan lebih baik
-                    </p>
+
+        {{-- Carousel --}}
+        <section class="relative w-2/5 rounded-2xl overflow-hidden shadow-outer px-8 py-8">
+            <div class="relative w-full h-full overflow-hidden" x-data="{
+                active: 0,
+                slides: [{
+                        title: 'Jasa Pengiriman',
+                        titleColor: 'Cepat',
+                        image: '{{ asset('img/Jasa Pengiriman Cepat.svg') }}'
+                    },
+                    {
+                        title: 'Harga Produk',
+                        titleColor: 'Bersaing',
+                        image: '{{ asset('img/Harga Produk Bersaing.svg') }}'
+                    },
+                    {
+                        title: 'Pesanan Diproses',
+                        titleColor: 'Langsung',
+                        image: '{{ asset('img/Pesanan Diproses Langsung.svg') }}'
+                    }
+                ],
+                next() { this.active = (this.active + 1) % this.slides.length },
+                prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
+                autoplay() { setInterval(() => this.next(), 3000) }
+            }" x-init="autoplay()">
+
+                {{-- Contents --}}
+                <template x-for="(slide, index) in slides" :key="index">
+                    <div x-cloak x-show="active === index"
+                        class="absolute top-0 left-0 right-0 flex flex-col items-center justify-center text-center"
+                        x-transition:enter="transition-all duration-500"
+                        x-transition:enter-start="opacity-0 -translate-x-10"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        x-transition:leave="transition-all duration-500"
+                        x-transition:leave-start="opacity-100 translate-x-0"
+                        x-transition:leave-end="opacity-0 -translate-x-10">
+
+                        <img :src="slide.image" class="max-w-[450px] mb-10">
+                        <div>
+                            <span class="text-black text-2xl font-bold inline-block" x-text="slide.title"></span>
+                            <span
+                                class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary-purple bg-clip-text text-transparent"
+                                x-text="' ' + slide.titleColor"> </span>
+                        </div>
+                    </div>
+                </template>
+
+                {{-- Indicators --}}
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2">
+                    <template x-for="(slide, i) in slides" :key="i">
+                        <button @click="active = i"
+                            :class="active === i ? 'bg-gradient-to-tr from-primary to-secondary-purple w-8' : 'bg-black/10 w-3'"
+                            class="h-3 rounded-full duration-500 transition-all"></button>
+                    </template>
                 </div>
             </div>
-            <!-- Slider indicators -->
-            <div class="absolute z-30 flex -translate-x-1/2 bottom-16 left-1/2 space-x-3 rtl:space-x-reverse">
-                <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide 1"
-                    data-carousel-slide-to="0"></button>
-                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 2"
-                    data-carousel-slide-to="1"></button>
-                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 3"
-                    data-carousel-slide-to="2"></button>
-            </div>
-            <!-- Slider controls -->
-            <button type="button"
-                class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-                data-carousel-prev>
-                <span
-                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M5 1 1 5l4 4" />
-                    </svg>
-                    <span class="sr-only">Previous</span>
-                </span>
-            </button>
-            <button type="button"
-                class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-                data-carousel-next>
-                <span
-                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 9 4-4-4-4" />
-                    </svg>
-                    <span class="sr-only">Next</span>
-                </span>
-            </button>
         </section>
     </div>
 

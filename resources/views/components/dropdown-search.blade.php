@@ -56,7 +56,6 @@
 
                                 const url = new URL(window.location.href);
                                 url.searchParams.set('{{ $name }}', item.slug);
-                                url.searchParams.set('step', '1');
 
                                 if ('{{ $name }}' === 'city') {
                                     url.searchParams.delete('district');

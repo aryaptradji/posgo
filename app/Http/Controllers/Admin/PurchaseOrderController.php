@@ -415,7 +415,7 @@ class PurchaseOrderController extends Controller
             );
 
             // Store hanya file pertama (karena per PO cuma 1 gambar)
-            $imagePath = $file->store('purchase_order', 'public');
+            $imagePath = $file->store('purchase_orders', 'public');
 
             $purchaseOrder->update([
                 'photo' => $imagePath,
