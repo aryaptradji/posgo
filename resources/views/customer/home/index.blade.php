@@ -75,7 +75,7 @@
         <!-- Controls -->
         <div class="flex flex-col w-fit justify-center gap-2">
             <template x-for="(slide, i) in slides" :key="i">
-                <button @click="active = i" :class="active === i ? 'bg-black h-7' : 'bg-gray-400 h-3'"
+                <button @click="active = i" :class="active === i ? 'bg-gradient-to-bl from-primary to-secondary-purple h-7' : 'bg-black/10 h-3'"
                     class="w-3 rounded-full duration-500 transition-all mr-6"></button>
             </template>
         </div>

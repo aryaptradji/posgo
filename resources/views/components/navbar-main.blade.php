@@ -27,7 +27,7 @@
 
     {{-- Navbar --}}
     <li class="flex uppercase gap-16 font-bold mt-2">
-        @if ($user?->role === 'customer' || !$user?->role)
+        @if (($user?->role === 'customer' || !$user?->role) && !request()->routeIs('profile.account'))
             <a href="{{ route('customer.home') }}"
                 class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
                 x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">
@@ -56,7 +56,7 @@
                         x-bind:class="isOrderActive ? 'scale-x-100' : 'scale-x-50'">
                 @endif
             </a>
-        @else
+        @elseif ($user?->role === 'cashier')
             <a href="{{ route('pos-menu') }}"
                 class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
                 x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">
@@ -117,10 +117,10 @@
                         </div>
                     </div>
                     <hr class="w-full h-[1px] mt-4 mb-2 bg-tertiary-table-line rounded-full border-0">
-                    <a href="#"
+                    <a href="{{ route('profile.account') }}"
                         class="flex items-center p-2 rounded-lg gap-2 text-sm transition-all hover:bg-tertiary-table-line">
-                        <x-icons.settings />
-                        <span class="font-semibold">Settings</span>
+                        <x-icons.account class="mb-0.5" />
+                        <span class="font-semibold">Profil</span>
                     </a>
                     <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                         class="flex items-center mt-1 p-2 rounded-lg gap-2 text-sm transition-all hover:bg-tertiary-table-line">

@@ -4,6 +4,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LoginController;
@@ -60,6 +61,13 @@ Route::get('/home', fn() => view('customer.home.index'))->name('customer.home');
 Route::get('/product', [CustomerProductController::class, 'index'])->name('customer.product');
 // Pesananku
 Route::get('/order', [CustomerOrderController::class, 'index'])->name('customer.order.index');
+
+// Profil
+Route::middleware(['auth', 'role:customer,cashier,admin'])->group(function() {
+    Route::get('/profile/account', [ProfileController::class, 'indexAccount'])->name('profile.account');
+    Route::get('/profile/address', [ProfileController::class, 'indexAddress'])->name('profile.address');
+    Route::put('/profile/account/{user}', [ProfileController::class, 'updatePhoto'])->name('profile.account.photo');
+});
 
 // Customer
 Route::middleware(['auth', 'role:customer'])->group(function () {

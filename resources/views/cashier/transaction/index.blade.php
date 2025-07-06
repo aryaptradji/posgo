@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <div class="mt-32 px-14">
+    <div class="mt-32 px-14 min-h-screen">
         <div class="w-full bg-tertiary rounded-2xl shadow-outer">
             <div class="flex flex-col justify-between">
                 <div class="px-7 py-4 flex justify-between">
