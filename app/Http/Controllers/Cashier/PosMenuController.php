@@ -130,7 +130,7 @@ class PosMenuController extends Controller
 
         session()->put("checkout.{$order->id}.user_id", $validated['user_id']);
 
-        return redirect()->route('pos-menu.checkout.address', compact('order'));
+        return redirect()->route('pos-menu.checkout.address', compact('order'))->with('success', 'Informasi pemesan berhasil disimpan!');
     }
 
     public function showCheckoutAddress(Order $order, Request $request)
@@ -266,7 +266,7 @@ class PosMenuController extends Controller
         if ($request->payment_method === 'tunai') {
             $order->update(['payment_method' => 'tunai']);
 
-            return redirect()->route('pos-menu.pay-cash', $order);
+            return redirect()->route('pos-menu.pay-cash', $order)->with('success', 'Detail pemesan berhasil disimpan!');
         }
 
         // Non-tunai - Midtrans
@@ -324,7 +324,7 @@ class PosMenuController extends Controller
             return back()->with('error', 'Gagal membuat token pembayaran: ' . $e->getMessage());
         }
 
-        return redirect()->route('pos-menu.pay', $order);
+        return redirect()->route('pos-menu.pay', $order)->with('success', 'Detail pemesan berhasil disimpan!');
     }
 
     public function pay(Order $order)

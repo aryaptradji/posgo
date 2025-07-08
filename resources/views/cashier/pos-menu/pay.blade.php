@@ -36,6 +36,19 @@
         </div>
     @endif
 
+    {{-- Toast Success --}}
+    @if (session('success'))
+        <div class="fixed top-16 right-10 z-50 flex flex-col justify-end gap-4">
+            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success"
+                :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-success />
+                </x-slot:icon>
+                {{ session('success') }}
+            </x-toast>
+        </div>
+    @endif
+
     <div class="flex flex-grow min-h-0 gap-6 mx-14 mt-32 h-full">
         <!-- Detail Pesanan -->
         <div class="w-3/4 shadow-outer py-6 rounded-xl flex flex-col">

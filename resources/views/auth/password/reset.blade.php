@@ -67,15 +67,15 @@
                     this.newPasswordError = '';
 
                     if (this.newPassword == '') {
-                        this.newPasswordError = 'Password wajib diisi';
+                        this.newPasswordError = 'Password baru wajib diisi';
                     } else if (this.newPassword.length <= 8) {
-                        this.newPasswordError = 'Password minimal berjumlah 8 karakter';
+                        this.newPasswordError = 'Password baru minimal berjumlah 8 karakter';
                     } else if (!/^(?=.*[A-Z]).*$/.test(this.newPassword)) {
-                        this.newPasswordError = 'Password setidaknya harus mengandung 1 huruf besar';
+                        this.newPasswordError = 'Password baru setidaknya harus mengandung 1 huruf besar';
                     } else if (!/^(?=.*[0-9]).*$/.test(this.newPassword)) {
-                        this.newPasswordError = 'Password setidaknya harus mengandung 1 digit angka';
+                        this.newPasswordError = 'Password baru setidaknya harus mengandung 1 digit angka';
                     } else if (!/^(?=.*[!@#$%^&*._]).*$/.test(this.newPassword)) {
-                        this.newPasswordError = 'Password setidaknya harus mengandung 1 karakter khusus';
+                        this.newPasswordError = 'Password baru setidaknya harus mengandung 1 karakter khusus';
                     }
                     if (this.newPassword !== '') {
                         this.newPasswordServerError = '';
@@ -87,7 +87,7 @@
                     if (this.confirmPassword == '') {
                         this.confirmPasswordError = 'Konfirmasi password wajib diisi';
                     } else if (this.confirmPassword !== this.newPassword) {
-                        this.confirmPasswordError = 'Isi password harus sama';
+                        this.confirmPasswordError = 'Isi konfirmasi password harus sama';
                     }
                     if (this.confirmPassword !== '') {
                         this.confirmPasswordServerError = '';

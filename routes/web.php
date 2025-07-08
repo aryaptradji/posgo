@@ -65,8 +65,14 @@ Route::get('/order', [CustomerOrderController::class, 'index'])->name('customer.
 // Profil
 Route::middleware(['auth', 'role:customer,cashier,admin'])->group(function() {
     Route::get('/profile/account', [ProfileController::class, 'indexAccount'])->name('profile.account');
+    Route::put('/profile/account/photo', [ProfileController::class, 'updatePhoto'])->name('profile.account.photo');
+    Route::put('/profile/account/name', [ProfileController::class, 'updateName'])->name('profile.account.name');
+    Route::put('/profile/account/phone', [ProfileController::class, 'updatePhone'])->name('profile.account.phone');
+    Route::put('/profile/account/email', [ProfileController::class, 'updateEmail'])->name('profile.account.email');
+    Route::put('/profile/account/password', [ProfileController::class, 'updatePassword'])->name('profile.account.password');
     Route::get('/profile/address', [ProfileController::class, 'indexAddress'])->name('profile.address');
-    Route::put('/profile/account/{user}', [ProfileController::class, 'updatePhoto'])->name('profile.account.photo');
+    Route::get('/profile/address/{user}', [ProfileController::class, 'editAddress'])->name('profile.address.edit');
+    Route::put('/profile/address/{user}', [ProfileController::class, 'updateAddress'])->name('profile.address.update');
 });
 
 // Customer

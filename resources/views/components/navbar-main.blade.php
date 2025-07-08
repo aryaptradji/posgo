@@ -27,7 +27,7 @@
 
     {{-- Navbar --}}
     <li class="flex uppercase gap-16 font-bold mt-2">
-        @if (($user?->role === 'customer' || !$user?->role) && !request()->routeIs('profile.account'))
+        @if (($user?->role === 'customer' || !$user?->role) && !request()->routeIs('profile.account') && !request()->routeIs('profile.address') && !request()->routeIs('profile.address.edit'))
             <a href="{{ route('customer.home') }}"
                 class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
                 x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">
@@ -56,7 +56,7 @@
                         x-bind:class="isOrderActive ? 'scale-x-100' : 'scale-x-50'">
                 @endif
             </a>
-        @elseif ($user?->role === 'cashier')
+        @elseif ($user?->role === 'cashier' && !request()->routeIs('profile.account'))
             <a href="{{ route('pos-menu') }}"
                 class="flex flex-col items-center gap-1 transition-all hover:scale-110 active:scale-90"
                 x-data="{ isHomeActive: false }" @mouseenter="isHomeActive = true" @mouseleave="isHomeActive = false">

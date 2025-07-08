@@ -44,13 +44,15 @@
     {{-- Toast Logout Success --}}
     @if (session('success'))
         <div class="fixed top-16 right-10 z-50 flex flex-col justify-end gap-4">
-            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success"
-                :duration="6000">
-                <x-slot:icon>
-                    <x-icons.toast-success />
-                </x-slot:icon>
-                {!! nl2br(e(session('success'))) !!}
-            </x-toast>
+            @foreach ((array) session('success') as $msg)
+                <x-toast id="toast-success{{ $loop->index }}" iconClass="text-success bg-success/25"
+                    slotClass="text-success" :duration="6000" :delay="$loop->index * 500">
+                    <x-slot:icon>
+                        <x-icons.toast-success />
+                    </x-slot:icon>
+                    {!! nl2br(e($msg)) !!}
+                </x-toast>
+            @endforeach
         </div>
     @endif
 

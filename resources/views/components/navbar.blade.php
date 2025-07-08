@@ -27,7 +27,7 @@
             class="flex items-center transition-all rounded-lg p-2 hover:bg-tertiary-table-line">
             <span class="font-semibold">{{ $user->name }}</span>
             <x-icons.arrow-down class="ml-2 text-tertiary-300" />
-            <div class="absolute right-0 -bottom-48 shadow-drop p-4 bg-white rounded-xl" x-cloak x-show="open"
+            <div class="absolute right-0 top-12 shadow-drop p-4 bg-white rounded-xl" x-cloak x-show="open"
                 x-transition:enter="transition-all ease duration-300" x-transition:enter-start="scale-0"
                 x-transition:enter-end="scale-100" x-transition:leave="transition-all ease duration-300"
                 x-transition:leave-start="scale-100" x-transition:leave-end="scale-0">
@@ -47,11 +47,6 @@
                     </div>
                 </div>
                 <hr class="w-full h-[1px] mt-4 mb-2 bg-tertiary-table-line rounded-full border-0">
-                <a href="#"
-                    class="flex items-center p-2 rounded-lg gap-2 text-sm transition-all hover:bg-tertiary-table-line">
-                    <x-icons.settings />
-                    <span class="font-semibold">Settings</span>
-                </a>
                 <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                     class="flex items-center mt-1 p-2 rounded-lg gap-2 text-sm transition-all hover:bg-tertiary-table-line">
                     <x-icons.logout class="text-danger" />

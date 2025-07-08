@@ -26,6 +26,19 @@
         </div>
     @endif
 
+    {{-- Toast Success --}}
+    @if (session('success'))
+        <div class="fixed top-16 right-10 z-50 flex flex-col justify-end gap-4">
+            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success"
+                :duration="6000">
+                <x-slot:icon>
+                    <x-icons.toast-success />
+                </x-slot:icon>
+                {{ session('success') }}
+            </x-toast>
+        </div>
+    @endif
+
     <form action="{{ route('pos-menu.checkout.address.store', $order) }}" method="POST" enctype="multipart/form-data"
         class="flex flex-grow min-h-0 gap-6 mx-14 mt-32" x-data="{
             phone: @js(old('phone', $user->phone_number)),
@@ -270,18 +283,70 @@
             </div>
 
             <!-- Tombol Bayar -->
-            <div class="flex gap-2">
+            <div class="flex gap-2" x-data="{ showModalNonTunai: false, showModalTunai: false }">
                 {{-- Non-Tunai --}}
-                <x-button-sm type="submit" name="payment_method" value="non-tunai"
+                <x-button-sm @click="showModalNonTunai = true"
                     class="bg-primary shadow-outer-sidebar-primary text-white w-full py-2 px-6 mt-auto text-xs">
                     Non-Tunai
                 </x-button-sm>
 
+                {{-- Modal Non-Tunai --}}
+                <x-modal show="showModalNonTunai">
+                    <x-slot:title>
+                        <x-icons.warning class="text-primary mr-3 -mt-0.5" />
+                        <h2 class="text-lg font-bold">Metode Pembayaran</h2>
+                    </x-slot:title>
+                    <p class="mb-6 mt-4 text-start">
+                        Setelah dipilih metode pembayaran <span class="font-bold text-primary">tidak dapat diubah lagi</span>,
+                        <br>
+                        Yakin ingin memilih metode pembayaran
+                        <span class="font-bold text-primary">Non-Tunai</span>
+                        ?
+                    </p>
+                    <x-slot:action>
+                        <button type="button" @click="showModalNonTunai = false"
+                            class="px-4 py-2 bg-btn-cancel rounded-full font-semibold hover:scale-110 hover:shadow-drop active:shadow-none active:scale-90 transition-all duration-200">
+                            Batal
+                        </button>
+
+                        <button type="submit" name="payment_method" value="non-tunai"
+                            class="px-4 py-2 bg-primary shadow-outer-sidebar-primary text-white rounded-full font-semibold hover:scale-110 hover:shadow-drop active:shadow-none active:scale-90 transition-all duration-200">
+                            Ya
+                        </button>
+                    </x-slot:action>
+                </x-modal>
+
                 {{-- Tunai --}}
-                <x-button-sm type="submit" name="payment_method" value="tunai"
+                <x-button-sm @click="showModalTunai = true"
                     class="bg-secondary-purple shadow-outer-sidebar-secondary text-white w-full py-2 px-6 mt-auto text-xs">
                     Tunai
                 </x-button-sm>
+
+                {{-- Modal Tunai --}}
+                <x-modal show="showModalTunai">
+                    <x-slot:title>
+                        <x-icons.warning class="text-secondary-purple mr-3 -mt-0.5" />
+                        <h2 class="text-lg font-bold">Metode Pembayaran</h2>
+                    </x-slot:title>
+                    <p class="mb-6 mt-4 text-start">
+                        Setelah dipilih metode pembayaran <span class="font-bold text-secondary-purple">tidak dapat diubah lagi</span>,
+                        <br>
+                        Yakin ingin memilih metode pembayaran
+                        <span class="font-bold text-secondary-purple">Tunai</span>
+                        ?
+                    </p>
+                    <x-slot:action>
+                        <button type="button" @click="showModalTunai = false"
+                            class="px-4 py-2 bg-btn-cancel rounded-full font-semibold hover:scale-110 hover:shadow-drop active:shadow-none active:scale-90 transition-all duration-200">
+                            Batal
+                        </button>
+
+                        <button type="submit" name="payment_method" value="tunai"
+                            class="px-4 py-2 bg-secondary-purple shadow-outer-sidebar-secondary text-white rounded-full font-semibold hover:scale-110 hover:shadow-drop active:shadow-none active:scale-90 transition-all duration-200">
+                            Ya
+                        </button>
+                    </x-slot:action>
+                </x-modal>
             </div>
         </div>
     </form>

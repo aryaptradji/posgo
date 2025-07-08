@@ -352,6 +352,7 @@
                                 class="text-white bg-gradient-to-r from-primary to-secondary-purple">lanjut</x-button-sm>
                         </div>
                     </div>
+
                     {{-- Akun --}}
                     <div
                         class="form-step w-full absolute top-0 transition-all duration-500 ease-in-out opacity-0 translate-x-full p-3">
@@ -366,6 +367,7 @@
                                 class="bg-gradient-to-t from-primary to-secondary-purple w-6 h-6 aspect-square rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">2</span>
                             <span class="font-bold">Akun</span>
                         </div>
+
                         {{-- Email --}}
                         <x-textfield x-model="email" x-on:input="validateEmail()" type="email" name="email"
                             placeholder="Masukkan email . . ." class="focus:border-[3.5px]"
