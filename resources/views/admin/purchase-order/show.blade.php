@@ -81,7 +81,7 @@
                 <thead class="text-sm uppercase bg-white">
                     <tr>
                         <th class="w-1/12" align="center">No</th>
-                        <th class="w-2/12 px-8 py-3" align="left">Produk</th>
+                        <th class="px-8 py-3" align="left">Produk</th>
                         <th class="pe-28 py-3" align="right">Pcs</th>
                         <th class="pe-28 py-3" align="right">Qty</th>
                         @if ($po->status === 'perlu invoice' || $po->status === 'siap')
@@ -94,7 +94,7 @@
                     @foreach ($po->items as $index => $item)
                         <tr class="border-b-2 border-b-tertiary-table-line">
                             <td class="w-1/12" align="center">{{ $index + 1 }}</td>
-                            <td class="w-2/12 px-8 py-3" align="left">{{ $item->product->name }}</td>
+                            <td class="px-8 py-3" align="left">{{ $item->product->name }}</td>
                             <td class="pe-28 py-3" align="right">{{ $item->pcs }}</td>
                             <td class="pe-28 py-3" align="right">{{ $item->qty }}</td>
                             @if ($po->status === 'perlu invoice' || $po->status === 'siap')

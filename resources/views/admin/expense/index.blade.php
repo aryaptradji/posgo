@@ -127,15 +127,13 @@
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
                                             <h2 class="text-lg font-bold">Hapus Data Pengeluaran</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                        <div class="mb-6 mx-1 mt-4 text-start">
                                             Yakin ingin menghapus
                                             <span class="font-bold text-danger">{{ $expense->source }}</span>
                                             pada
                                             <span class="font-bold text-danger">{{ $expense->date->translatedFormat('l, j M o') }}</span>
-                                            jam
-                                            <span class="font-bold text-danger">{{ $expense->date->translatedFormat('H:i:s') }}</span>
                                             ?
-                                        </p>
+                                        </div>
                                         <x-slot:action>
                                             <button type="button" @click="showModal = false"
                                                 class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">

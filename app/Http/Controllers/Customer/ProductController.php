@@ -109,6 +109,11 @@ class ProductController extends Controller
                     'qty' => $item['quantity'],
                     'price' => $item['price'],
                 ]);
+
+                $product = Product::find($item['id']);
+                if ($product) {
+                    $product->decrement('stock', $item['quantity']);
+                }
             }
 
             return $order;

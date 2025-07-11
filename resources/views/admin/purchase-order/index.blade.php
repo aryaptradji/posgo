@@ -212,7 +212,7 @@
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
                                             <h2 class="text-lg font-bold">Hapus Purchase Order</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                        <p class="mb-6 mx-1 mt-4 text-start">
                                             Yakin ingin menghapus data Purchase Order
                                             <span class="font-bold text-danger">#{{ $po->code }}</span>
                                             ini?
@@ -240,7 +240,7 @@
                                             <x-icons.delivery class="mr-3 text-warning-100" />
                                             <h2 class="text-lg font-bold">Kirim Purchase Order</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                        <p class="mb-6 mx-1 mt-4 text-start">
                                             Yakin ingin mengirim Purchase Order
                                             <span class="font-bold text-warning-100">#{{ $po->code }}</span>
                                             ini?

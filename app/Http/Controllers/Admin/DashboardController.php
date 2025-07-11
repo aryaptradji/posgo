@@ -102,7 +102,7 @@ class DashboardController extends Controller
         if ($request->filled('stok_sort')) {
             $queryStokProduk->orderBy($request->input('stok_sort'), $request->boolean('stok_desc') ? 'desc' : 'asc');
         } else {
-            $queryStokProduk->latest();
+            $queryStokProduk->orderBy('stock', 'asc');
         }
 
         $products = $queryStokProduk->paginate($request->input('stok_per_page', 5))->withQueryString();

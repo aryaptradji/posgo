@@ -206,7 +206,7 @@
                                                 <x-icons.upload-icon />
                                             </button>
                                         </template>
-                                        <template x-if="{{ $delivery->shipping_status === 'selesai' || $delivery->shipping_status === 'dikirim' }}">
+                                        <template x-if="{{ $delivery->shipping_status === 'dikirim' }}">
                                             <a href="{{ route('delivery.deliveryNote', $delivery) }}"
                                                 class="transition-transform hover:scale-125 active:scale-90 mt-1">
                                                 <x-icons.print-sm />

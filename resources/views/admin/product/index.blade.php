@@ -4,12 +4,14 @@
         <div class="flex justify-between items-center">
             <span>Produk</span>
             <div class="flex gap-6">
-                <a href="{{ route('product.print') }}" class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
-                    <x-icons.print/>
+                <a href="{{ route('product.print') }}"
+                    class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-secondary-blue transition-all hover:scale-105 active:scale-90">
+                    <x-icons.print />
                     Print
                 </a>
-                <a href="{{ route('product.export') }}" class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-success transition-all hover:scale-105 active:scale-90">
-                    <x-icons.export/>
+                <a href="{{ route('product.export') }}"
+                    class="flex justify-between items-center gap-2 px-4 py-3 font-semibold text-base rounded-lg text-white bg-success transition-all hover:scale-105 active:scale-90">
+                    <x-icons.export />
                     Export
                 </a>
                 <a href="{{ route('product.create') }}"
@@ -24,7 +26,8 @@
     <!-- Toast Create Success -->
     @if (session('success'))
         <div class="fixed top-16 right-10 z-20 flex flex-col gap-4">
-            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success" :duration="6000">
+            <x-toast id="toast-success" iconClass="text-success bg-success/25" slotClass="text-success"
+                :duration="6000">
                 <x-slot:icon>
                     <x-icons.toast-success />
                 </x-slot:icon>
@@ -138,17 +141,22 @@
                                         <x-slot:title>
                                             <div class="w-full flex justify-between">
                                                 <div class="flex">
-                                                    <x-icons.info-icon class="mr-3"/>
+                                                    <x-icons.info-icon class="mr-3" />
                                                     <h2 class="text-lg font-bold">Detail</h2>
                                                 </div>
-                                                <button class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95" type="button" @click="showModalView = false">
-                                                    <x-icons.close/>
+                                                <button
+                                                    class="text-tertiary-title transition-all hover:text-danger hover:scale-125 active:scale-95"
+                                                    type="button" @click="showModalView = false">
+                                                    <x-icons.close />
                                                 </button>
                                             </div>
                                         </x-slot:title>
                                         <div class="px-10 mb-2">
-                                            <div class="flex items-center justify-center mb-6 h-32 p-2 aspect-square object-contain rounded-full bg-white">
-                                                <img src="{{ asset('storage/' . $product->image) }}" class="max-h-24">
+                                            <div class="flex justify-center">
+                                                <div
+                                                    class="flex items-center justify-center mb-6 h-32 p-2 aspect-square object-contain rounded-full bg-white">
+                                                    <img src="{{ asset('storage/' . $product->image) }}" class="max-h-24">
+                                                </div>
                                             </div>
                                             <div class="grid grid-cols-2 gap-4 text-start">
                                                 <div class="flex flex-col gap-4 col-span-1 justify-self-start">
@@ -168,11 +176,13 @@
                                                 <div class="flex flex-col gap-4 col-span-1 justify-self-end">
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Status</span>
-                                                        <span class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $status }}</span>
+                                                        <span
+                                                            class="px-2 rounded-lg capitalize border-2 w-fit {{ $class }}">{{ $status }}</span>
                                                     </div>
                                                     <div class="flex flex-col gap-1">
                                                         <span class="font-bold">Harga</span>
-                                                        <span>Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                                        <span>Rp
+                                                            {{ number_format($product->price, 0, ',', '.') }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -182,14 +192,14 @@
                                     <!-- Modal Delete -->
                                     <x-modal show="showModalDelete">
                                         <x-slot:title>
-                                            <x-icons.delete-icon class="text-danger mr-3 mt-0.5"/>
+                                            <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
                                             <h2 class="text-lg font-bold">Hapus Produk</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 px-8 mt-4 text-start">
+                                        <div class="mb-6 px-1 mt-4 text-start">
                                             Yakin ingin menghapus
                                             <span class="font-bold text-danger">{{ $product->name }}</span>
                                             ?
-                                        </p>
+                                        </div>
                                         <x-slot:action>
                                             <button type="button" @click="showModalDelete = false"
                                                 class="px-4 py-2 bg-btn-cancel rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
@@ -210,7 +220,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Produk tidak ditemukan
+                                <td colspan="7" class="text-center py-10 text-gray-500 italic">Produk tidak
+                                    ditemukan
                                 </td>
                             </tr>
                         @endforelse
@@ -243,7 +254,6 @@
 
                 <div
                     class="flex items-center gap-px rounded-full overflow-hidden border border-gray-300 shadow-sm w-fit">
-                    {{-- Tombol Sebelumnya --}}
                     @if ($products->onFirstPage())
                         <span class="px-3 py-2 text-gray-400 bg-tertiary cursor-default">
                             <x-icons.arrow-down class="rotate-90 text-tertiary-title" />
@@ -255,18 +265,43 @@
                         </a>
                     @endif
 
-                    {{-- Nomor Halaman --}}
-                    @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-                        @if ($page == $products->currentPage())
-                            <span
-                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $page }}</span>
-                        @else
-                            <a href="{{ $url }}"
-                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $page }}</a>
-                        @endif
-                    @endforeach
+                    @php
+                        $currentPage = $products->currentPage();
+                        $lastPage = $products->lastPage();
+                        $start = max(1, $currentPage - 2);
+                        $end = min($lastPage, $currentPage + 2);
+                    @endphp
 
-                    {{-- Tombol Selanjutnya --}}
+                    <!-- First page -->
+                    @if ($start > 1)
+                        <a href="{{ $products->url(1) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">1</a>
+                        @if ($start > 2)
+                            <span class="px-3 py-2 text-gray-500">...</span>
+                        @endif
+                    @endif
+
+                    <!-- Middle pages -->
+                    @for ($i = $start; $i <= $end; $i++)
+                        @if ($i == $currentPage)
+                            <span
+                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $i }}</span>
+                        @else
+                            <a href="{{ $products->url($i) }}"
+                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $i }}</a>
+                        @endif
+                    @endfor
+
+                    <!-- Last page -->
+                    @if ($end < $lastPage)
+                        @if ($end < $lastPage - 1)
+                            <span class="px-3 py-2 text-gray-500">...</span>
+                        @endif
+                        <a href="{{ $products->url($lastPage) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $lastPage }}</a>
+                    @endif
+
+
                     @if ($products->hasMorePages())
                         <a href="{{ $products->nextPageUrl() }}" class="px-3 py-2 bg-tertiary hover:bg-gray-100">
                             <x-icons.arrow-down class="-rotate-90 text-tertiary-title" />

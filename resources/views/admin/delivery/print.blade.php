@@ -92,7 +92,7 @@
     </style>
 </head>
 
-<body>
+<body onload="window.print()">
 
     <div class="no-print">
         <button onclick="window.print()">Print</button>

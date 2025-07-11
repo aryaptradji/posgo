@@ -40,6 +40,38 @@
     @endif
 
     <div class="flex flex-col-2 px-14 pt-32 gap-44 h-[92vh]">
+        @php
+            $user = Auth::user();
+            $parts = explode(' ', $user->name);
+            $initials = strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
+
+            if ($user->role === 'customer') {
+                $menus = [
+                    [
+                        'name' => 'Akun',
+                        'active' => request()->routeIs('profile.account'),
+                        'icon' => view('components.icons.account')->render(),
+                        'route' => route('profile.account'),
+                    ],
+                    [
+                        'name' => 'Alamat',
+                        'active' => request()->routeIs('profile.address'),
+                        'icon' => view('components.icons.address')->render(),
+                        'route' => route('profile.address'),
+                    ],
+                ];
+            } else {
+                $menus = [
+                    [
+                        'name' => 'Akun',
+                        'active' => request()->routeIs('profile.account'),
+                        'icon' => view('components.icons.account')->render(),
+                        'route' => route('profile.account'),
+                    ],
+                ];
+            }
+        @endphp
+
         {{-- Sidebar --}}
         <div class="py-6 w-2/6 rounded-2xl shadow-outer">
             <div class="flex items-center gap-4 px-8 mb-8">
@@ -51,23 +83,6 @@
             </div>
 
             <div>
-                @php
-                    $menus = [
-                        [
-                            'name' => 'Akun',
-                            'active' => request()->routeIs('profile.account'),
-                            'icon' => view('components.icons.account')->render(),
-                            'route' => route('profile.account'),
-                        ],
-                        [
-                            'name' => 'Alamat',
-                            'active' => request()->routeIs('profile.address'),
-                            'icon' => view('components.icons.address')->render(),
-                            'route' => route('profile.address'),
-                        ],
-                    ];
-                @endphp
-
                 @foreach ($menus as $menu)
                     <a href="{{ $menu['route'] }}"
                         class="flex gap-6 py-5 mb-3 ml-8 rounded-sm transition-all duration-300 {{ $menu['active'] ? 'text-primary border-r-[5px] border-primary bg-gradient-to-r from-primary/0 to-primary/15' : 'text-black hover:border-r-[5px] hover:border-primary' }}">
@@ -80,10 +95,6 @@
 
         {{-- Content --}}
         <div class="w-full pe-20 text-center">
-            @php
-                $user = Auth::user()->load('address.neighborhood.subDistrict.district.city');
-            @endphp
-
             <div class="flex flex-col-2 justify-center gap-36" x-data="{
                 address: @js(old('address', $user->address->street)),
                 rt: @js(old('rt', $user->address->neighborhood->rt)),

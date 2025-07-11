@@ -49,7 +49,57 @@
         </div>
     @endif
 
-    <div class="flex flex-grow min-h-0 gap-6 mx-14 mt-32 h-full">
+    <div class="flex flex-grow min-h-0 gap-6 mx-14 mt-32 h-full" x-data="paymentHandler()">
+
+        {{-- Modal Expired --}}
+        <x-alert x-show="showExpiredModal" x-cloak>
+            <x-slot:title>
+                <div class="w-full flex justify-start">
+                    <div class="flex">
+                        <x-icons.alert class="mr-3 text-danger" />
+                        <h2 class="text-lg font-bold">Peringatan</h2>
+                    </div>
+                </div>
+            </x-slot:title>
+            <div class="px-8 mb-6">
+                Maaf, pesanan ini sudah <span class="text-danger font-semibold">kadaluwarsa</span>.
+                Silakan buat pesanan baru.
+            </div>
+            <x-slot:action>
+                <form :action="actionUrl" method="GET">
+                    <button type="submit"
+                        class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                        OK
+                    </button>
+                </form>
+            </x-slot:action>
+        </x-alert>
+
+        {{-- Modal Error Token Kosong --}}
+        <x-alert x-show="showErrorModal" x-cloak>
+            <x-slot:title>
+                <div class="w-full flex justify-start">
+                    <div class="flex">
+                        <x-icons.alert class="mr-3 text-danger" />
+                        <h2 class="text-lg font-bold">Error Pembayaran</h2>
+                    </div>
+                </div>
+            </x-slot:title>
+            <div class="px-8 mb-6">
+                Token pembayaran tidak tersedia untuk pesanan <span class="font-semibold">#<span
+                        x-text="orderCode"></span></span>.
+                Silakan ulangi proses checkout.
+            </div>
+            <x-slot:action>
+                <form :action="actionUrl" method="GET">
+                    <button type="submit"
+                        class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                        OK
+                    </button>
+                </form>
+            </x-slot:action>
+        </x-alert>
+
         <!-- Detail Pesanan -->
         <div class="w-3/4 shadow-outer py-6 rounded-xl flex flex-col">
             <div class="text-2xl px-8 font-bold pb-4 border-b border-tertiary-title-line">Detail Pesanan</div>
@@ -148,34 +198,81 @@
             </div>
 
             <!-- Tombol Bayar -->
-            <x-button-sm id="btn-pay"
-                class="bg-primary shadow-outer-sidebar-primary text-white w-full py-2 px-6 mt-auto">Bayar</x-button-sm>
+            <x-button-sm type="button" @click="handlePayClick($event.target.closest('button'))"
+                class="bg-primary shadow-outer-sidebar-primary text-white w-full py-2 px-6 mt-auto"
+                data-snap-token="{{ $snapToken }}"
+                data-snap-expires-at="{{ $order->snap_expires_at->timestamp ?? 0 }}"
+                data-order-code="{{ $order->code }}"
+                data-expire-url="{{ route('pos-menu.expire', ['order' => '__ORDER_CODE__']) }}">
+                Bayar
+            </x-button-sm>
         </div>
     </div>
 
     <script type="text/javascript">
-        var payButton = document.getElementById('btn-pay');
-        payButton.addEventListener('click', function() {
-            window.snap.pay('{{ $snapToken }}', {
-                onSuccess: function(result) {
-                    window.location.href =
-                        "{{ route('pos-menu') }}";
-                },
-                onPending: function(result) {
-                    window.location.href =
-                        "{{ route('pos-menu') }}";
-                },
-                onError: function(result) {
-                    alert('Terjadi kesalahan saat pembayaran.');
-                    console.error(result);
-                    window.location.href =
-                        "{{ route('pos-menu') }}";
-                },
-                onClose: function() {
-                    window.location.href =
-                        "{{ route('pos-menu') }}";
+        function paymentHandler() {
+            return {
+                showExpiredModal: false,
+                showErrorModal: false,
+                orderCode: null,
+                actionUrl: '',
+
+                handlePayClick(button) {
+                    const snapToken = button.dataset.snapToken;
+                    const snapExpiresAt = parseInt(button.dataset.snapExpiresAt) * 1000;
+                    const orderCode = button.dataset.orderCode;
+                    const now = new Date().getTime();
+                    const expireUrl = button.dataset.expireUrl.replace('__ORDER_CODE__', orderCode);
+
+                    console.log({
+                        snapToken,
+                        snapExpiresAt,
+                        snapExpiresAt_human: new Date(snapExpiresAt).toISOString(),
+                        orderCode,
+                        now,
+                        now_human: new Date(now).toISOString(),
+                        comparison: now > snapExpiresAt
+                    });
+
+                    // Snap token kosong → tampilkan Error Modal
+                    if (!snapToken || snapToken.trim() === '') {
+                        this.orderCode = orderCode;
+                        this.actionUrl = expireUrl;
+                        this.showErrorModal = true;
+                        return;
+                    }
+
+                    // Snap expired → tampilkan Expired Modal
+                    if (now > snapExpiresAt) {
+                        this.orderCode = orderCode;
+                        this.actionUrl = expireUrl;
+                        this.showExpiredModal = true;
+                        return;
+                    } else {
+                        // Snap valid → langsung trigger snap pay
+                        window.snap.pay(snapToken, {
+                            onSuccess: function(result) {
+                                window.location.href =
+                                    "{{ route('pos-menu') }}";
+                            },
+                            onPending: function(result) {
+                                window.location.href =
+                                    "{{ route('pos-menu') }}";
+                            },
+                            onError: function(result) {
+                                alert('Terjadi kesalahan saat pembayaran.');
+                                console.error(result);
+                                window.location.href =
+                                    "{{ route('pos-menu') }}";
+                            },
+                            onClose: function() {
+                                window.location.href =
+                                    "{{ route('pos-menu') }}";
+                            }
+                        });
+                    }
                 }
-            });
-        });
+            }
+        }
     </script>
 </x-layout-main>

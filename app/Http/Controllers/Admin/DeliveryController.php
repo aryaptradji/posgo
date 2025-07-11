@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Order;
 use App\Models\Courier;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Exports\DeliveryExport;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,10 @@ class DeliveryController extends Controller
      */
     public function index(Request $request)
     {
+        Order::where('shipping_status', 'belum dibayar')
+            ->where('shipped_at', '<=', now())
+            ->update(['shipping_status' => 'dikirim']);
+
         $query = Order::with('user', 'items')->where('payment_status', 'dibayar');
 
         // Filter kategori
@@ -88,13 +93,17 @@ class DeliveryController extends Controller
             ],
         );
 
+        $status = now()->gte($validated['shipped_at']) ? 'dikirim' : 'belum dikirim';
+
         $delivery->update([
             'courier_id' => $validated['courier_id'],
-            'shipping_status' => 'dikirim',
+            'shipping_status' => $status,
             'shipped_at' => $validated['shipped_at'],
         ]);
 
-        return redirect()->route('delivery.index')->with('success', 'Pesanan berhasil dikirim');
+        return redirect()
+            ->route('delivery.index', ['filter' => Str::slug($status), 'sort' => 'arrived_at', 'desc' => 1])
+            ->with('success', 'Pesanan berhasil dikirim');
     }
 
     public function upload(Request $request, Order $delivery)
@@ -130,7 +139,7 @@ class DeliveryController extends Controller
             $delivery->update([
                 'photo' => $imagePath,
                 'shipping_status' => 'selesai',
-                'arrived_at' => now()
+                'arrived_at' => now(),
             ]);
 
             break; // hanya proses file pertama

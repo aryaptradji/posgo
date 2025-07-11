@@ -102,6 +102,11 @@ class PosMenuController extends Controller
                     'qty' => $item['quantity'],
                     'price' => $item['price'],
                 ]);
+
+                $product = Product::find($item['id']);
+                if ($product) {
+                    $product->decrement('stock', $item['quantity']);
+                }
             }
 
             return $order;
@@ -333,6 +338,17 @@ class PosMenuController extends Controller
             'order' => $order,
             'snapToken' => $order->snap_token,
         ]);
+    }
+
+    public function expire(Order $order)
+    {
+        $order->update([
+            'payment_status' => 'kadaluwarsa',
+            'snap_token' => null,
+            'snap_expires_at' => null,
+        ]);
+
+        return redirect()->route('transaction');
     }
 
     public function payCash(Order $order, Request $request)

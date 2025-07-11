@@ -96,13 +96,13 @@ Route::middleware(['auth', 'role:cashier'])
         Route::get('/pos-menu/checkout/recipient/{order}', [PosMenuController::class, 'showCheckoutRecipient'])->name('pos-menu.checkout.recipient');
         Route::post('/pos-menu/checkout/recipient/{order}', [PosMenuController::class, 'storeCheckoutRecipient'])->name('pos-menu.checkout.recipient.store');
         Route::get('/pos-menu/checkout/{order}/pay', [PosMenuController::class, 'pay'])->name('pos-menu.pay');
+        Route::get('/pos-menu/checkout/{order}/expire', [PosMenuController::class, 'expire'])->name('pos-menu.expire');
         Route::get('/pos-menu/checkout/{order}/pay-cash', [PosMenuController::class, 'payCash'])->name('pos-menu.pay-cash');
         Route::post('/pos-menu/checkout/{order}/pay-cash', [PosMenuController::class, 'storePayCash'])->name('pos-menu.pay-cash.store');
         Route::post('/pos-menu/create-user', [PosMenuController::class, 'createUser'])->name('pos-menu.create-user');
 
         // Riwayat
         Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
-        Route::get('/transaction/{order}/receipt', [TransactionController::class, 'receipt'])->name('transaction.receipt');
         Route::get('/transaction/{order}/print-receipt', [TransactionController::class, 'printReceipt'])->name('transaction.print-receipt');
     });
 

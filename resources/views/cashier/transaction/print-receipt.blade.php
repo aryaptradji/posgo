@@ -126,7 +126,12 @@
         <div class="mt-1">
             No. Pesanan: {{ $transaction->code }}<br>
             Nama: {{ $transaction->user->name ?? '-' }}<br>
-            <span class="capitalize">Metode: {{ $transaction->payment_method }}</span>
+            <span class="capitalize">Metode: {{ $transaction->payment_method }}</span><br>
+            Alamat: {{ $transaction->user->address->street ?? '-' }},
+                    RT {{ $transaction->user->address->neighborhood->rt ?? '-' }}/RW {{ $transaction->user->address->neighborhood->rw ?? '-' }},
+                    Kec. {{ $transaction->user->address->neighborhood->subDistrict->district->name ?? '-' }},
+                    Kel. {{ $transaction->user->address->neighborhood->subDistrict->name ?? '-' }},
+                    {{ $transaction->user->address->neighborhood->subDistrict->district->city->name ?? '-' }}
         </div>
 
         <hr>

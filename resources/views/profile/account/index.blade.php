@@ -60,16 +60,16 @@
                         'route' => route('profile.address'),
                     ],
                 ];
+            } else {
+                $menus = [
+                    [
+                        'name' => 'Akun',
+                        'active' => request()->routeIs('profile.account'),
+                        'icon' => view('components.icons.account')->render(),
+                        'route' => route('profile.account'),
+                    ],
+                ];
             }
-
-            $menus = [
-                [
-                    'name' => 'Akun',
-                    'active' => request()->routeIs('profile.account'),
-                    'icon' => view('components.icons.account')->render(),
-                    'route' => route('profile.account'),
-                ],
-            ];
         @endphp
 
         {{-- Sidebar --}}
@@ -149,7 +149,7 @@
                                 {{-- Cropping --}}
                                 <div x-show="cropping" class="w-full flex gap-8 items-center justify-between">
                                     <div class="flex justify-start items-center"> <img id="cropperImage"
-                                            :src="tempPreviewUrl" class="max-w-full rounded">
+                                            :src="tempPreviewUrl" class="max-h-[60vh] rounded">
                                     </div>
 
                                     <div class="flex flex-col items-center justify-center gap-6">

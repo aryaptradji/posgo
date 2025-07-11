@@ -33,7 +33,7 @@
         <div class="flex flex-col justify-between">
             <div class="px-7 py-4 flex justify-between">
                 <div class="w-fit flex gap-4 items-center justify-center font-semibold">
-                    @foreach (['semua', 'dibayar', 'belum dibayar', 'ditolak', 'kadaluwarsa', 'dibatalkan'] as $status)
+                    @foreach (['semua', 'dibayar', 'belum dibayar', 'ditolak', 'kadaluwarsa'] as $status)
                         <a href="{{ request()->fullUrlWithQuery(['filter' => $status, 'page' => 1]) }}"
                             class="px-3 py-2 rounded-lg capitalize transition-all duration-1000 cursor-pointer {{ request('filter', 'semua') === $status ? 'bg-primary text-white shadow-outer-sidebar-primary scale-105' : 'bg-tertiary-title-line text-black' }}">
                             {{ $status }}
@@ -285,7 +285,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-10 text-gray-500 italic">Data pesanan tidak
+                                <td colspan="8" class="text-center py-10 text-gray-500 italic">Data pesanan tidak
                                     ditemukan
                                 </td>
                             </tr>

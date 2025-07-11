@@ -38,7 +38,7 @@ class ProductController extends Controller
         if ($request->filled('sort')) {
             $query->orderBy($request->sort, $request->boolean('desc') ? 'desc' : 'asc');
         } else {
-            $query->latest();
+            $query->orderBy('stock', 'asc');
         }
 
         // Pagination

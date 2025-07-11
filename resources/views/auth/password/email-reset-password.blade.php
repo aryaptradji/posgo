@@ -15,7 +15,7 @@
                                 Reset Password
                             </a>
                         </p>
-                        <p>Link ini hanya berlaku sekali. Jangan bagikan kepada siapa pun.</p>
+                        <p>Link ini hanya berlaku hingga 1 jam kedepan. Jangan bagikan kepada siapa pun.</p>
                     </td>
                 </tr>
             </table>

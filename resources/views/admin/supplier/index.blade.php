@@ -173,7 +173,7 @@
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
                                             <h2 class="text-lg font-bold">Hapus Data Supplier</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                        <p class="mb-6 mx-1 mt-4 text-start">
                                             Yakin ingin menghapus supplier bernama
                                             <span class="font-bold text-danger">{{ $supplier->name }}</span>
                                             ?

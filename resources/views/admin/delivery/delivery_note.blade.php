@@ -61,6 +61,24 @@
             justify-content: space-between;
         }
 
+        .info-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .info-column {
+            width: 48%;
+        }
+
+        .info-column h2 {
+            font-size: 12pt;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            color: #555;
+        }
+
         .signature {
             margin-top: 60px;
             text-align: center;
@@ -119,9 +137,30 @@
         <div class="sectionA">
             <strong>No Pengiriman: </strong> {{ $delivery->code }}<br>
             <strong>Tanggal Pengiriman: </strong> {{ $delivery->shipped_at_formatted }}<br>
-            <strong>Pelanggan: </strong> {{ $delivery->user->name }}<br>
             <strong>Kurir: </strong> {{ $delivery->courier->name ?? '-' }}<br>
-            <strong>Status Pengiriman: </strong> {{ $delivery->shipping_status }}<br>
+        </div>
+
+        <div class="info-section">
+            <div class="info-column">
+                <h2>Informasi Penerima</h2>
+                <p>Nama: {{ $delivery->user->name }}</p>
+                <p>
+                    Alamat: {{ $delivery->user->address->street ?? '-' }},
+                    RT {{ $delivery->user->address->neighborhood->rt ?? '-' }}/RW {{ $delivery->user->address->neighborhood->rw ?? '-' }},
+                    Kec. {{ $delivery->user->address->neighborhood->subDistrict->district->name ?? '-' }},
+                    Kel. {{ $delivery->user->address->neighborhood->subDistrict->name ?? '-' }},
+                    {{ $delivery->user->address->neighborhood->subDistrict->district->city->name ?? '-' }}
+                </p> {{-- Tambahkan kolom alamat jika ada --}}
+                <p>Telepon: {{ $delivery->user->phone_number ?? '-' }}</p> {{-- Tambahkan kolom telepon jika ada --}}
+                <p>Email: {{ $delivery->user->email ?? '-' }}</p> {{-- Tambahkan kolom telepon jika ada --}}
+            </div>
+            <div class="info-column">
+                <h2>Informasi Pengirim</h2>
+                <p>Nama Perusahaan: Toko Biyan</p> {{-- Ganti dengan nama perusahaan Anda --}}
+                <p>Alamat: Jl. Inpres Raya No.2, RT.004/RW.004, Gaga, Kec. Larangan, Kota Tangerang, Banten 15154</p>
+                {{-- Ganti dengan alamat perusahaan Anda --}}
+                <p>Telepon: 085100270185</p> {{-- Ganti dengan telepon perusahaan Anda --}}
+            </div>
         </div>
 
         <div class="sectionB">

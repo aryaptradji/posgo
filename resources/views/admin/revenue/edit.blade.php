@@ -1,14 +1,14 @@
 <x-layout class="mb-0">
-    <x-slot:title>Ubah Pendapatan</x-slot:title>
+    <x-slot:title>Ubah Pemasukan</x-slot:title>
     <x-slot:header>
         <div class="flex mb-2 items-center gap-2 text-sm text-tertiary-title">
             <a href="{{ route('revenue.index') }}"
-                class="font-semibold transition-all duration-300 hover:text-primary hover:scale-110 active:scale-90">Pendapatan</a>
+                class="font-semibold transition-all duration-300 hover:text-primary hover:scale-110 active:scale-90">Pemasukan</a>
             <x-icons.arrow-down class="mb-0.5 -rotate-90 text-tertiary-300" />
             <span class="font-semibold">Ubah</span>
         </div>
         <div>
-            Ubah Pendapatan
+            Ubah Pemasukan
         </div>
     </x-slot:header>
 

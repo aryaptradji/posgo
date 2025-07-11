@@ -417,35 +417,56 @@
 
                 <div
                     class="flex items-center gap-px rounded-full overflow-hidden border border-gray-300 shadow-sm w-fit">
-                    {{-- Tombol Sebelumnya --}}
                     @if ($produkTerlaris->onFirstPage())
                         <span class="px-3 py-2 text-gray-400 bg-tertiary cursor-default">
                             <x-icons.arrow-down class="rotate-90 text-tertiary-title" />
                         </span>
                     @else
-                        <a href="{{ $produkTerlaris->previousPageUrl() . '&' . http_build_query(request()->except('produk_page')) }}"
+                        <a href="{{ $produkTerlaris->previousPageUrl() }}"
                             class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">
                             <x-icons.arrow-down class="rotate-90 text-tertiary-title" />
                         </a>
                     @endif
 
-                    {{-- Nomor Halaman --}}
-                    @foreach ($produkTerlaris->getUrlRange(1, $produkTerlaris->lastPage()) as $page => $url)
-                        @php
-                            $fullUrl = $url . '&' . http_build_query(request()->except('produk_page'));
-                        @endphp
-                        @if ($page == $produkTerlaris->currentPage())
-                            <span
-                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $page }}</span>
-                        @else
-                            <a href="{{ $fullUrl }}"
-                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $page }}</a>
-                        @endif
-                    @endforeach
+                    @php
+                        $currentPage = $produkTerlaris->currentPage();
+                        $lastPage = $produkTerlaris->lastPage();
+                        $start = max(1, $currentPage - 2);
+                        $end = min($lastPage, $currentPage + 2);
+                    @endphp
 
-                    {{-- Tombol Selanjutnya --}}
+                    <!-- First page -->
+                    @if ($start > 1)
+                        <a href="{{ $produkTerlaris->url(1) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">1</a>
+                        @if ($start > 2)
+                            <span class="px-3 py-2 text-gray-500">...</span>
+                        @endif
+                    @endif
+
+                    <!-- Middle pages -->
+                    @for ($i = $start; $i <= $end; $i++)
+                        @if ($i == $currentPage)
+                            <span
+                                class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $i }}</span>
+                        @else
+                            <a href="{{ $produkTerlaris->url($i) }}"
+                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $i }}</a>
+                        @endif
+                    @endfor
+
+                    <!-- Last page -->
+                    @if ($end < $lastPage)
+                        @if ($end < $lastPage - 1)
+                            <span class="px-3 py-2 text-gray-500">...</span>
+                        @endif
+                        <a href="{{ $produkTerlaris->url($lastPage) }}"
+                            class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $lastPage }}</a>
+                    @endif
+
+
                     @if ($produkTerlaris->hasMorePages())
-                        <a href="{{ $produkTerlaris->nextPageUrl() . '&' . http_build_query(request()->except('produk_page')) }}"
+                        <a href="{{ $produkTerlaris->nextPageUrl() }}"
                             class="px-3 py-2 bg-tertiary hover:bg-gray-100">
                             <x-icons.arrow-down class="-rotate-90 text-tertiary-title" />
                         </a>
@@ -543,7 +564,6 @@
 
                     <div
                         class="flex items-center gap-px rounded-full overflow-hidden border border-gray-300 shadow-sm w-fit">
-                        {{-- Tombol Sebelumnya --}}
                         @if ($products->onFirstPage())
                             <span class="px-3 py-2 text-gray-400 bg-tertiary cursor-default">
                                 <x-icons.arrow-down class="rotate-90 text-tertiary-title" />
@@ -555,18 +575,43 @@
                             </a>
                         @endif
 
-                        {{-- Nomor Halaman --}}
-                        @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-                            @if ($page == $products->currentPage())
-                                <span
-                                    class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $page }}</span>
-                            @else
-                                <a href="{{ $url }}"
-                                    class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $page }}</a>
-                            @endif
-                        @endforeach
+                        @php
+                            $currentPage = $products->currentPage();
+                            $lastPage = $products->lastPage();
+                            $start = max(1, $currentPage - 2);
+                            $end = min($lastPage, $currentPage + 2);
+                        @endphp
 
-                        {{-- Tombol Selanjutnya --}}
+                        <!-- First page -->
+                        @if ($start > 1)
+                            <a href="{{ $products->url(1) }}"
+                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">1</a>
+                            @if ($start > 2)
+                                <span class="px-3 py-2 text-gray-500">...</span>
+                            @endif
+                        @endif
+
+                        <!-- Middle pages -->
+                        @for ($i = $start; $i <= $end; $i++)
+                            @if ($i == $currentPage)
+                                <span
+                                    class="px-3 py-2 font-semibold bg-tertiary shadow-inner-pag text-primary">{{ $i }}</span>
+                            @else
+                                <a href="{{ $products->url($i) }}"
+                                    class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $i }}</a>
+                            @endif
+                        @endfor
+
+                        <!-- Last page -->
+                        @if ($end < $lastPage)
+                            @if ($end < $lastPage - 1)
+                                <span class="px-3 py-2 text-gray-500">...</span>
+                            @endif
+                            <a href="{{ $products->url($lastPage) }}"
+                                class="px-3 py-2 text-gray-700 bg-tertiary hover:bg-gray-100">{{ $lastPage }}</a>
+                        @endif
+
+
                         @if ($products->hasMorePages())
                             <a href="{{ $products->nextPageUrl() }}" class="px-3 py-2 bg-tertiary hover:bg-gray-100">
                                 <x-icons.arrow-down class="-rotate-90 text-tertiary-title" />

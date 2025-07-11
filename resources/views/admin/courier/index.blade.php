@@ -150,7 +150,7 @@
                                             <x-icons.delete-icon class="text-danger mr-3 mt-0.5" />
                                             <h2 class="text-lg font-bold">Hapus Data Kurir</h2>
                                         </x-slot:title>
-                                        <p class="mb-6 mx-6 mt-4 text-start">
+                                        <p class="mb-6 mx-1 mt-4 text-start">
                                             Yakin ingin menghapus kurir bernama
                                             <span class="font-bold text-danger">{{ $courier->name }}</span>
                                             ?

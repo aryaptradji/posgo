@@ -17,7 +17,14 @@ class RevenueSync extends Command
 
         Revenue::truncate(); // Kosongkan dulu supaya clean
 
-        $items = OrderItem::with('order', 'product')->get();
+        $items = OrderItem::with(
+            [
+                'order' => function ($query) {
+                    $query->where('shipping_status', 'selesai');
+                },
+            ],
+            'product',
+        )->get();
 
         foreach ($items as $item) {
             if (!$item->order) {

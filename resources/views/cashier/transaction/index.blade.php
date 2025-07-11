@@ -12,7 +12,52 @@
         </div>
     @endif
 
-    <div class="mt-32 px-14 min-h-screen">
+    <div class="mt-32 px-14 min-h-screen" x-data="paymentHandler()">
+        {{-- Modal Expired --}}
+        <x-alert x-show="showExpiredModal" x-cloak>
+            <x-slot:title>
+                <div class="flex items-center">
+                    <x-icons.alert class="mr-3 text-danger" />
+                    <h2 class="text-lg font-bold">Peringatan</h2>
+                </div>
+            </x-slot:title>
+            <div class="px-8 mb-6">
+                Maaf, pesanan ini sudah <span class="text-danger font-semibold">kadaluwarsa</span>. Silakan buat pesanan
+                baru.
+            </div>
+            <x-slot:action>
+                <form :action="actionUrl" method="GET">
+                    <button type="submit"
+                        class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                        OK
+                    </button>
+                </form>
+            </x-slot:action>
+        </x-alert>
+
+        {{-- Modal Error Token --}}
+        <x-alert x-show="showErrorModal" x-cloak>
+            <x-slot:title>
+                <div class="flex items-center">
+                    <x-icons.alert class="mr-3 text-danger" />
+                    <h2 class="text-lg font-bold">Error Pembayaran</h2>
+                </div>
+            </x-slot:title>
+            <div class="px-8 mb-6">
+                Token pembayaran tidak tersedia untuk pesanan <span class="font-semibold">#<span
+                        x-text="orderCode"></span></span>.
+                Silakan ulangi proses checkout.
+            </div>
+            <x-slot:action>
+                <form :action="actionUrl" method="GET">
+                    <button type="submit"
+                        class="px-4 py-2 bg-danger text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
+                        OK
+                    </button>
+                </form>
+            </x-slot:action>
+        </x-alert>
+
         <div class="w-full bg-tertiary rounded-2xl shadow-outer">
             <div class="flex flex-col justify-between">
                 <div class="px-7 py-4 flex justify-between">
@@ -132,11 +177,11 @@
                                             ? 'bg-danger/15 text-danger border-danger'
                                             : 'bg-success/15 text-success border-success';
                                     $shipClass =
-                                    $transaction->shipping_status == 'belum dikirim'
-                                        ? 'bg-danger/15 text-danger border-danger'
-                                        : ($transaction->shipping_status == 'dikirim'
-                                            ? 'bg-warning-200/15 text-warning-200 border-warning-200'
-                                            : 'bg-success/15 text-success border-success');
+                                        $transaction->shipping_status == 'belum dikirim'
+                                            ? 'bg-danger/15 text-danger border-danger'
+                                            : ($transaction->shipping_status == 'dikirim'
+                                                ? 'bg-warning-200/15 text-warning-200 border-warning-200'
+                                                : 'bg-success/15 text-success border-success');
 
                                 @endphp
                                 <tr class="border-b-2 border-b-tertiary-table-line">
@@ -164,11 +209,24 @@
                                                 class="text-secondary-purple transition-transform hover:scale-125 active:scale-90">
                                                 <x-icons.detail-icon />
                                             </button>
-                                            <template x-if="{{ $transaction->payment_status == 'dibayar'}}">
+                                            <template x-if="{{ $transaction->payment_status == 'dibayar' }}">
                                                 <a href="{{ route('transaction.print-receipt', $transaction) }}"
                                                     class="transition-transform hover:scale-125 active:scale-90 mt-1">
                                                     <x-icons.print-sm />
                                                 </a>
+                                            </template>
+                                            <template
+                                                x-if="{{ $transaction->payment_status == 'belum dibayar' && $transaction->payment_method != 'tunai' }}">
+                                                <button @click="handlePayClick($event.target.closest('button'))"
+                                                    class="px-3 py-1 rounded-full font-semibold bg-success text-white transition-all hover:scale-110 active:scale-90 hover:shadow-drop duration-200"
+                                                    data-snap-token="{{ $transaction->snap_token }}"
+                                                    data-snap-expires-at="{{ $transaction->snap_expires_at->timestamp ?? 0 }}"
+                                                    data-order-code="{{ $transaction->code }}"
+                                                    data-expire-url="{{ route('pos-menu.expire', ['order' => '__ORDER_CODE__']) }}"
+                                                    data-pay-url="{{ route('pos-menu.pay', ['order' => '__ORDER_CODE__']) }}"
+                                                    type="button">
+                                                    Bayar
+                                                </button>
                                             </template>
                                         </div>
 
@@ -213,6 +271,10 @@
                                                             <span class="font-bold">Status</span>
                                                             <span
                                                                 class="px-2 rounded-lg capitalize border-2 w-fit {{ $payClass }}">{{ $transaction->payment_status }}</span>
+                                                        </div>
+                                                        <div class="flex flex-col gap-1">
+                                                            <span class="font-bold">Metode Pembayaran</span>
+                                                            <span class="capitalize">{{ $transaction->payment_method ?? "-" }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -380,4 +442,58 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+        function paymentHandler() {
+            return {
+                showExpiredModal: false,
+                showErrorModal: false,
+                orderCode: null,
+                actionUrl: '',
+                payUrl: '',
+
+                handlePayClick(button) {
+                    const snapToken = button.dataset.snapToken;
+                    const snapExpiresAt = parseInt(button.dataset.snapExpiresAt) * 1000;
+                    const orderCode = button.dataset.orderCode;
+                    const now = new Date().getTime();
+                    const expireUrl = button.dataset.expireUrl.replace('__ORDER_CODE__', orderCode);
+                    const payUrl = button.dataset.payUrl.replace('__ORDER_CODE__', orderCode);
+
+                    console.log({
+                        snapToken,
+                        snapExpiresAt,
+                        orderCode,
+                        now
+                    });
+
+                    // Handle Token Kosong
+                    if (!snapToken || snapToken.trim() === '') {
+                        this.orderCode = orderCode;
+                        this.actionUrl = expireUrl
+                        this.showErrorModal = true;
+                        return;
+                    }
+
+                    console.log({
+                        snapToken,
+                        snapExpiresAt,
+                        snapExpiresAt_human: new Date(snapExpiresAt).toISOString(),
+                        now,
+                        now_human: new Date(now).toISOString(),
+                        comparison: now > snapExpiresAt
+                    });
+
+                    // Handle Token Expired
+                    if (now > snapExpiresAt) {
+                        this.orderCode = orderCode;
+                        this.actionUrl = expireUrl;
+                        this.showExpiredModal = true;
+                    } else {
+                        window.location.href = payUrl;
+                    }
+                }
+            }
+        }
+    </script>
 </x-layout-main>
