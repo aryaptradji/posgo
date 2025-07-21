@@ -37,8 +37,10 @@
             $po->status === 'perlu dikirim'
                 ? 'bg-danger/15 text-danger border-danger'
                 : ($po->status === 'perlu invoice'
-                    ? 'bg-secondary-blue/15 text-secondary-blue border-secondary-blue'
-                    : 'bg-success/15 text-success border-success');
+                    ? 'bg-warning-100/15 text-warning-100 border-warning-100'
+                    : ($po->status === 'perlu dibayar'
+                        ? 'bg-success/15 text-success border-success'
+                        : 'bg-secondary-blue/15 text-secondary-blue border-secondary-blue'));
 
         $invoiceItemsData = $po->items
             ->map(function ($item) {

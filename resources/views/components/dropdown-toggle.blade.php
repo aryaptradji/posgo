@@ -42,7 +42,7 @@
             x-transition:leave-start="scale-100"
             x-transition:leave-end="scale-0"
         >
-            <input type="text" name="{{ $name }}" x-model="typed" x-on:input="selected = typed" placeholder="Lain-lain . . ."  class="bg-tertiary h-14 shadow-outer rounded-2xl text-black placeholder:text-tertiary-200 focus:ring focus:ring-primary text-sm outline-none w-full text-left px-6 flex justify-between items-center">
+            <input type="text" name="{{ $name }}" x-model="typed" x-on:input="selected = typed" placeholder="Lain-lain . . ."  class="bg-tertiary h-14 shadow-outer rounded-2xl text-black placeholder:text-tertiary-200 focus:shadow-inner focus:ring focus:ring-primary text-sm outline-none w-full text-left px-6 flex justify-between items-center">
             <button type="button" class="text-danger transition-all hover:scale-125 active:scale-90" @click="btnShow = true; inputShow = false; open = false">
                 <x-icons.close-drop />
             </button>

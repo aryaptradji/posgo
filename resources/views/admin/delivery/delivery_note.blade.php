@@ -43,7 +43,8 @@
             margin-top: 10px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ccc;
             padding: 2px;
             text-align: left;
@@ -79,6 +80,27 @@
             color: #555;
         }
 
+        .table-summary {
+            width: 300px;
+            /* Lebar untuk tabel ringkasan */
+            float: right;
+            /* Posisikan di kanan */
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            border-top: 1px solid #ddd;
+        }
+
+        .table-summary td {
+            padding: 5px 10px;
+            border: none;
+            text-align: right;
+        }
+
+        .table-summary .total-row {
+            font-weight: bold;
+            padding-top: 10px;
+        }
+
         .signature {
             margin-top: 60px;
             text-align: center;
@@ -102,7 +124,7 @@
 
         .no-print button:hover {
             transform: scale(115%);
-            box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+            box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
         }
 
         @media print {
@@ -146,7 +168,8 @@
                 <p>Nama: {{ $delivery->user->name }}</p>
                 <p>
                     Alamat: {{ $delivery->user->address->street ?? '-' }},
-                    RT {{ $delivery->user->address->neighborhood->rt ?? '-' }}/RW {{ $delivery->user->address->neighborhood->rw ?? '-' }},
+                    RT {{ $delivery->user->address->neighborhood->rt ?? '-' }}/RW
+                    {{ $delivery->user->address->neighborhood->rw ?? '-' }},
                     Kec. {{ $delivery->user->address->neighborhood->subDistrict->district->name ?? '-' }},
                     Kel. {{ $delivery->user->address->neighborhood->subDistrict->name ?? '-' }},
                     {{ $delivery->user->address->neighborhood->subDistrict->district->city->name ?? '-' }}
@@ -170,6 +193,7 @@
                         <th>Nama Produk</th>
                         <th>Qty</th>
                         <th>Pcs</th>
+                        <th>Harga</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -178,9 +202,16 @@
                             <td>{{ $item->product->name }}</td>
                             <td>{{ $item->qty }}</td>
                             <td>{{ $item->product->pcs }}</td>
+                            <td>Rp {{ number_format($item->price * $item->qty, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
+            </table>
+            <table class="table-summary">
+                <tr class="total-row">
+                    <td>Total</td>
+                    <td>Rp {{ number_format($delivery->total, 0, ',', '.') }}</td>
+                </tr>
             </table>
         </div>
 

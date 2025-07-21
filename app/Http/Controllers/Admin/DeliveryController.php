@@ -102,7 +102,7 @@ class DeliveryController extends Controller
         ]);
 
         return redirect()
-            ->route('delivery.index', ['filter' => Str::slug($status), 'sort' => 'arrived_at', 'desc' => 1])
+            ->route('delivery.index', ['filter' => $status, 'sort' => 'shipped_at', 'desc' => 1])
             ->with('success', 'Pesanan berhasil dikirim');
     }
 

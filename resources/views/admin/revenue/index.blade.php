@@ -92,7 +92,7 @@
                         @forelse ($revenues as $revenue)
                             @php
                                 $class =
-                                    $revenue->category === 'produk'
+                                    $revenue->category === 'Produk'
                                         ? 'bg-secondary-purple/15 text-secondary-purple border-secondary-purple'
                                         : 'bg-primary/15 text-primary border-primary';
                             @endphp

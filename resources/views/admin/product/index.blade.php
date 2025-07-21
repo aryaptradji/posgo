@@ -65,7 +65,7 @@
 
             </div>
 
-            <div class="pb-4 relative overflow-x-auto overflow-y-auto max-h-[450px]">
+            <div class="pb-4 relative overflow-x-auto overflow-y-auto">
                 <table class="w-full min-w-max text-sm text-left">
                     <thead class="text-xs uppercase bg-white">
                         <tr>

@@ -50,7 +50,7 @@ export default function imageCropper(initialUrl, initialsText) {
         saveCrop() {
             if (this.cropper) {
                 const canvas = this.cropper.getCroppedCanvas();
-                this.previewUrl = canvas.toDataURL('image/png');
+                this.previewUrl = canvas.toDataURL('image/jpeg', 0.8);
                 this.hasChange = true;    // tandai udah ada perubahan
                 this.cropper.destroy();
                 this.cropper = null;

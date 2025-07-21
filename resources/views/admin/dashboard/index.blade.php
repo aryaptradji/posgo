@@ -488,14 +488,14 @@
                 <div class="px-7 py-4 flex justify-end">
                     <form action="{{ route('dashboard') }}" method="GET"
                         class="w-2/5 ps-4 pe-2 py-2 flex flex-row text-sm outline-none ring-1 ring-tertiary-300 rounded-lg bg-gray-50">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari"
+                        <input type="text" name="stok_search" value="{{ request('stok_search') }}" placeholder="Cari"
                             class="outline-none w-full pt-1 bg-transparent placeholder:text-tertiary-title">
                         <button type="submit"
                             class="transition-all hover:scale-125 active:scale-95 hover:text-primary text-tertiary-title disabled">
                             <x-icons.cari />
                         </button>
-                        @if (request('search'))
-                            <a href="{{ route('dashboard', request()->except(['search', 'filter', 'page'])) }}"
+                        @if (request('stok_search'))
+                            <a href="{{ route('dashboard', request()->except(['stok_search', 'filter', 'page'])) }}"
                                 class="ml-1 text-tertiary-title hover:text-danger transition-all hover:scale-125 active:scale-95">
                                 <x-icons.close />
                             </a>
@@ -510,11 +510,11 @@
                                 <th class="px-4 py-3" align="center">Nama Produk</th>
                                 <th class="px-4 py-3" align="center">Status</th>
                                 <th class="px-4 py-3" align="center">
-                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'stock', 'desc' => request('desc') ? null : 1, 'page' => 1]) }}"
+                                    <a href="{{ request()->fullUrlWithQuery(['stok_sort' => 'stock', 'stok_desc' => request('stok_desc') ? null : 1, 'page' => 1]) }}"
                                         class="flex items-center justify-center uppercase">
                                         Stok
                                         <x-icons.arrow-down
-                                            class="ml-2 text-tertiary-300 {{ request('sort') == 'stock' && request('desc') ? 'rotate-180' : '' }}" />
+                                            class="ml-2 text-tertiary-300 {{ request('sort') == 'stock' && request('stok_desc') ? 'rotate-180' : '' }}" />
                                     </a>
                                 </th>
                             </tr>

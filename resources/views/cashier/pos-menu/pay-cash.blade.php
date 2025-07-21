@@ -67,7 +67,7 @@
                     Batal
                 </a>
 
-                <form action="{{ route('transaction.receipt', $order) }}" method="GET">
+                <form action="{{ route('transaction.print-receipt', $order) }}" method="GET">
                     <button type="submit"
                         class="px-4 py-2 bg-secondary-blue text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-90">
                         Cetak

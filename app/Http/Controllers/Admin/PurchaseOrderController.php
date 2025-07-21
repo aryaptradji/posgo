@@ -315,7 +315,7 @@ class PurchaseOrderController extends Controller
     {
         $purchaseOrder->update(['status' => 'perlu invoice']);
 
-        return redirect()->route('purchase-order.index')->with('success', 'Purchase Order berhasil dikirim');
+        return redirect()->route('purchase-order.index', ['filter' => 'perlu invoice'])->with('success', 'Purchase Order berhasil dikirim');
     }
 
     public function fillInvoice(PurchaseOrder $purchaseOrder)
@@ -383,7 +383,7 @@ class PurchaseOrderController extends Controller
         $purchaseOrder->status = 'perlu dibayar';
         $purchaseOrder->save();
 
-        return redirect()->route('purchase-order.index')->with('success', 'Invoice berhasil diisi');
+        return redirect()->route('purchase-order.index', ['filter' => 'perlu dibayar'])->with('success', 'Invoice berhasil diisi');
     }
 
     public function pay(Request $request, PurchaseOrder $purchaseOrder)
@@ -425,7 +425,7 @@ class PurchaseOrderController extends Controller
             break;
         }
 
-        return redirect()->route('purchase-order.index')->with('success', 'Bukti pembayaran berhasil diupload');
+        return redirect()->route('purchase-order.index', ['filter' => 'selesai'])->with('success', 'Bukti pembayaran berhasil diupload');
     }
 
     public function print()
